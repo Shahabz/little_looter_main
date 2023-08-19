@@ -1,0 +1,1375 @@
+fileFormatVersion: 2
+guid: 5dfc4a565abb41240bf6e4d862b16247
+timeCreated: 1549365057
+licenseType: Store
+ModelImporter:
+  serializedVersion: 19
+  fileIDToRecycleName:
+    100000: Basic_soldier
+    100002: Bip001
+    100004: Bip001 Footsteps
+    100006: Bip001 Head
+    100008: Bip001 HeadNub
+    100010: Bip001 L Calf
+    100012: Bip001 L Clavicle
+    100014: Bip001 L Foot
+    100016: Bip001 L Forearm
+    100018: Bip001 L Hand
+    100020: Bip001 L Thigh
+    100022: Bip001 L Toe0
+    100024: Bip001 L Toe0Nub
+    100026: Bip001 L UpperArm
+    100028: Bip001 Neck
+    100030: Bip001 Pelvis
+    100032: Bip001 R Calf
+    100034: Bip001 R Clavicle
+    100036: Bip001 R Foot
+    100038: Bip001 R Forearm
+    100040: Bip001 R Hand
+    100042: Bip001 R Thigh
+    100044: Bip001 R Toe0
+    100046: Bip001 R Toe0Nub
+    100048: Bip001 R UpperArm
+    100050: Bip001 Spine
+    100052: //RootNode
+    100054: weapon
+    100056: MESH_Infantry
+    100058: weapon_assault
+    100060: WeaponContainer
+    100062: TS_Body_01_infantry
+    100064: TS_Body_02_gunner
+    100066: TS_Body_03_scout
+    100068: TS_Body_04_sniper
+    100070: TS_Body_05_engineer
+    100072: TS_Body_06_medic
+    100074: TS_Head_00_clean
+    100076: TS_Head_01_infantry
+    100078: TS_Head_02_Scout
+    100080: TS_Head_04_sniper
+    100082: TS_Head_05_engineer
+    100084: TS_Head_06_medic_A
+    100086: TS_Body_03_scout001
+    100088: TS_Body_F_General
+    100090: Backpack_container
+    100092: TS_Body_07_unequipped
+    100094: TS_Body_08_trench
+    100096: TS_Body_09_general
+    100098: TS_Head_00_unequipped
+    100100: TS_Head_07_medic_B
+    100102: TS_Head_08_beret
+    100104: TS_Head_09_general
+    100106: TS_Head_10_glasses
+    100108: TS_Head_11_gasmask
+    100110: TS_Head_12_gasmask_helmet
+    100112: TS_Head_13_gasmask_general
+    100114: TS_Head_14_gasmask_medic
+    100116: TS_Head_15_gunner_only
+    100118: WeaponContainer_L
+    100120: Body_standarrrrrd
+    100122: extra_backpack
+    100124: Head_B
+    100126: Legs_D_pistola
+    100128: Soldier_equip_A
+    100130: Legs_B_armies_standard
+    100132: Legs_C_rodilleras
+    100134: Head_helmet
+    100136: Body_Soldier_Light
+    100138: Body_Soldier_Med
+    100140: Body_commander
+    100142: Body_commando
+    100144: Body_heavy
+    100146: Body_standard
+    100148: Body_Tshirt
+    100150: extra_equip_A
+    100152: extra_equip_C
+    100154: extra_equip_D
+    100156: extra_scarf_A
+    100158: extra_scarf_B
+    100160: Head_basic
+    100162: head_beret
+    100164: head_cap
+    100166: head_capucha
+    100168: head_gasmask
+    100170: head_glasses
+    100172: Head_helmet_cloth
+    100174: head_mask
+    100176: head_wool
+    100178: Body_Tshirt_vest
+    100180: shoulderpads
+    100182: Body_Uniform
+    100184: Head_helmet_tactical
+    100186: HeadSet
+    100188: CamelBack
+    100190: Body_Soldier_Heavy
+    100192: extra_scarf
+    100194: Body_A
+    100196: Body_B
+    100198: Body_C
+    100200: Body_D
+    100202: Body_E
+    100204: Body_F
+    100206: Body_G
+    100208: Body_H
+    100210: Body_I
+    100212: extra_camelback
+    100214: extra_equip_B
+    100216: extra_light_backpack
+    100218: Head_A1
+    100220: Head_A2
+    100222: Head_A3
+    100224: Head_B1
+    100226: Head_B2
+    100228: Head_B3
+    100230: Head_B4
+    100232: Head_B5
+    100234: Head_B6
+    100236: Head_B7
+    100238: Head_C1
+    100240: Head_C2
+    100242: Head_C3
+    100244: Head_C4
+    100246: Head_C5
+    100248: Head_C6
+    100250: Head_C7
+    100252: Head_D1
+    100254: Head_D2
+    100256: Head_D3
+    100258: Head_D4
+    100260: Head_D5
+    100262: Head_E1
+    100264: Head_E2
+    100266: Head_E3
+    100268: Head_E4
+    100270: Head_E5
+    100272: Head_F1
+    100274: Head_F2
+    100276: Head_F3
+    100278: Head_F4
+    100280: Head_G1
+    100282: Head_G2
+    100284: Head_G3
+    100286: Head_G4
+    100288: Head_H1
+    100290: Head_H2
+    100292: Head_I1
+    100294: Head_I2
+    100296: Head_J1
+    100298: Head_J2
+    100300: Head_J3
+    100302: Head_J4
+    100304: Head_K1
+    100306: Head_K2
+    100308: Head_K3
+    100310: Head_K4
+    100312: Head_L1
+    100314: Head_L2
+    100316: Head_L3
+    100318: Head_L4
+    100320: Head_L5
+    100322: Legs_A
+    100324: Legs_B
+    100326: Legs_C
+    100328: x_shoulderpads
+    100330: Body_J
+    100332: Body_K
+    100334: Body_A 1
+    100336: Body_B 1
+    100338: Body_C 1
+    100340: Body_D 1
+    100342: Body_E 1
+    100344: Body_F 1
+    100346: Body_G 1
+    100348: Body_H 1
+    100350: Body_I 1
+    100352: Body_J 1
+    100354: Body_K 1
+    100356: extra_backpack 1
+    100358: extra_camelback 1
+    100360: extra_equip_A 1
+    100362: extra_equip_B 1
+    100364: extra_equip_C 1
+    100366: extra_light_backpack 1
+    100368: Head_A1 1
+    100370: Head_A2 1
+    100372: Head_A3 1
+    100374: Head_B1 1
+    100376: Head_B2 1
+    100378: Head_B3 1
+    100380: Head_B4 1
+    100382: Head_B5 1
+    100384: Head_B6 1
+    100386: Head_B7 1
+    100388: Head_C1 1
+    100390: Head_C2 1
+    100392: Head_C3 1
+    100394: Head_C4 1
+    100396: Head_C5 1
+    100398: Head_C6 1
+    100400: Head_C7 1
+    100402: Head_D1 1
+    100404: Head_D2 1
+    100406: Head_D3 1
+    100408: Head_D4 1
+    100410: Head_D5 1
+    100412: Head_E1 1
+    100414: Head_E2 1
+    100416: Head_E3 1
+    100418: Head_E4 1
+    100420: Head_E5 1
+    100422: Head_F1 1
+    100424: Head_F2 1
+    100426: Head_F3 1
+    100428: Head_F4 1
+    100430: Head_G1 1
+    100432: Head_G2 1
+    100434: Head_G3 1
+    100436: Head_G4 1
+    100438: Head_H1 1
+    100440: Head_H2 1
+    100442: Head_I1 1
+    100444: Head_I2 1
+    100446: Head_J1 1
+    100448: Head_J2 1
+    100450: Head_J3 1
+    100452: Head_J4 1
+    100454: Head_K1 1
+    100456: Head_K2 1
+    100458: Head_K3 1
+    100460: Head_K4 1
+    100462: Head_L1 1
+    100464: Head_L2 1
+    100466: Head_L3 1
+    100468: Head_L4 1
+    100470: Head_L5 1
+    100472: Legs_A 1
+    100474: Legs_B 1
+    100476: Legs_C 1
+    400000: Basic_soldier
+    400002: Bip001
+    400004: Bip001 Footsteps
+    400006: Bip001 Head
+    400008: Bip001 HeadNub
+    400010: Bip001 L Calf
+    400012: Bip001 L Clavicle
+    400014: Bip001 L Foot
+    400016: Bip001 L Forearm
+    400018: Bip001 L Hand
+    400020: Bip001 L Thigh
+    400022: Bip001 L Toe0
+    400024: Bip001 L Toe0Nub
+    400026: Bip001 L UpperArm
+    400028: Bip001 Neck
+    400030: Bip001 Pelvis
+    400032: Bip001 R Calf
+    400034: Bip001 R Clavicle
+    400036: Bip001 R Foot
+    400038: Bip001 R Forearm
+    400040: Bip001 R Hand
+    400042: Bip001 R Thigh
+    400044: Bip001 R Toe0
+    400046: Bip001 R Toe0Nub
+    400048: Bip001 R UpperArm
+    400050: Bip001 Spine
+    400052: //RootNode
+    400054: weapon
+    400056: MESH_Infantry
+    400058: weapon_assault
+    400060: WeaponContainer
+    400062: TS_Body_01_infantry
+    400064: TS_Body_02_gunner
+    400066: TS_Body_03_scout
+    400068: TS_Body_04_sniper
+    400070: TS_Body_05_engineer
+    400072: TS_Body_06_medic
+    400074: TS_Head_00_clean
+    400076: TS_Head_01_infantry
+    400078: TS_Head_02_Scout
+    400080: TS_Head_04_sniper
+    400082: TS_Head_05_engineer
+    400084: TS_Head_06_medic_A
+    400086: TS_Body_03_scout001
+    400088: TS_Body_F_General
+    400090: Backpack_container
+    400092: TS_Body_07_unequipped
+    400094: TS_Body_08_trench
+    400096: TS_Body_09_general
+    400098: TS_Head_00_unequipped
+    400100: TS_Head_07_medic_B
+    400102: TS_Head_08_beret
+    400104: TS_Head_09_general
+    400106: TS_Head_10_glasses
+    400108: TS_Head_11_gasmask
+    400110: TS_Head_12_gasmask_helmet
+    400112: TS_Head_13_gasmask_general
+    400114: TS_Head_14_gasmask_medic
+    400116: TS_Head_15_gunner_only
+    400118: WeaponContainer_L
+    400120: Body_standarrrrrd
+    400122: extra_backpack
+    400124: Head_B
+    400126: Legs_D_pistola
+    400128: Soldier_equip_A
+    400130: Legs_B_armies_standard
+    400132: Legs_C_rodilleras
+    400134: Head_helmet
+    400136: Body_Soldier_Light
+    400138: Body_Soldier_Med
+    400140: Body_commander
+    400142: Body_commando
+    400144: Body_heavy
+    400146: Body_standard
+    400148: Body_Tshirt
+    400150: extra_equip_A
+    400152: extra_equip_C
+    400154: extra_equip_D
+    400156: extra_scarf_A
+    400158: extra_scarf_B
+    400160: Head_basic
+    400162: head_beret
+    400164: head_cap
+    400166: head_capucha
+    400168: head_gasmask
+    400170: head_glasses
+    400172: Head_helmet_cloth
+    400174: head_mask
+    400176: head_wool
+    400178: Body_Tshirt_vest
+    400180: shoulderpads
+    400182: Body_Uniform
+    400184: Head_helmet_tactical
+    400186: HeadSet
+    400188: CamelBack
+    400190: Body_Soldier_Heavy
+    400192: extra_scarf
+    400194: Body_A
+    400196: Body_B
+    400198: Body_C
+    400200: Body_D
+    400202: Body_E
+    400204: Body_F
+    400206: Body_G
+    400208: Body_H
+    400210: Body_I
+    400212: extra_camelback
+    400214: extra_equip_B
+    400216: extra_light_backpack
+    400218: Head_A1
+    400220: Head_A2
+    400222: Head_A3
+    400224: Head_B1
+    400226: Head_B2
+    400228: Head_B3
+    400230: Head_B4
+    400232: Head_B5
+    400234: Head_B6
+    400236: Head_B7
+    400238: Head_C1
+    400240: Head_C2
+    400242: Head_C3
+    400244: Head_C4
+    400246: Head_C5
+    400248: Head_C6
+    400250: Head_C7
+    400252: Head_D1
+    400254: Head_D2
+    400256: Head_D3
+    400258: Head_D4
+    400260: Head_D5
+    400262: Head_E1
+    400264: Head_E2
+    400266: Head_E3
+    400268: Head_E4
+    400270: Head_E5
+    400272: Head_F1
+    400274: Head_F2
+    400276: Head_F3
+    400278: Head_F4
+    400280: Head_G1
+    400282: Head_G2
+    400284: Head_G3
+    400286: Head_G4
+    400288: Head_H1
+    400290: Head_H2
+    400292: Head_I1
+    400294: Head_I2
+    400296: Head_J1
+    400298: Head_J2
+    400300: Head_J3
+    400302: Head_J4
+    400304: Head_K1
+    400306: Head_K2
+    400308: Head_K3
+    400310: Head_K4
+    400312: Head_L1
+    400314: Head_L2
+    400316: Head_L3
+    400318: Head_L4
+    400320: Head_L5
+    400322: Legs_A
+    400324: Legs_B
+    400326: Legs_C
+    400328: x_shoulderpads
+    400330: Body_J
+    400332: Body_K
+    400334: Body_A 1
+    400336: Body_B 1
+    400338: Body_C 1
+    400340: Body_D 1
+    400342: Body_E 1
+    400344: Body_F 1
+    400346: Body_G 1
+    400348: Body_H 1
+    400350: Body_I 1
+    400352: Body_J 1
+    400354: Body_K 1
+    400356: extra_backpack 1
+    400358: extra_camelback 1
+    400360: extra_equip_A 1
+    400362: extra_equip_B 1
+    400364: extra_equip_C 1
+    400366: extra_light_backpack 1
+    400368: Head_A1 1
+    400370: Head_A2 1
+    400372: Head_A3 1
+    400374: Head_B1 1
+    400376: Head_B2 1
+    400378: Head_B3 1
+    400380: Head_B4 1
+    400382: Head_B5 1
+    400384: Head_B6 1
+    400386: Head_B7 1
+    400388: Head_C1 1
+    400390: Head_C2 1
+    400392: Head_C3 1
+    400394: Head_C4 1
+    400396: Head_C5 1
+    400398: Head_C6 1
+    400400: Head_C7 1
+    400402: Head_D1 1
+    400404: Head_D2 1
+    400406: Head_D3 1
+    400408: Head_D4 1
+    400410: Head_D5 1
+    400412: Head_E1 1
+    400414: Head_E2 1
+    400416: Head_E3 1
+    400418: Head_E4 1
+    400420: Head_E5 1
+    400422: Head_F1 1
+    400424: Head_F2 1
+    400426: Head_F3 1
+    400428: Head_F4 1
+    400430: Head_G1 1
+    400432: Head_G2 1
+    400434: Head_G3 1
+    400436: Head_G4 1
+    400438: Head_H1 1
+    400440: Head_H2 1
+    400442: Head_I1 1
+    400444: Head_I2 1
+    400446: Head_J1 1
+    400448: Head_J2 1
+    400450: Head_J3 1
+    400452: Head_J4 1
+    400454: Head_K1 1
+    400456: Head_K2 1
+    400458: Head_K3 1
+    400460: Head_K4 1
+    400462: Head_L1 1
+    400464: Head_L2 1
+    400466: Head_L3 1
+    400468: Head_L4 1
+    400470: Head_L5 1
+    400472: Legs_A 1
+    400474: Legs_B 1
+    400476: Legs_C 1
+    2300000: weapon
+    2300002: weapon_assault
+    2300004: TS_Body_03_scout001
+    2300006: TS_Body_F_General
+    2300008: shoulderpads
+    2300010: Body_A 1
+    2300012: Body_B 1
+    2300014: Body_C
+    2300016: Body_D 1
+    2300018: Body_E 1
+    2300020: Body_F 1
+    2300022: Body_G
+    2300024: Body_H 1
+    2300026: Body_I
+    2300028: Body_J
+    2300030: Body_K 1
+    2300032: extra_backpack 1
+    2300034: extra_camelback 1
+    2300036: extra_equip_A
+    2300038: extra_equip_B 1
+    2300040: extra_equip_C 1
+    2300042: extra_light_backpack 1
+    2300044: Head_A1 1
+    2300046: Head_A2 1
+    2300048: Head_A3
+    2300050: Head_B1 1
+    2300052: Head_B2 1
+    2300054: Head_B3 1
+    2300056: Head_B4
+    2300058: Head_B5
+    2300060: Head_B6
+    2300062: Head_B7
+    2300064: Head_C1 1
+    2300066: Head_C2
+    2300068: Head_C3
+    2300070: Head_C4
+    2300072: Head_C5
+    2300074: Head_C6
+    2300076: Head_C7 1
+    2300078: Head_D1 1
+    2300080: Head_D2
+    2300082: Head_D3 1
+    2300084: Head_D4 1
+    2300086: Head_D5 1
+    2300088: Head_E1
+    2300090: Head_E2 1
+    2300092: Head_E3 1
+    2300094: Head_E4 1
+    2300096: Head_E5 1
+    2300098: Head_F1
+    2300100: Head_F2
+    2300102: Head_F3 1
+    2300104: Head_F4 1
+    2300106: Head_G1 1
+    2300108: Head_G2 1
+    2300110: Head_G3 1
+    2300112: Head_G4 1
+    2300114: Head_H1 1
+    2300116: Head_H2 1
+    2300118: Head_I1
+    2300120: Head_I2 1
+    2300122: Head_J1
+    2300124: Head_J2 1
+    2300126: Head_J3 1
+    2300128: Head_J4 1
+    2300130: Head_K1
+    2300132: Head_K2
+    2300134: Head_K3
+    2300136: Head_K4
+    2300138: Head_L1 1
+    2300140: Head_L2 1
+    2300142: Head_L3 1
+    2300144: Head_L4 1
+    2300146: Head_L5 1
+    2300148: Legs_A
+    2300150: Legs_B
+    2300152: Legs_C 1
+    3300000: weapon
+    3300002: weapon_assault
+    3300004: TS_Body_03_scout001
+    3300006: TS_Body_F_General
+    3300008: shoulderpads
+    3300010: Body_A 1
+    3300012: Body_B 1
+    3300014: Body_C
+    3300016: Body_D 1
+    3300018: Body_E 1
+    3300020: Body_F 1
+    3300022: Body_G
+    3300024: Body_H 1
+    3300026: Body_I
+    3300028: Body_J
+    3300030: Body_K 1
+    3300032: extra_backpack 1
+    3300034: extra_camelback 1
+    3300036: extra_equip_A
+    3300038: extra_equip_B 1
+    3300040: extra_equip_C 1
+    3300042: extra_light_backpack 1
+    3300044: Head_A1 1
+    3300046: Head_A2 1
+    3300048: Head_A3
+    3300050: Head_B1 1
+    3300052: Head_B2 1
+    3300054: Head_B3 1
+    3300056: Head_B4
+    3300058: Head_B5
+    3300060: Head_B6
+    3300062: Head_B7
+    3300064: Head_C1 1
+    3300066: Head_C2
+    3300068: Head_C3
+    3300070: Head_C4
+    3300072: Head_C5
+    3300074: Head_C6
+    3300076: Head_C7 1
+    3300078: Head_D1 1
+    3300080: Head_D2
+    3300082: Head_D3 1
+    3300084: Head_D4 1
+    3300086: Head_D5 1
+    3300088: Head_E1
+    3300090: Head_E2 1
+    3300092: Head_E3 1
+    3300094: Head_E4 1
+    3300096: Head_E5 1
+    3300098: Head_F1
+    3300100: Head_F2
+    3300102: Head_F3 1
+    3300104: Head_F4 1
+    3300106: Head_G1 1
+    3300108: Head_G2 1
+    3300110: Head_G3 1
+    3300112: Head_G4 1
+    3300114: Head_H1 1
+    3300116: Head_H2 1
+    3300118: Head_I1
+    3300120: Head_I2 1
+    3300122: Head_J1
+    3300124: Head_J2 1
+    3300126: Head_J3 1
+    3300128: Head_J4 1
+    3300130: Head_K1
+    3300132: Head_K2
+    3300134: Head_K3
+    3300136: Head_K4
+    3300138: Head_L1 1
+    3300140: Head_L2 1
+    3300142: Head_L3 1
+    3300144: Head_L4 1
+    3300146: Head_L5 1
+    3300148: Legs_A
+    3300150: Legs_B
+    3300152: Legs_C 1
+    4300000: Basic_soldier
+    4300002: weapon
+    4300004: MESH_Infantry
+    4300006: weapon_assault
+    4300008: TS_Body_01_infantry
+    4300010: TS_Head_01_infantry
+    4300012: TS_Body_02_gunner
+    4300014: TS_Body_03_scout
+    4300016: TS_Head_02_Scout
+    4300018: TS_Body_04_sniper
+    4300020: TS_Head_04_sniper
+    4300022: TS_Body_05_engineer
+    4300024: TS_Head_05_engineer
+    4300026: TS_Body_06_medic
+    4300028: TS_Head_06_medic_A
+    4300030: TS_Head_00_clean
+    4300032: TS_Body_03_scout001
+    4300034: TS_Body_F_General
+    4300036: TS_Head_00_unequipped
+    4300038: TS_Body_09_general
+    4300040: TS_Head_09_general
+    4300042: TS_Body_07_unequipped
+    4300044: TS_Head_08_beret
+    4300046: TS_Head_11_gasmask
+    4300048: TS_Head_13_gasmask_general
+    4300050: TS_Head_12_gasmask_helmet
+    4300052: TS_Body_08_trench
+    4300054: TS_Head_07_medic_B
+    4300056: TS_Head_14_gasmask_medic
+    4300058: TS_Head_10_glasses
+    4300060: TS_Head_15_gunner_only
+    4300062: Soldier_equip_A
+    4300064: extra_backpack
+    4300066: Body_standarrrrrd
+    4300068: Head_B
+    4300070: Legs_D_pistola
+    4300072: Legs_B_armies_standard
+    4300074: Legs_C_rodilleras
+    4300076: Head_helmet
+    4300078: Body_Soldier_Light
+    4300080: Body_Soldier_Med
+    4300082: head_beret
+    4300084: head_wool
+    4300086: head_gasmask
+    4300088: head_capucha
+    4300090: head_mask
+    4300092: Body_standard
+    4300094: extra_scarf_B
+    4300096: extra_scarf_A
+    4300098: head_cap
+    4300100: Body_Tshirt
+    4300102: Body_commando
+    4300104: Body_heavy
+    4300106: Body_commander
+    4300108: extra_equip_D
+    4300110: extra_equip_C
+    4300112: extra_equip_A
+    4300114: head_glasses
+    4300116: Head_basic
+    4300118: Head_helmet_cloth
+    4300120: Body_Tshirt_vest
+    4300122: shoulderpads
+    4300124: Body_Uniform
+    4300126: Head_helmet_tactical
+    4300128: HeadSet
+    4300130: CamelBack
+    4300132: extra_scarf
+    4300134: Body_Soldier_Heavy
+    4300136: Head_I1
+    4300138: Head_K1
+    4300140: Head_F1
+    4300142: Head_L1
+    4300144: Head_E1
+    4300146: Head_G1
+    4300148: Body_G
+    4300150: extra_equip_B
+    4300152: Body_B
+    4300154: Legs_A
+    4300156: Legs_B
+    4300158: Head_A1
+    4300160: Head_B1
+    4300162: Legs_C
+    4300164: Head_C1
+    4300166: Body_A
+    4300168: Body_F
+    4300170: Body_E
+    4300172: Body_H
+    4300174: Head_D1
+    4300176: extra_camelback
+    4300178: Head_A2
+    4300180: extra_light_backpack
+    4300182: Head_J1
+    4300184: Head_H1
+    4300186: Body_I
+    4300188: Body_C
+    4300190: Head_C5
+    4300192: Body_D
+    4300194: x_shoulderpads
+    4300196: Head_A3
+    4300198: Head_B2
+    4300200: Head_B3
+    4300202: Head_B4
+    4300204: Head_B6
+    4300206: Head_B5
+    4300208: Head_B7
+    4300210: Head_C2
+    4300212: Head_C3
+    4300214: Head_C4
+    4300216: Head_C6
+    4300218: Head_C7
+    4300220: Head_D2
+    4300222: Head_D3
+    4300224: Head_D4
+    4300226: Head_D5
+    4300228: Head_E2
+    4300230: Head_E3
+    4300232: Head_E4
+    4300234: Head_E5
+    4300236: Head_F2
+    4300238: Head_F3
+    4300240: Head_F4
+    4300242: Head_G2
+    4300244: Head_H2
+    4300246: Head_I2
+    4300248: Head_G4
+    4300250: Head_G3
+    4300252: Head_J2
+    4300254: Head_J4
+    4300256: Head_J3
+    4300258: Head_K2
+    4300260: Head_K3
+    4300262: Head_K4
+    4300264: Head_L2
+    4300266: Head_L3
+    4300268: Head_L4
+    4300270: Head_L5
+    4300272: Body_K
+    4300274: Body_J
+    4300276: Head_I1
+    4300278: Head_K1
+    4300280: Head_F1
+    4300282: Head_L1
+    4300284: Head_E1
+    4300286: Head_G1
+    4300288: extra_equip_A
+    4300290: Body_G
+    4300292: extra_backpack
+    4300294: extra_equip_C
+    4300296: extra_equip_B
+    4300298: Body_B
+    4300300: Legs_A
+    4300302: Legs_B
+    4300304: Head_A1
+    4300306: Head_B1
+    4300308: Legs_C
+    4300310: Head_C1
+    4300312: Body_A
+    4300314: Body_F
+    4300316: Body_E
+    4300318: Body_H
+    4300320: Head_D1
+    4300322: extra_camelback
+    4300324: Head_A2
+    4300326: extra_light_backpack
+    4300328: Head_J1
+    4300330: Head_H1
+    4300332: Body_I
+    4300334: Body_C
+    4300336: Head_C5
+    4300338: Body_D
+    4300340: Head_A3
+    4300342: Head_B2
+    4300344: Head_B3
+    4300346: Head_B4
+    4300348: Head_B6
+    4300350: Head_B5
+    4300352: Head_B7
+    4300354: Head_C2
+    4300356: Head_C3
+    4300358: Head_C4
+    4300360: Head_C6
+    4300362: Head_C7
+    4300364: Head_D2
+    4300366: Head_D3
+    4300368: Head_D4
+    4300370: Head_D5
+    4300372: Head_E2
+    4300374: Head_E3
+    4300376: Head_E4
+    4300378: Head_E5
+    4300380: Head_F2
+    4300382: Head_F3
+    4300384: Head_F4
+    4300386: Head_G2
+    4300388: Head_H2
+    4300390: Head_I2
+    4300392: Head_G4
+    4300394: Head_G3
+    4300396: Head_J2
+    4300398: Head_J4
+    4300400: Head_J3
+    4300402: Head_K2
+    4300404: Head_K3
+    4300406: Head_K4
+    4300408: Head_L2
+    4300410: Head_L3
+    4300412: Head_L4
+    4300414: Head_L5
+    4300416: Body_K
+    4300418: Body_J
+    9500000: //RootNode
+    11100000: //RootNode
+    13700000: Basic_soldier
+    13700002: MESH_Infantry
+    13700004: TS_Body_01_infantry
+    13700006: TS_Body_02_gunner
+    13700008: TS_Body_03_scout
+    13700010: TS_Body_04_sniper
+    13700012: TS_Body_05_engineer
+    13700014: TS_Body_06_medic
+    13700016: TS_Head_00_clean
+    13700018: TS_Head_01_infantry
+    13700020: TS_Head_02_Scout
+    13700022: TS_Head_04_sniper
+    13700024: TS_Head_05_engineer
+    13700026: TS_Head_06_medic_A
+    13700028: TS_Body_07_unequipped
+    13700030: TS_Body_08_trench
+    13700032: TS_Body_09_general
+    13700034: TS_Head_00_unequipped
+    13700036: TS_Head_07_medic_B
+    13700038: TS_Head_08_beret
+    13700040: TS_Head_09_general
+    13700042: TS_Head_10_glasses
+    13700044: TS_Head_11_gasmask
+    13700046: TS_Head_12_gasmask_helmet
+    13700048: TS_Head_13_gasmask_general
+    13700050: TS_Head_14_gasmask_medic
+    13700052: TS_Head_15_gunner_only
+    13700054: Body_standarrrrrd
+    13700056: extra_backpack
+    13700058: Head_B
+    13700060: Legs_D_pistola
+    13700062: Soldier_equip_A
+    13700064: Legs_B_armies_standard
+    13700066: Legs_C_rodilleras
+    13700068: Head_helmet
+    13700070: Body_Soldier_Light
+    13700072: Body_Soldier_Med
+    13700074: Body_commander
+    13700076: Body_commando
+    13700078: Body_heavy
+    13700080: Body_standard
+    13700082: Body_Tshirt
+    13700084: extra_equip_A
+    13700086: extra_equip_C
+    13700088: extra_equip_D
+    13700090: extra_scarf_A
+    13700092: extra_scarf_B
+    13700094: Head_basic
+    13700096: head_beret
+    13700098: head_cap
+    13700100: head_capucha
+    13700102: head_gasmask
+    13700104: head_glasses
+    13700106: Head_helmet_cloth
+    13700108: head_mask
+    13700110: head_wool
+    13700112: Body_Tshirt_vest
+    13700114: Body_Uniform
+    13700116: Head_helmet_tactical
+    13700118: HeadSet
+    13700120: CamelBack
+    13700122: Body_Soldier_Heavy
+    13700124: extra_scarf
+    13700126: Body_A
+    13700128: Body_B
+    13700130: Body_C
+    13700132: Body_D
+    13700134: Body_E
+    13700136: Body_F
+    13700138: Body_G
+    13700140: Body_H
+    13700142: Body_I
+    13700144: extra_camelback
+    13700146: extra_equip_B
+    13700148: extra_light_backpack
+    13700150: Head_A1
+    13700152: Head_A2
+    13700154: Head_A3
+    13700156: Head_B1
+    13700158: Head_B2
+    13700160: Head_B3
+    13700162: Head_B4
+    13700164: Head_B5
+    13700166: Head_B6
+    13700168: Head_B7
+    13700170: Head_C1
+    13700172: Head_C2
+    13700174: Head_C3
+    13700176: Head_C4
+    13700178: Head_C5
+    13700180: Head_C6
+    13700182: Head_C7
+    13700184: Head_D1
+    13700186: Head_D2
+    13700188: Head_D3
+    13700190: Head_D4
+    13700192: Head_D5
+    13700194: Head_E1
+    13700196: Head_E2
+    13700198: Head_E3
+    13700200: Head_E4
+    13700202: Head_E5
+    13700204: Head_F1
+    13700206: Head_F2
+    13700208: Head_F3
+    13700210: Head_F4
+    13700212: Head_G1
+    13700214: Head_G2
+    13700216: Head_G3
+    13700218: Head_G4
+    13700220: Head_H1
+    13700222: Head_H2
+    13700224: Head_I1
+    13700226: Head_I2
+    13700228: Head_J1
+    13700230: Head_J2
+    13700232: Head_J3
+    13700234: Head_J4
+    13700236: Head_K1
+    13700238: Head_K2
+    13700240: Head_K3
+    13700242: Head_K4
+    13700244: Head_L1
+    13700246: Head_L2
+    13700248: Head_L3
+    13700250: Head_L4
+    13700252: Head_L5
+    13700254: Legs_A
+    13700256: Legs_B
+    13700258: Legs_C
+    13700260: x_shoulderpads
+    13700262: Body_J
+    13700264: Body_K
+    13700266: Body_C 1
+    13700268: Body_G 1
+    13700270: Body_I 1
+    13700272: Body_J 1
+    13700274: extra_equip_A 1
+    13700276: Head_A3 1
+    13700278: Head_B4 1
+    13700280: Head_B5 1
+    13700282: Head_B6 1
+    13700284: Head_B7 1
+    13700286: Head_C2 1
+    13700288: Head_C3 1
+    13700290: Head_C4 1
+    13700292: Head_C5 1
+    13700294: Head_C6 1
+    13700296: Head_D2 1
+    13700298: Head_E1 1
+    13700300: Head_F1 1
+    13700302: Head_F2 1
+    13700304: Head_I1 1
+    13700306: Head_J1 1
+    13700308: Head_K1 1
+    13700310: Head_K2 1
+    13700312: Head_K3 1
+    13700314: Head_K4 1
+    13700316: Legs_A 1
+    13700318: Legs_B 1
+  materials:
+    importMaterials: 1
+    materialName: 1
+    materialSearch: 1
+  animations:
+    legacyGenerateAnimations: 4
+    bakeSimulation: 0
+    resampleRotations: 1
+    optimizeGameObjects: 0
+    motionNodeName: 
+    animationImportErrors: 
+    animationImportWarnings: 
+    animationRetargetingWarnings: 
+    animationDoRetargetingWarnings: 0
+    animationCompression: 3
+    animationRotationError: 0.5
+    animationPositionError: 0.5
+    animationScaleError: 0.5
+    animationWrapMode: 0
+    extraExposedTransformPaths: []
+    clipAnimations: []
+    isReadable: 1
+  meshes:
+    lODScreenPercentages: []
+    globalScale: 1
+    meshCompression: 0
+    addColliders: 0
+    importBlendShapes: 0
+    swapUVChannels: 0
+    generateSecondaryUV: 0
+    useFileUnits: 1
+    optimizeMeshForGPU: 1
+    keepQuads: 0
+    weldVertices: 1
+    secondaryUVAngleDistortion: 8
+    secondaryUVAreaDistortion: 15.000001
+    secondaryUVHardAngle: 88
+    secondaryUVPackMargin: 4
+    useFileScale: 1
+  tangentSpace:
+    normalSmoothAngle: 60
+    normalImportMode: 0
+    tangentImportMode: 0
+  importAnimation: 0
+  copyAvatar: 0
+  humanDescription:
+    human:
+    - boneName: Bip001 Pelvis
+      humanName: Hips
+      limit:
+        min: {x: 0, y: 0, z: 0}
+        max: {x: 0, y: 0, z: 0}
+        value: {x: 0, y: 0, z: 0}
+        length: 0
+        modified: 0
+    - boneName: Bip001 L Thigh
+      humanName: LeftUpperLeg
+      limit:
+        min: {x: 0, y: 0, z: 0}
+        max: {x: 0, y: 0, z: 0}
+        value: {x: 0, y: 0, z: 0}
+        length: 0
+        modified: 0
+    - boneName: Bip001 R Thigh
+      humanName: RightUpperLeg
+      limit:
+        min: {x: 0, y: 0, z: 0}
+        max: {x: 0, y: 0, z: 0}
+        value: {x: 0, y: 0, z: 0}
+        length: 0
+        modified: 0
+    - boneName: Bip001 L Calf
+      humanName: LeftLowerLeg
+      limit:
+        min: {x: 0, y: 0, z: 0}
+        max: {x: 0, y: 0, z: 0}
+        value: {x: 0, y: 0, z: 0}
+        length: 0
+        modified: 0
+    - boneName: Bip001 R Calf
+      humanName: RightLowerLeg
+      limit:
+        min: {x: 0, y: 0, z: 0}
+        max: {x: 0, y: 0, z: 0}
+        value: {x: 0, y: 0, z: 0}
+        length: 0
+        modified: 0
+    - boneName: Bip001 L Foot
+      humanName: LeftFoot
+      limit:
+        min: {x: 0, y: 0, z: 0}
+        max: {x: 0, y: 0, z: 0}
+        value: {x: 0, y: 0, z: 0}
+        length: 0
+        modified: 0
+    - boneName: Bip001 R Foot
+      humanName: RightFoot
+      limit:
+        min: {x: 0, y: 0, z: 0}
+        max: {x: 0, y: 0, z: 0}
+        value: {x: 0, y: 0, z: 0}
+        length: 0
+        modified: 0
+    - boneName: Bip001 Spine
+      humanName: Spine
+      limit:
+        min: {x: 0, y: 0, z: 0}
+        max: {x: 0, y: 0, z: 0}
+        value: {x: 0, y: 0, z: 0}
+        length: 0
+        modified: 0
+    - boneName: Bip001 Neck
+      humanName: Neck
+      limit:
+        min: {x: 0, y: 0, z: 0}
+        max: {x: 0, y: 0, z: 0}
+        value: {x: 0, y: 0, z: 0}
+        length: 0
+        modified: 0
+    - boneName: Bip001 Head
+      humanName: Head
+      limit:
+        min: {x: 0, y: 0, z: 0}
+        max: {x: 0, y: 0, z: 0}
+        value: {x: 0, y: 0, z: 0}
+        length: 0
+        modified: 0
+    - boneName: Bip001 L Clavicle
+      humanName: LeftShoulder
+      limit:
+        min: {x: 0, y: 0, z: 0}
+        max: {x: 0, y: 0, z: 0}
+        value: {x: 0, y: 0, z: 0}
+        length: 0
+        modified: 0
+    - boneName: Bip001 R Clavicle
+      humanName: RightShoulder
+      limit:
+        min: {x: 0, y: 0, z: 0}
+        max: {x: 0, y: 0, z: 0}
+        value: {x: 0, y: 0, z: 0}
+        length: 0
+        modified: 0
+    - boneName: Bip001 L UpperArm
+      humanName: LeftUpperArm
+      limit:
+        min: {x: 0, y: 0, z: 0}
+        max: {x: 0, y: 0, z: 0}
+        value: {x: 0, y: 0, z: 0}
+        length: 0
+        modified: 0
+    - boneName: Bip001 R UpperArm
+      humanName: RightUpperArm
+      limit:
+        min: {x: 0, y: 0, z: 0}
+        max: {x: 0, y: 0, z: 0}
+        value: {x: 0, y: 0, z: 0}
+        length: 0
+        modified: 0
+    - boneName: Bip001 L Forearm
+      humanName: LeftLowerArm
+      limit:
+        min: {x: 0, y: 0, z: 0}
+        max: {x: 0, y: 0, z: 0}
+        value: {x: 0, y: 0, z: 0}
+        length: 0
+        modified: 0
+    - boneName: Bip001 R Forearm
+      humanName: RightLowerArm
+      limit:
+        min: {x: 0, y: 0, z: 0}
+        max: {x: 0, y: 0, z: 0}
+        value: {x: 0, y: 0, z: 0}
+        length: 0
+        modified: 0
+    - boneName: Bip001 L Hand
+      humanName: LeftHand
+      limit:
+        min: {x: 0, y: 0, z: 0}
+        max: {x: 0, y: 0, z: 0}
+        value: {x: 0, y: 0, z: 0}
+        length: 0
+        modified: 0
+    - boneName: Bip001 R Hand
+      humanName: RightHand
+      limit:
+        min: {x: 0, y: 0, z: 0}
+        max: {x: 0, y: 0, z: 0}
+        value: {x: 0, y: 0, z: 0}
+        length: 0
+        modified: 0
+    - boneName: Bip001 L Toe0
+      humanName: LeftToes
+      limit:
+        min: {x: 0, y: 0, z: 0}
+        max: {x: 0, y: 0, z: 0}
+        value: {x: 0, y: 0, z: 0}
+        length: 0
+        modified: 0
+    - boneName: Bip001 R Toe0
+      humanName: RightToes
+      limit:
+        min: {x: 0, y: 0, z: 0}
+        max: {x: 0, y: 0, z: 0}
+        value: {x: 0, y: 0, z: 0}
+        length: 0
+        modified: 0
+    skeleton:
+    - name: ToonSoldier_Infantry(Clone)
+      position: {x: 0, y: 0, z: 0}
+      rotation: {x: 0, y: 0, z: 0, w: 1}
+      scale: {x: 1, y: 1, z: 1}
+      transformModified: 1
+    - name: Bip001
+      position: {x: -0.0000000015575574, y: 1.2235097, z: -0.035632763}
+      rotation: {x: -0.50000036, y: 0.49999964, z: 0.49999964, w: 0.50000036}
+      scale: {x: 0.99999994, y: 0.99999994, z: 1}
+      transformModified: 1
+    - name: Bip001 Footsteps
+      position: {x: -0, y: 0, z: -1.2285202}
+      rotation: {x: 0, y: 0, z: -0.7071063, w: 0.70710725}
+      scale: {x: 1, y: 1, z: 1}
+      transformModified: 1
+    - name: Bip001 Pelvis
+      position: {x: 0, y: 0, z: 0}
+      rotation: {x: 0.50000006, y: -0.5000008, z: -0.49999934, w: -0.49999997}
+      scale: {x: 0.9999999, y: 0.9999999, z: 0.9999999}
+      transformModified: 1
+    - name: Bip001 R Thigh
+      position: {x: -0.00000029067994, y: -0.0000002089262, z: -0.18964642}
+      rotation: {x: -0.018307177, y: 0.99976134, z: 0.0005925893, w: -0.011909543}
+      scale: {x: 0.99999976, y: 1.0000002, z: 0.9999998}
+      transformModified: 1
+    - name: Bip001 R Calf
+      position: {x: -0.6094277, y: 0, z: 0}
+      rotation: {x: 0.000000044703484, y: 0, z: 0.05198762, w: 0.9986478}
+      scale: {x: 1.0000001, y: 0.9999998, z: 0.99999964}
+      transformModified: 1
+    - name: Bip001 R Foot
+      position: {x: -0.42799026, y: 0, z: 0.000000024223327}
+      rotation: {x: -0.000026732683, y: -0.011925042, z: -0.03369282, w: 0.99936116}
+      scale: {x: 1.0000001, y: 1.0000001, z: 1.0000002}
+      transformModified: 1
+    - name: Bip001 R Toe0
+      position: {x: -0.18122193, y: 0.27282667, z: 0}
+      rotation: {x: -0.000000119209275, y: -0.00000007395258, z: -0.70710677, w: 0.70710695}
+      scale: {x: 0.99999976, y: 0.99999976, z: 1}
+      transformModified: 1
+    - name: Bip001 R Toe0Nub
+      position: {x: -0.14850944, y: 0, z: 0}
+      rotation: {x: 1.6970273e-30, y: -9.553415e-16, z: 1.776357e-15, w: 1}
+      scale: {x: 0.99999994, y: 1, z: 0.99999994}
+      transformModified: 1
+    - name: Bip001 Spine
+      position: {x: -0.16117437, y: -0.00047135568, z: 0.0000002241702}
+      rotation: {x: 0.0000021010635, y: 0.00000077486027, z: 0.013839586, w: -0.9999042}
+      scale: {x: 1, y: 0.99999994, z: 0.99999994}
+      transformModified: 1
+    - name: Bip001 R Clavicle
+      position: {x: -0.5700798, y: 0.00061403104, z: -0.12735397}
+      rotation: {x: 0.6646334, y: 0.04131061, z: 0.74514234, w: 0.036316007}
+      scale: {x: 0.99999994, y: 1.0000001, z: 1}
+      transformModified: 1
+    - name: Bip001 R UpperArm
+      position: {x: -0.24968553, y: 0, z: 0}
+      rotation: {x: -0.041812558, y: -0.01914453, z: 0.044521313, w: 0.9979495}
+      scale: {x: 1, y: 0.9999998, z: 1.0000004}
+      transformModified: 1
+    - name: Bip001 R Forearm
+      position: {x: -0.4044885, y: 0, z: 0.00000019378662}
+      rotation: {x: 0.0010097323, y: -0.01638276, z: 0.0391693, w: 0.9990978}
+      scale: {x: 1.0000004, y: 1.0000002, z: 1}
+      transformModified: 1
+    - name: Bip001 R Hand
+      position: {x: -0.34167925, y: 0, z: -0.00000019378662}
+      rotation: {x: -0.7068252, y: 0.000000052154057, z: 0.00000003352761, w: -0.70738834}
+      scale: {x: 0.99999994, y: 0.9999999, z: 0.9999999}
+      transformModified: 1
+    - name: weapon_assault
+      position: {x: -0.22456807, y: 0.01858123, z: 0.13615254}
+      rotation: {x: -0.00826426, y: 0.737549, z: -0.67079574, w: 0.07737063}
+      scale: {x: 0.99999994, y: 0.9999999, z: 0.9999999}
+      transformModified: 1
+    - name: Bip001 Neck
+      position: {x: -0.6330967, y: 0.005227303, z: 0.0000000056535367}
+      rotation: {x: -0.000000014901159, y: 0.00000035762784, z: -0.12263252, w: 0.99245214}
+      scale: {x: 0.9999998, y: 0.9999999, z: 0.99999994}
+      transformModified: 1
+    - name: Bip001 Head
+      position: {x: -0.12508887, y: -0.000000048446655, z: -9.240466e-14}
+      rotation: {x: 0.000000059604645, y: -0.00000029802322, z: -0.136356, w: -0.9906599}
+      scale: {x: 1.0000004, y: 1.0000001, z: 1.0000001}
+      transformModified: 1
+    - name: Bip001 HeadNub
+      position: {x: -0.36115566, y: 0, z: 0}
+      rotation: {x: -4.1174657e-20, y: -3.3881318e-21, z: -1.39505e-40, w: 1}
+      scale: {x: 1, y: 0.99999994, z: 0.99999994}
+      transformModified: 1
+    - name: Bip001 L Clavicle
+      position: {x: -0.5700798, y: 0.00061332254, z: 0.12735398}
+      rotation: {x: 0.6646333, y: 0.041312728, z: -0.7451422, w: -0.036317896}
+      scale: {x: 1.0000001, y: 0.99999994, z: 0.9999998}
+      transformModified: 1
+    - name: Bip001 L UpperArm
+      position: {x: -0.24968548, y: 0, z: 0}
+      rotation: {x: 0.0418126, y: 0.019144539, z: 0.044521365, w: 0.9979494}
+      scale: {x: 0.99999994, y: 1.0000002, z: 1.0000004}
+      transformModified: 1
+    - name: Bip001 L Forearm
+      position: {x: -0.4044886, y: -0.000000024223327, z: -0.00000019378662}
+      rotation: {x: -0.0010098119, y: 0.016382795, z: 0.039169196, w: 0.9990978}
+      scale: {x: 1.0000002, y: 1.0000004, z: 1.0000002}
+      transformModified: 1
+    - name: Bip001 L Hand
+      position: {x: -0.34167933, y: 0.000000024223327, z: 0}
+      rotation: {x: 0.7068252, y: -0.000000059604638, z: 0.000000041909512, w: -0.70738834}
+      scale: {x: 1, y: 1, z: 0.9999999}
+      transformModified: 1
+    - name: Bip001 L Thigh
+      position: {x: 0.00000029067994, y: 0.00000031793118, z: 0.18964642}
+      rotation: {x: -0.018307252, y: 0.9997613, z: -0.00059409434, w: 0.011910988}
+      scale: {x: 0.9999999, y: 1.0000001, z: 0.9999998}
+      transformModified: 1
+    - name: Bip001 L Calf
+      position: {x: -0.6094277, y: 0, z: 0}
+      rotation: {x: -0.00000008940696, y: -0.000000059604638, z: 0.051987655, w: 0.9986477}
+      scale: {x: 1.0000001, y: 1, z: 0.9999999}
+      transformModified: 1
+    - name: Bip001 L Foot
+      position: {x: -0.42799026, y: 0, z: 0.000000024223327}
+      rotation: {x: 0.00002673268, y: 0.011925055, z: -0.03369276, w: 0.9993611}
+      scale: {x: 1.0000001, y: 1.0000001, z: 1.0000001}
+      transformModified: 1
+    - name: Bip001 L Toe0
+      position: {x: -0.18122193, y: 0.27282667, z: 0}
+      rotation: {x: -0.00000008940697, y: -0.00000013466358, z: -0.7071068, w: 0.7071068}
+      scale: {x: 0.9999998, y: 0.99999964, z: 1}
+      transformModified: 1
+    - name: Bip001 L Toe0Nub
+      position: {x: -0.14850947, y: -7.56979e-10, z: 0}
+      rotation: {x: 5.9101466e-14, y: 1.776357e-15, z: 1, w: 6.123234e-17}
+      scale: {x: -1, y: -0.99999994, z: -0.99999994}
+      transformModified: 1
+    - name: MESH_Infantry
+      position: {x: 0, y: 0, z: 0}
+      rotation: {x: -0.7071068, y: 0, z: -0, w: 0.7071068}
+      scale: {x: 1, y: 1, z: 1}
+      transformModified: 1
+    armTwist: 0.5
+    foreArmTwist: 0.5
+    upperLegTwist: 0.5
+    legTwist: 0.5
+    armStretch: 0.05
+    legStretch: 0.05
+    feetSpacing: 0
+    rootMotionBoneName: 
+    hasTranslationDoF: 1
+  lastHumanDescriptionAvatarSource: {instanceID: 0}
+  animationType: 3
+  humanoidOversampling: 1
+  additionalBone: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
