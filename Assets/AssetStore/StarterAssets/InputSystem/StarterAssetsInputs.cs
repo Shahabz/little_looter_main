@@ -14,6 +14,7 @@ namespace StarterAssets
 		public bool sprint;
 		public Vector2 aim;
 		public bool attack;
+		public bool reload;
 		public bool IsAiming => aim != vectorZero;
 		public bool IsMoving => move != vectorZero;
 
@@ -56,6 +57,14 @@ namespace StarterAssets
 
 			AttackInput();
 		}
+
+		public void OnReload(InputValue value)
+		{
+			if (!value.isPressed) return;
+
+			ReloadInput();
+		}
+
 #endif
 
 		public void MoveInput(Vector2 newMoveDirection)
@@ -86,6 +95,11 @@ namespace StarterAssets
 		public void AttackInput()
 		{
 			attack = true;
+		}
+
+		public void ReloadInput()
+		{
+			reload = true;
 		}
 
 		private void OnApplicationFocus(bool hasFocus)

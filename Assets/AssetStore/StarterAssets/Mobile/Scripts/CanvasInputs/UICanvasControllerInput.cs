@@ -42,6 +42,11 @@ namespace StarterAssets
         {
             starterAssetsInputs.AttackInput();
         }
+
+        public void VirtualReloadInput()
+        {
+            starterAssetsInputs.ReloadInput();
+        }
     }
 
 }
