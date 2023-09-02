@@ -41,6 +41,13 @@ public class UIVirtualButton : MonoBehaviour, IPointerDownHandler, IPointerUpHan
         OutputButtonClickEvent();
     }
 
+    public void Deactivate()
+	{
+        _isActive = false;
+
+        _bg.color = Color.white;
+    }
+
     void OutputButtonStateValue(bool buttonState)
     {
         var state = buttonState;

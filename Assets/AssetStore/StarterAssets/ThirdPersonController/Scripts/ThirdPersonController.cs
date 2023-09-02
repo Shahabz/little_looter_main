@@ -1,4 +1,6 @@
-﻿using UnityEngine;
+﻿using LittleLooters.Gameplay;
+using LittleLooters.Gameplay.Combat;
+using UnityEngine;
 #if ENABLE_INPUT_SYSTEM && STARTER_ASSETS_PACKAGES_CHECKED
 using UnityEngine.InputSystem;
 #endif
@@ -14,7 +16,9 @@ namespace StarterAssets
 #endif
     public class ThirdPersonController : MonoBehaviour
     {
-        [Header("Player")]
+		#region Inspector
+
+		[Header("Player")]
         [Tooltip("Move speed of the character in m/s")]
         public float MoveSpeed = 2.0f;
 
@@ -79,9 +83,14 @@ namespace StarterAssets
         [SerializeField] private bool canRotateCamera = false;
 
         [SerializeField] private WeaponController _weaponController = default;
+        [SerializeField] private VisualCharacterController _visualController = default;
 
-        // cinemachine
-        private float _cinemachineTargetYaw;
+		#endregion
+
+		#region Private properties
+
+		// cinemachine
+		private float _cinemachineTargetYaw;
         private float _cinemachineTargetPitch;
 
         // player
@@ -127,8 +136,11 @@ namespace StarterAssets
             }
         }
 
+		#endregion
 
-        private void Awake()
+		#region Unity events
+
+		private void Awake()
         {
             // get a reference to our main camera
             if (_mainCamera == null)
@@ -155,6 +167,9 @@ namespace StarterAssets
             // reset our timeouts on start
             _jumpTimeoutDelta = JumpTimeout;
             _fallTimeoutDelta = FallTimeout;
+
+            _weaponController.Init();
+            _visualController.Init(_weaponController);
         }
 
         private void Update()
@@ -165,16 +180,28 @@ namespace StarterAssets
             GroundedCheck();
             FireCheck();
             Move();
+
+            _visualController.RefreshStateByInput(_input);
         }
 
-        /*private void LateUpdate()
+		/*private void LateUpdate()
         {
             if (!canRotateCamera) return;
 
             CameraRotation();
         }*/
 
-        private void AssignAnimationIDs()
+		private void OnDestroy()
+		{
+            _weaponController.Teardown();
+            _visualController.Teardown(_weaponController);
+		}
+
+		#endregion
+
+		#region Private methods
+
+		private void AssignAnimationIDs()
         {
             _animIDSpeed = Animator.StringToHash("Speed");
             _animIDGrounded = Animator.StringToHash("Grounded");
@@ -229,6 +256,11 @@ namespace StarterAssets
 
         private void Move()
         {
+            if (_input.IsAiming && _input.sprint)
+			{
+                _input.CancelSprint();
+			}
+
             // set target speed based on move speed, sprint speed and if sprint is pressed
             float targetSpeed = _input.sprint ? SprintSpeed : MoveSpeed;
 
@@ -441,5 +473,7 @@ namespace StarterAssets
                 return;
             }
         }
-    }
+
+		#endregion
+	}
 }

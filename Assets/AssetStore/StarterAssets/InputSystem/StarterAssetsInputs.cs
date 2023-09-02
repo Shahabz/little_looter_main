@@ -7,6 +7,10 @@ namespace StarterAssets
 {
 	public class StarterAssetsInputs : MonoBehaviour
 	{
+		public System.Action OnCancelSprint;
+
+		#region Inspector
+
 		[Header("Character Input Values")]
 		public Vector2 move;
 		public Vector2 look;
@@ -15,8 +19,6 @@ namespace StarterAssets
 		public Vector2 aim;
 		public bool attack;
 		public bool reload;
-		public bool IsAiming => aim != vectorZero;
-		public bool IsMoving => move != vectorZero;
 
 		[Header("Movement Settings")]
 		public bool analogMovement;
@@ -25,7 +27,26 @@ namespace StarterAssets
 		public bool cursorLocked = true;
 		public bool cursorInputForLook = true;
 
+		#endregion
+
+		#region Public properties
+
+		public bool IsAiming => aim != vectorZero;
+		public bool IsMoving => move != vectorZero;
+		public bool StartAiming => startAiming;
+		public bool StopAiming => stopAiming;
+
+		#endregion
+
+		#region Private properties
+
+		private bool startAiming = false;
+		private bool stopAiming = false;
 		private readonly Vector2 vectorZero = Vector2.zero;
+
+		#endregion
+
+		#region Public methods
 
 #if ENABLE_INPUT_SYSTEM && STARTER_ASSETS_PACKAGES_CHECKED
 		public void OnMove(InputValue value)
@@ -74,7 +95,16 @@ namespace StarterAssets
 
 		public void AimInput(Vector2 direction)
 		{
+			startAiming = false;
+			stopAiming = false;
+
+			var wasAiming = IsAiming;
+
 			aim = direction;
+
+			startAiming = (!wasAiming && IsAiming);
+
+			stopAiming = (wasAiming && !IsAiming);
 		}
 
 		public void LookInput(Vector2 newLookDirection)
@@ -102,15 +132,32 @@ namespace StarterAssets
 			reload = true;
 		}
 
+		public void CancelSprint()
+		{
+			sprint = false;
+
+			OnCancelSprint?.Invoke();
+		}
+
+		#endregion
+
+		#region Unity events
+
 		private void OnApplicationFocus(bool hasFocus)
 		{
 			SetCursorState(cursorLocked);
 		}
 
+		#endregion
+
+		#region Private methods
+
 		private void SetCursorState(bool newState)
 		{
 			Cursor.lockState = newState ? CursorLockMode.Locked : CursorLockMode.None;
 		}
+
+		#endregion
 	}
-	
+
 }

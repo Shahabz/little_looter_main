@@ -4,15 +4,38 @@ namespace StarterAssets
 {
     public class UICanvasControllerInput : MonoBehaviour
     {
+		#region Inspector
 
-        [Header("Output")]
+		[Header("Output")]
         public StarterAssetsInputs starterAssetsInputs;
-
         [SerializeField] private bool _isAim = false;
+        [SerializeField] private UIVirtualButton _btnSprint = default;
 
-        private readonly Vector2 _vectorUp = Vector2.up;
+		#endregion
 
-        public void VirtualMoveInput(Vector2 virtualMoveDirection)
+		#region Private properties
+
+		private readonly Vector2 _vectorUp = Vector2.up;
+
+		#endregion
+
+		#region Unity events
+
+		private void Start()
+		{
+            starterAssetsInputs.OnCancelSprint += CancelSprint;
+        }
+
+        private void OnDestroy()
+        {
+            starterAssetsInputs.OnCancelSprint -= CancelSprint;
+        }
+
+		#endregion
+
+		#region Public methods
+
+		public void VirtualMoveInput(Vector2 virtualMoveDirection)
         {
             if (_isAim)
 			{
@@ -47,6 +70,19 @@ namespace StarterAssets
         {
             starterAssetsInputs.ReloadInput();
         }
-    }
+
+		#endregion
+
+		#region Private methods
+
+        private void CancelSprint()
+		{
+            if (_btnSprint == null) return;
+
+            _btnSprint.Deactivate();
+		}
+
+		#endregion
+	}
 
 }
