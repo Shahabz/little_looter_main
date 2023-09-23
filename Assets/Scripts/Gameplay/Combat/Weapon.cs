@@ -109,6 +109,13 @@ namespace LittleLooters.Gameplay.Combat
             OnRefreshAmmo?.Invoke(_currentClipSize, _currentAmmo);
         }
 
+        public void AddAmmo(int ammo)
+		{
+            _currentAmmo += ammo;
+
+            OnRefreshAmmo?.Invoke(_currentClipSize, _currentAmmo);
+        }
+
         #endregion
 
         #region Private methods

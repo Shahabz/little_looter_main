@@ -84,6 +84,7 @@ namespace StarterAssets
 
         [SerializeField] private WeaponController _weaponController = default;
         [SerializeField] private VisualCharacterController _visualController = default;
+        [SerializeField] private PlayerHealth _health = default;
 
 		#endregion
 
@@ -168,12 +169,14 @@ namespace StarterAssets
             _jumpTimeoutDelta = JumpTimeout;
             _fallTimeoutDelta = FallTimeout;
 
-            _weaponController.Init();
-            _visualController.Init(_weaponController);
+            //_weaponController.Init();
+            //_visualController.Init(_weaponController);
         }
 
         private void Update()
         {
+            if (_health.IsDead) return;
+
             _hasAnimator = TryGetComponent(out _animator);
 
             JumpAndGravity();
@@ -196,6 +199,22 @@ namespace StarterAssets
             _weaponController.Teardown();
             _visualController.Teardown(_weaponController);
 		}
+
+		#endregion
+
+		#region Public methods
+
+        public void TakeDamage(float damage)
+		{
+            Debug.LogError($"Player Take damage <color=yellow>{damage}</color>");
+		}
+
+        public void Dead()
+		{
+            Debug.LogError($"Player is <color=red>DEAD</color>");
+
+            _visualController.Dead();
+        }
 
 		#endregion
 

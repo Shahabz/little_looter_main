@@ -72,6 +72,11 @@ namespace LittleLooters.Gameplay.Combat
 			_weapon.Fire();
 		}
 
+		public void PickupAmmo(int ammo)
+		{
+			_weapon.AddAmmo(ammo);
+		}
+
 		#endregion
 
 		#region Private methods

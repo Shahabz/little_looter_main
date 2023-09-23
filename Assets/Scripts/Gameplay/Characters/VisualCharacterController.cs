@@ -6,6 +6,7 @@
 using LittleLooters.Gameplay.Combat;
 using StarterAssets;
 using UnityEngine;
+using UnityEngine.Animations.Rigging;
 
 namespace LittleLooters.Gameplay
 {
@@ -17,6 +18,7 @@ namespace LittleLooters.Gameplay
 		#region Inspector
 
 		[SerializeField] private Animator _animator = default;
+		[SerializeField] private RigBuilder _rigBuilder = default;
 
 		#endregion
 
@@ -27,6 +29,7 @@ namespace LittleLooters.Gameplay
 		private const string IS_RELOADING = "isReloading";
 		private const string FIRE = "fire";
 		private const string IS_FIRING = "isFiring";
+		private const string DEAD = "dead";
 
 		#endregion
 
@@ -57,6 +60,13 @@ namespace LittleLooters.Gameplay
 		public void RefreshStateByInput(StarterAssetsInputs input)
 		{
 			CheckAimingStatus(input);
+		}
+
+		public void Dead()
+		{
+			_animator.SetTrigger(DEAD);
+
+			_rigBuilder.enabled = false;
 		}
 
 		#endregion

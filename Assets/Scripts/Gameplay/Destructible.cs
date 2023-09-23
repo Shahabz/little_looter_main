@@ -1,27 +1,52 @@
+/*
+ * Date: August 26th, 2023
+ * Author: Peche
+ */
 
+using LittleLooters.Gameplay.Combat;
+using System;
 using UnityEngine;
 
-public class Destructible : MonoBehaviour
+namespace LittleLooters.Gameplay
 {
-    [SerializeField] private GameObject _art = default;
-    [SerializeField] private float _hp = default;
-	[SerializeField] private Collider _collider = default;
-
-	public void TakeDamage(float damage)
+	public class Destructible : MonoBehaviour, ITakeDamage
 	{
-		_hp = Mathf.Clamp(_hp - damage, 0, _hp);
+		[SerializeField] private GameObject _art = default;
+		[SerializeField] private float _hp = default;
+		[SerializeField] private float _maxHp = default;
+		[SerializeField] private Collider _collider = default;
 
-		if (_hp > 0) return;
+		public event Action OnInitialized;
+		public event Action<float> OnTakeDamage;
+		public event Action OnDead;
 
-		Death();
-	}
+		public bool IsDead => _hp <= 0;
+		public float Health => _hp;
+		public float MaxHealth => _maxHp;
 
-	private void Death()
-	{
-		_art.SetActive(false);
+		public void Init(float initialHp, float maxHp)
+		{
+			_hp = initialHp;
 
-		_collider.enabled = false;
+			_maxHp = maxHp;
+		}
 
-		Debug.LogError($"Destructible <color=yellow>{name}</color> was destroyed");
+		public void TakeDamage(float damage)
+		{
+			_hp = Mathf.Clamp(_hp - damage, 0, _hp);
+
+			if (_hp > 0) return;
+
+			Death();
+		}
+
+		private void Death()
+		{
+			_art.SetActive(false);
+
+			_collider.enabled = false;
+
+			Debug.LogError($"Destructible <color=yellow>{name}</color> was destroyed");
+		}
 	}
 }

@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
+using LittleLooters.Gameplay.Combat;
 
 /* THIS CODE IS JUST FOR PREVIEW AND TESTING */
 // Feel free to use any code and picking on it, I cannot guaratnee it will fit into your project
@@ -92,7 +93,7 @@ public class ECExplodingProjectile : MonoBehaviour
             Vector3 pos = hit.point;
            
             // Check if a destructible should take damage
-            if (hit.collider.gameObject.TryGetComponent<Destructible>(out var destructible))
+            if (hit.collider.gameObject.TryGetComponent<ITakeDamage>(out var destructible))
 			{
                 destructible.TakeDamage(5);
 			}

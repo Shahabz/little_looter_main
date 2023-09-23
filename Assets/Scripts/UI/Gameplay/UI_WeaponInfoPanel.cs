@@ -26,7 +26,7 @@ namespace LittleLooters.Gameplay.UI
 
 		#region Unity events
 
-		private void Start()
+		private void Awake()
 		{
 			_weaponController.OnRefreshAmmo += Refresh;
 			_weaponController.OnStartReloading += StartReloading;
