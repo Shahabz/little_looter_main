@@ -24,6 +24,7 @@ namespace LittleLooters.Gameplay
 		private int _animSpeedId = default;
 		private int _animMotionSpeedId = default;
 		private int _animAttackId = default;
+		private int _animIsAttackingId = default;
 		private int _animTakeDamageId = default;
 		private int _animDeathId = default;
 		private bool _isEnabled = false;
@@ -44,6 +45,7 @@ namespace LittleLooters.Gameplay
 
 			// Attack ids
 			_animAttackId = Animator.StringToHash("attack");
+			_animIsAttackingId = Animator.StringToHash("isAttacking");
 
 			// Take damage id
 			_animTakeDamageId = Animator.StringToHash("takeDamage");
@@ -53,10 +55,10 @@ namespace LittleLooters.Gameplay
 
 			_isEnabled = true;
 
-			Refresh(state);
+			Refresh(state, false);
 		}
 
-		public void Refresh(EnemyState state)
+		public void Refresh(EnemyState state, bool isPerformingAttack)
 		{
 			if (!_isEnabled) return;
 
@@ -74,7 +76,7 @@ namespace LittleLooters.Gameplay
 
 			if (state == EnemyState.ATTACK)
 			{
-				SetAttack();
+				SetAttack(isPerformingAttack);
 				return;
 			}
 
@@ -107,6 +109,11 @@ namespace LittleLooters.Gameplay
 			SetTakeDamage();
 		}
 
+		public void Attack()
+		{
+			_animator.SetTrigger(_animAttackId);
+		}
+
 		#endregion
 
 		#region Private methods
@@ -115,22 +122,31 @@ namespace LittleLooters.Gameplay
 		{
 			_animator.SetFloat(_animSpeedId, 0);
 			_animator.SetFloat(_animMotionSpeedId, 0);
+
+			_animator.SetBool(_animIsAttackingId, false);
 		}
 
 		private void SetChase()
 		{
 			_animator.SetFloat(_animSpeedId, _data.WalkingSpeed);
 			_animator.SetFloat(_animMotionSpeedId, 1);
+
+			_animator.SetBool(_animIsAttackingId, false);
 		}
 
-		private void SetAttack()
+		private void SetAttack(bool isPerformingAttack)
 		{
 			// Stop movement animation
 			_animator.SetFloat(_animSpeedId, 0);
 			_animator.SetFloat(_animMotionSpeedId, 0);
 
 			// Set attack trigger
-			_animator.SetTrigger(_animAttackId);
+			/*if (!isPerformingAttack)
+			{
+				_animator.SetTrigger(_animAttackId);
+			}*/
+
+			_animator.SetBool(_animIsAttackingId, true);
 		}
 
 		private void SetDeath()
@@ -138,6 +154,8 @@ namespace LittleLooters.Gameplay
 			// Stop movement animation
 			_animator.SetFloat(_animSpeedId, 0);
 			_animator.SetFloat(_animMotionSpeedId, 0);
+
+			_animator.SetBool(_animIsAttackingId, false);
 
 			// Set dead trigger
 			_animator.SetTrigger(_animDeathId);

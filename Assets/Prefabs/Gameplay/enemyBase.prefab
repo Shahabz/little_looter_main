@@ -1172,13 +1172,13 @@ NavMeshAgent:
   avoidancePriority: 50
   m_AngularSpeed: 120
   m_StoppingDistance: 0
-  m_AutoTraverseOffMeshLink: 1
+  m_AutoTraverseOffMeshLink: 0
   m_AutoBraking: 1
   m_AutoRepath: 1
   m_Height: 2
   m_BaseOffset: 0
   m_WalkableMask: 4294967295
-  m_ObstacleAvoidanceType: 4
+  m_ObstacleAvoidanceType: 3
 --- !u!114 &8244590010012197971
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1197,8 +1197,11 @@ MonoBehaviour:
   _target: {fileID: 0}
   _fovHelper: {fileID: 6694687262555749580}
   _hp: 50
+  _maxHp: 0
   _collider: {fileID: 4405331416515651085}
+  _mainCamera: {fileID: 0}
   _canDebug: 1
+  _rotationSmoothTime: 0.8
 --- !u!114 &4405331416515651087
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2798,7 +2801,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 5147225393622571558}
   m_LocalRotation: {x: 0.16624723, y: -0.96667826, z: -0.10446213, w: 0.16426381}
-  m_LocalPosition: {x: 0.043, y: -0.098, z: 0.071}
+  m_LocalPosition: {x: 0.012, y: -0.085, z: -0.012}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 3005357890842088266}

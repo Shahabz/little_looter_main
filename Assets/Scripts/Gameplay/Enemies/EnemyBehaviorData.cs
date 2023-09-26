@@ -18,8 +18,12 @@ namespace LittleLooters.Gameplay
 		public float RadiusDetection;
 		public float RadiusAttack;
 		public float AttackRate;
+		public float AttackAngle;
+		public float AttackDistance;
 		public float AngleFieldOfView;
 		public Weapon Weapon;
+		public int MinDamage;
+		public int MaxDamage;
 
 		#endregion
 	}

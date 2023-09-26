@@ -30,6 +30,7 @@ namespace LittleLooters.Gameplay
 		[SerializeField] private float _hp = default;
 		[SerializeField] private float _maxHp = default;
 		[SerializeField] private Collider _collider = default;
+		[SerializeField] private GameObject _mainCamera = default;
 		[SerializeField] private bool _canDebug = false;
 
 		#endregion
@@ -45,6 +46,10 @@ namespace LittleLooters.Gameplay
 		private float _refreshTime = 0;
 		private const float DELAY_CALCULATION = 0.12f;
 		private ITakeDamage _targetHealth = default;
+		private bool _isPerformingAnAttack = false;
+		//private Vector3 _targetPosition = default;
+		[SerializeField] private float _rotationSmoothTime = 0.12f;
+		private float _rotationVelocity = default;
 
 		#endregion
 
@@ -73,6 +78,8 @@ namespace LittleLooters.Gameplay
 			{
 				_targetHealth.OnDead += TargetDead;
 			}
+
+			_weaponController.Init(_data, _target, MeleeAttackCompleted, MeleeAttackStarted);
 
 			_enabled = true;
 		}
@@ -103,9 +110,11 @@ namespace LittleLooters.Gameplay
 
 			RefreshDetection();
 
+			RefreshRotation();
+
 			RefreshAttackState();
 
-			_visualController.Refresh(_state);
+			_visualController.Refresh(_state, _isPerformingAnAttack);
 
 			DebugRefreshState();
 
@@ -116,8 +125,6 @@ namespace LittleLooters.Gameplay
 			_refreshTime = DELAY_CALCULATION;
 
 			_fovService.Tick();
-
-			RefreshRotation();
 		}
 
 		#endregion
@@ -130,6 +137,8 @@ namespace LittleLooters.Gameplay
 
 			if (_state == EnemyState.ATTACK) return;
 
+			//_targetPosition = _target.position;
+
 			_agent.SetDestination(_target.position);
 			_agent.isStopped = false;
 
@@ -141,6 +150,8 @@ namespace LittleLooters.Gameplay
 			if (!_enabled) return;
 
 			if (_state != EnemyState.CHASE) return;
+
+			//_targetPosition = _target.position;
 
 			_agent.SetDestination(_target.position);
 			_agent.isStopped = false;
@@ -170,6 +181,13 @@ namespace LittleLooters.Gameplay
 			var targetDirection = _target.position - transform.position;
 
 			transform.rotation = Quaternion.LookRotation(targetDirection);
+			return;
+
+			var targetRotation = Mathf.Atan2(targetDirection.x, targetDirection.z) * Mathf.Rad2Deg + _mainCamera.transform.eulerAngles.y;
+			float rotation = Mathf.SmoothDampAngle(transform.eulerAngles.y, targetRotation, ref _rotationVelocity, _rotationSmoothTime);
+
+			// rotate to face input direction relative to camera position
+			transform.rotation = Quaternion.Euler(0.0f, rotation, 0.0f);
 		}
 
 		private void RefreshAttackState()
@@ -179,6 +197,9 @@ namespace LittleLooters.Gameplay
 			// It was attacking but is not in attack range area
 			if (_state == EnemyState.ATTACK && !inAttackRange)
 			{
+				// Should wait until the attack in progress has finished
+				if (_isPerformingAnAttack) return;
+
 				StopAttackState();
 				return;
 			}
@@ -234,11 +255,14 @@ namespace LittleLooters.Gameplay
 			_nextAttackTime = Time.time + _data.AttackRate;
 
 			Debug.LogError("Attack!");
+
+			_visualController.Attack();
 		}
 
 		private void StopMovement()
 		{
 			_agent.isStopped = true;
+			_agent.velocity = Vector3.zero;
 		}
 
 		private void DebugRefreshState()
@@ -254,7 +278,7 @@ namespace LittleLooters.Gameplay
 		{
 			_state = EnemyState.DIE;
 
-			_visualController.Refresh(_state);
+			_visualController.Refresh(_state, false);
 
 			DebugRefreshState();
 		}
@@ -269,7 +293,17 @@ namespace LittleLooters.Gameplay
 
 			_state = EnemyState.IDLE;
 
-			_visualController.Refresh(_state);
+			_visualController.Refresh(_state, false);
+		}
+
+		private void MeleeAttackStarted()
+		{
+			_isPerformingAnAttack = true;
+		}
+
+		private void MeleeAttackCompleted()
+		{
+			_isPerformingAnAttack = false;
 		}
 
 		#endregion

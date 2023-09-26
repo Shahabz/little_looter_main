@@ -19,6 +19,7 @@ namespace LittleLooters.Gameplay
 
 		[SerializeField] private Animator _animator = default;
 		[SerializeField] private RigBuilder _rigBuilder = default;
+		[SerializeField] private ParticleSystem _damageVfx = default;
 
 		#endregion
 
@@ -44,6 +45,9 @@ namespace LittleLooters.Gameplay
 			// Firing events
 			weaponController.OnStartFiring += StartFiring;
 			weaponController.OnStopFiring += StopFiring;
+
+			var damageable = GetComponent<ITakeDamage>();
+			damageable.OnTakeDamage += TakeDamage;
 		}
 
 		public void Teardown(WeaponController weaponController)
@@ -55,6 +59,9 @@ namespace LittleLooters.Gameplay
 			// Firing events
 			weaponController.OnStartFiring += StartFiring;
 			weaponController.OnStopFiring += StopFiring;
+
+			var damageable = GetComponent<ITakeDamage>();
+			damageable.OnTakeDamage -= TakeDamage;
 		}
 
 		public void RefreshStateByInput(StarterAssetsInputs input)
@@ -108,6 +115,11 @@ namespace LittleLooters.Gameplay
 		private void StopFiring()
 		{
 			_animator.SetBool(IS_FIRING, false);
+		}
+
+		private void TakeDamage(float damage)
+		{
+			_damageVfx.Play();
 		}
 
 		#endregion
