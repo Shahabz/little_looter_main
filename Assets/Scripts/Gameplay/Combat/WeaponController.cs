@@ -12,10 +12,11 @@ namespace LittleLooters.Gameplay.Combat
 	{
 		#region Events
 
-		public System.Action OnStartReloading;
+		public System.Action<float> OnStartReloading;
 		public System.Action OnStopReloading;
-		public System.Action OnStartFiring;
+		public System.Action<float> OnStartFiring;
 		public System.Action OnStopFiring;
+		public System.Action OnCompleteFiring;
 		public System.Action<int, int> OnRefreshAmmo;
 
 		#endregion
@@ -24,11 +25,19 @@ namespace LittleLooters.Gameplay.Combat
 
 		[SerializeField] private Weapon _weapon = default;
 
+		[Header("Inventory weapons")]
+		[SerializeField] private GameObject _weapon0 = default;
+		[SerializeField] private AssaultWeaponData _weaponData0 = default;
+
+		[SerializeField] private GameObject _weapon1 = default;
+		[SerializeField] private AssaultWeaponData _weaponData1 = default;
+
 		#endregion
 
 		#region Private properties
 
 		private bool _isFiring = default;
+		private PlayerAimingAssistance _aimingAssistance = default;
 
 		#endregion
 
@@ -40,18 +49,26 @@ namespace LittleLooters.Gameplay.Combat
 
 		#region Public methods
 
-		public void Init()
+		public void Init(PlayerAimingAssistance aimingAssistance)
 		{
+			_aimingAssistance = aimingAssistance;
+
 			_weapon.OnStopReloading += ProcessStopReloading;
 			_weapon.OnRefreshAmmo += RefreshAmmo;
+			_weapon.OnCompleteFiring += CompleteFiring;
 
 			_weapon.Init();
+
+			UI_GameplayEvents.OnWeaponSelection += SwapWeapon;
 		}
 
 		public void Teardown()
 		{
+			UI_GameplayEvents.OnWeaponSelection -= SwapWeapon;
+
 			_weapon.OnStopReloading -= ProcessStopReloading;
 			_weapon.OnRefreshAmmo -= RefreshAmmo;
+			_weapon.OnCompleteFiring -= CompleteFiring;
 		}
 
 		public void CheckInput(StarterAssetsInputs input)
@@ -61,7 +78,6 @@ namespace LittleLooters.Gameplay.Combat
 			if (reloading) return;
 
 			CheckAttack(input);
-			
 		}
 
 		/// <summary>
@@ -69,6 +85,9 @@ namespace LittleLooters.Gameplay.Combat
 		/// </summary>
 		public void FireWeapon()
 		{
+			_aimingAssistance.Process(transform.forward);
+			_aimingAssistance.RotateToTarget();
+
 			_weapon.Fire();
 		}
 
@@ -102,7 +121,7 @@ namespace LittleLooters.Gameplay.Combat
 		{
 			var isClipEmpty = _weapon.IsClipEmpty;
 
-			var nonFiring = _weapon.IsReloading || !input.attack || isClipEmpty;
+			var nonFiring = _weapon.IsReloading || _weapon.WaitingFireRate || !input.attack || isClipEmpty;
 
 			if (!_weapon.IsAutoFire)
 			{
@@ -130,7 +149,7 @@ namespace LittleLooters.Gameplay.Combat
 			// Check if previously was firing
 			if (!_isFiring)
 			{
-				OnStartFiring?.Invoke();
+				OnStartFiring?.Invoke(_weapon.FireRate);
 			}
 
 			_isFiring = true;
@@ -142,7 +161,7 @@ namespace LittleLooters.Gameplay.Combat
 		{
 			_weapon.StartReloading();
 
-			OnStartReloading?.Invoke();
+			OnStartReloading?.Invoke(_weapon.ReloadingTime);
 		}
 
 		private void ProcessStopReloading()
@@ -153,6 +172,21 @@ namespace LittleLooters.Gameplay.Combat
 		private void RefreshAmmo(int clipSize, int ammo)
 		{
 			OnRefreshAmmo?.Invoke(clipSize, ammo);
+		}
+
+		private void SwapWeapon(int id)
+		{
+			var weaponData = (id == 0) ? _weaponData0 : _weaponData1;
+
+			_weapon0.SetActive(id == 0);
+			_weapon1.SetActive(id == 1);
+
+			_weapon.RefreshData(weaponData);
+		}
+
+		private void CompleteFiring()
+		{
+			OnCompleteFiring?.Invoke();
 		}
 
 		#endregion

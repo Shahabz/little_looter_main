@@ -25,6 +25,8 @@ namespace LittleLooters.Gameplay.Combat
 
 		#endregion
 
+		private bool _godMode = false;
+
 		#region ITakeDamage implementation
 
 		public bool IsDead => _hp <= 0;
@@ -44,7 +46,10 @@ namespace LittleLooters.Gameplay.Combat
 		{
 			if (IsDead) return;
 
-			_hp = Mathf.Clamp(_hp - damage, 0, _hp);
+			if (!_godMode)
+			{
+				_hp = Mathf.Clamp(_hp - damage, 0, _hp);
+			}
 
 			if (_hp > 0)
 			{
@@ -57,6 +62,11 @@ namespace LittleLooters.Gameplay.Combat
 		}
 
 		#endregion
+
+		public void SetGodMode(bool modeOn)
+		{
+			_godMode = modeOn;
+		}
 
 		[ContextMenu("Apply Damage")]
 		public void ApplyDamageForTesting()

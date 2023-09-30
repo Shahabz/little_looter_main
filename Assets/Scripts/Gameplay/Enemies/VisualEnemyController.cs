@@ -93,13 +93,14 @@ namespace LittleLooters.Gameplay
 		/// <param name="animationEvent"></param>
 		public void OnFootstep(AnimationEvent animationEvent)
 		{
-			if (animationEvent.animatorClipInfo.weight <= 0.5f) return;
+			// Commented for performance
+			/*if (animationEvent.animatorClipInfo.weight <= 0.5f) return;
 
 			if (_footstepAudioClips.Length == 0) return;
 
 			var index = Random.Range(0, _footstepAudioClips.Length);
 
-			AudioSource.PlayClipAtPoint(_footstepAudioClips[index], transform.TransformPoint(transform.position), _footstepAudioVolume);
+			AudioSource.PlayClipAtPoint(_footstepAudioClips[index], transform.TransformPoint(transform.position), _footstepAudioVolume);*/
 		}
 
 		public void TakeDamage()

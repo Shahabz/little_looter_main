@@ -10,12 +10,13 @@ namespace StarterAssets
         public StarterAssetsInputs starterAssetsInputs;
         [SerializeField] private bool _isAim = false;
         [SerializeField] private UIVirtualButton _btnSprint = default;
+        [SerializeField] private float _deadZoneThreshold = 0.5f;
 
-		#endregion
+        #endregion
 
-		#region Private properties
+        #region Private properties
 
-		private readonly Vector2 _vectorUp = Vector2.up;
+        private readonly Vector2 _vectorUp = Vector2.up;
 
 		#endregion
 
@@ -39,6 +40,18 @@ namespace StarterAssets
         {
             if (_isAim)
 			{
+                // Check Dead zone for X axis
+                if (Mathf.Abs(virtualMoveDirection.x) < _deadZoneThreshold)
+                {
+                    virtualMoveDirection.x = 0;
+                }
+
+                // Check Dead zone for X axis
+                if (Mathf.Abs(virtualMoveDirection.y) < _deadZoneThreshold)
+                {
+                    virtualMoveDirection.y = 0;
+                }
+
                 starterAssetsInputs.AimInput(virtualMoveDirection);
                 return;
 			}

@@ -23,6 +23,7 @@ namespace LittleLooters.Gameplay
 		#region Inspector
 
 		[SerializeField] private EnemyBehaviorData _data = default;
+		[SerializeField] private EnemyState _state = EnemyState.NONE;
 		[SerializeField] private VisualEnemyController _visualController = default;
 		[SerializeField] private WeaponEnemyController _weaponController = default;
 		[SerializeField] private Transform _target = default;
@@ -31,32 +32,39 @@ namespace LittleLooters.Gameplay
 		[SerializeField] private float _maxHp = default;
 		[SerializeField] private Collider _collider = default;
 		[SerializeField] private GameObject _mainCamera = default;
+		[SerializeField] private GameObject _detection = default;
+		[SerializeField] private float _rotationSmoothTime = 0.12f;
 		[SerializeField] private bool _canDebug = false;
 
 		#endregion
 
 		#region Private properties
 
+		private int _id = -1;
 		private bool _enabled = false;
 		private EnemyFieldOfViewService _fovService = default;
 		private NavMeshAgent _agent = default;
-		private EnemyState _state = EnemyState.NONE;
 		private float _nextAttackTime = 0;
 		private EnemyState _previousState = EnemyState.NONE;
 		private float _refreshTime = 0;
 		private const float DELAY_CALCULATION = 0.12f;
 		private ITakeDamage _targetHealth = default;
 		private bool _isPerformingAnAttack = false;
-		//private Vector3 _targetPosition = default;
-		[SerializeField] private float _rotationSmoothTime = 0.12f;
-		private float _rotationVelocity = default;
+
+		#endregion
+
+		#region Public properties
+
+		public int Id => _id;
 
 		#endregion
 
 		#region Public methods
 
-		public void Initialization()
+		public void Initialization(int id)
 		{
+			_id = id;
+
 			_agent = GetComponent<NavMeshAgent>();
 
 			_agent.speed = _data.WalkingSpeed;
@@ -81,6 +89,8 @@ namespace LittleLooters.Gameplay
 
 			_weaponController.Init(_data, _target, MeleeAttackCompleted, MeleeAttackStarted);
 
+			MarkAsNonDetected();
+
 			_enabled = true;
 		}
 
@@ -97,12 +107,8 @@ namespace LittleLooters.Gameplay
 				_targetHealth.OnDead -= TargetDead;
 			}
 		}
-
-		#endregion
-
-		#region Unity events
-
-		private void Update()
+		
+		public void Tick(float deltaTime)
 		{
 			if (!_enabled) return;
 
@@ -118,13 +124,23 @@ namespace LittleLooters.Gameplay
 
 			DebugRefreshState();
 
-			_refreshTime -= Time.deltaTime;
+			_refreshTime -= deltaTime;
 
 			if (_refreshTime > 0) return;
 
 			_refreshTime = DELAY_CALCULATION;
 
 			_fovService.Tick();
+		}
+
+		public void MarkAsDetected()
+		{
+			_detection.SetActive(true);
+		}
+
+		public void MarkAsNonDetected()
+		{
+			_detection.SetActive(false);
 		}
 
 		#endregion
@@ -137,8 +153,6 @@ namespace LittleLooters.Gameplay
 
 			if (_state == EnemyState.ATTACK) return;
 
-			//_targetPosition = _target.position;
-
 			_agent.SetDestination(_target.position);
 			_agent.isStopped = false;
 
@@ -150,8 +164,6 @@ namespace LittleLooters.Gameplay
 			if (!_enabled) return;
 
 			if (_state != EnemyState.CHASE) return;
-
-			//_targetPosition = _target.position;
 
 			_agent.SetDestination(_target.position);
 			_agent.isStopped = false;
@@ -181,13 +193,6 @@ namespace LittleLooters.Gameplay
 			var targetDirection = _target.position - transform.position;
 
 			transform.rotation = Quaternion.LookRotation(targetDirection);
-			return;
-
-			var targetRotation = Mathf.Atan2(targetDirection.x, targetDirection.z) * Mathf.Rad2Deg + _mainCamera.transform.eulerAngles.y;
-			float rotation = Mathf.SmoothDampAngle(transform.eulerAngles.y, targetRotation, ref _rotationVelocity, _rotationSmoothTime);
-
-			// rotate to face input direction relative to camera position
-			transform.rotation = Quaternion.Euler(0.0f, rotation, 0.0f);
 		}
 
 		private void RefreshAttackState()
@@ -254,7 +259,7 @@ namespace LittleLooters.Gameplay
 
 			_nextAttackTime = Time.time + _data.AttackRate;
 
-			Debug.LogError("Attack!");
+			//Debug.LogError("Attack!");
 
 			_visualController.Attack();
 		}
@@ -269,7 +274,7 @@ namespace LittleLooters.Gameplay
 		{
 			if (_state == _previousState) return;
 
-			Debug.LogError($"Move from <color=yellow>{_previousState}</color> to <color=cyan>{_state}</color>");
+			//Debug.LogError($"Move from <color=yellow>{_previousState}</color> to <color=cyan>{_state}</color>");
 
 			_previousState = _state;
 		}
@@ -346,8 +351,6 @@ namespace LittleLooters.Gameplay
 			_enabled = false;
 
 			StopMovement();
-
-			Debug.LogError($"Enemy <color=yellow>{name}</color> was destroyed");
 
 			RefreshDeathState();
 		}

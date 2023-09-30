@@ -13,9 +13,17 @@ namespace LittleLooters.Gameplay
     {
 		#region Inspector
 
+		[Header("Level")]
+		[SerializeField] private LevelEnemies _levelEnemies = default;
+
 		[Header("Config")]
 		[SerializeField] private float _initialHp = default;
 		[SerializeField] private float _maxHp = default;
+		[SerializeField] private bool _godMode = default;
+
+		[Header("Aiming assistance")]
+		[SerializeField] private float _aimingAssistanceAngle = default;
+		[SerializeField] private float _aimingAssistanceRadius = default;
 
 		#endregion
 
@@ -35,9 +43,13 @@ namespace LittleLooters.Gameplay
 			// Health
 			_health = GetComponent<PlayerHealth>();
 
+			// Aiming assistance
+			var aimingAssistance = new PlayerAimingAssistance();
+			aimingAssistance.Init(transform, _aimingAssistanceAngle, _aimingAssistanceRadius, _levelEnemies);
+
 			// Weapon controller
 			_weaponController = GetComponent<WeaponController>();
-			_weaponController.Init();
+			_weaponController.Init(aimingAssistance);
 
 			// Visual controller
 			_visualController = GetComponent<VisualCharacterController>();
@@ -45,11 +57,15 @@ namespace LittleLooters.Gameplay
 
 			// Controller
 			_controller = GetComponent<ThirdPersonController>();
+			_controller.SetAimingAssistance(aimingAssistance);
 		}
 
 		private void Start()
 		{
 			_health.Init(_initialHp, _maxHp);
+
+			_health.SetGodMode(_godMode);
+
 			_health.OnTakeDamage += TakeDamage;
 			_health.OnDead += Dead;
 		}

@@ -45,7 +45,7 @@ namespace LittleLooters.Gameplay
 		{
 			if (!_initialized) return;
 
-			Debug.LogError($"<color=orange>{name}</color> performed a melee attack! angle: <color=yellow>{_data.AttackAngle}</color>,  distance: <color=yellow>{_data.AttackDistance}</color>");
+			//Debug.LogError($"<color=orange>{name}</color> performed a melee attack! angle: <color=yellow>{_data.AttackAngle}</color>,  distance: <color=yellow>{_data.AttackDistance}</color>");
 
 			var playerInsideAttackArea = CheckInsideAttackArea();
 

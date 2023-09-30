@@ -95,7 +95,7 @@ namespace LittleLooters.Gameplay
 			}
 		}
 
-		private void StartReloading()
+		private void StartReloading(float reloadingTime)
 		{
 			_animator.SetBool(IS_RELOADING, true);
 			_animator.SetTrigger(RELOAD);
@@ -106,7 +106,7 @@ namespace LittleLooters.Gameplay
 			_animator.SetBool(IS_RELOADING, false);
 		}
 
-		private void StartFiring()
+		private void StartFiring(float fireRateTime)
 		{
 			_animator.SetBool(IS_FIRING, true);
 			_animator.SetTrigger(FIRE);

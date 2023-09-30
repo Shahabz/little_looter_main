@@ -45,8 +45,6 @@ namespace LittleLooters.Gameplay
 			_art.SetActive(false);
 
 			_collider.enabled = false;
-
-			Debug.LogError($"Destructible <color=yellow>{name}</color> was destroyed");
 		}
 	}
 }

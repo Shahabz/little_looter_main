@@ -29,6 +29,10 @@ namespace StarterAssets
         [Range(0.0f, 0.3f)]
         public float RotationSmoothTime = 0.12f;
 
+        [Tooltip("How fast the character turns to face movement direction")]
+        [Range(0.0f, 0.5f)]
+        public float SprintRotationSmoothTime = 0.24f;
+
         [Tooltip("Acceleration and deceleration")]
         public float SpeedChangeRate = 10.0f;
 
@@ -124,6 +128,7 @@ namespace StarterAssets
         private const float _threshold = 0.01f;
 
         private bool _hasAnimator;
+        private PlayerAimingAssistance _aimingAssistance = default;
 
         private bool IsCurrentDeviceMouse
         {
@@ -181,8 +186,8 @@ namespace StarterAssets
 
             JumpAndGravity();
             GroundedCheck();
-            FireCheck();
             Move();
+            FireCheck();
 
             _visualController.RefreshStateByInput(_input);
         }
@@ -206,21 +211,26 @@ namespace StarterAssets
 
         public void TakeDamage(float damage)
 		{
-            Debug.LogError($"Player Take damage <color=yellow>{damage}</color>");
+            //Debug.LogError($"Player Take damage <color=yellow>{damage}</color>");
 		}
 
         public void Dead()
 		{
-            Debug.LogError($"Player is <color=red>DEAD</color>");
+            //Debug.LogError($"Player is <color=red>DEAD</color>");
 
             _visualController.Dead();
         }
 
-		#endregion
+        public void SetAimingAssistance(PlayerAimingAssistance assistance)
+		{
+            _aimingAssistance = assistance;
+		}
 
-		#region Private methods
+        #endregion
 
-		private void AssignAnimationIDs()
+        #region Private methods
+
+        private void AssignAnimationIDs()
         {
             _animIDSpeed = Animator.StringToHash("Speed");
             _animIDGrounded = Animator.StringToHash("Grounded");
@@ -438,14 +448,15 @@ namespace StarterAssets
 
         private void OnFootstep(AnimationEvent animationEvent)
         {
-            if (animationEvent.animatorClipInfo.weight > 0.5f)
+            // NOTE: uncomment this logic if we need the footstep audios
+            /*if (animationEvent.animatorClipInfo.weight > 0.5f)
             {
                 if (FootstepAudioClips.Length > 0)
                 {
                     var index = Random.Range(0, FootstepAudioClips.Length);
                     AudioSource.PlayClipAtPoint(FootstepAudioClips[index], transform.TransformPoint(_controller.center), FootstepAudioVolume);
                 }
-            }
+            }*/
         }
 
         private void OnLand(AnimationEvent animationEvent)
@@ -467,13 +478,21 @@ namespace StarterAssets
 
                 var targetRotation = Mathf.Atan2(inputDirection.x, inputDirection.z) * Mathf.Rad2Deg + _mainCamera.transform.eulerAngles.y;
 
-                float rotation = Mathf.SmoothDampAngle(transform.eulerAngles.y, targetRotation, ref _rotationVelocity, RotationSmoothTime);
+                var rotationTime = (_input.sprint) ? SprintRotationSmoothTime : RotationSmoothTime;
+
+                float rotation = Mathf.SmoothDampAngle(transform.eulerAngles.y, targetRotation, ref _rotationVelocity, rotationTime);
 
                 // rotate to face input direction relative to camera position
                 transform.rotation = Quaternion.Euler(0.0f, rotation, 0.0f);
 
+                _aimingAssistance?.Process(transform.forward);
+
                 return;
             }
+            else
+			{
+                _aimingAssistance?.StopProcessing();
+			}
 
             if (_input.move != Vector2.zero)
             {
@@ -484,7 +503,8 @@ namespace StarterAssets
 
                 var targetRotation = Mathf.Atan2(inputDirection.x, inputDirection.z) * Mathf.Rad2Deg + _mainCamera.transform.eulerAngles.y;
 
-                float rotation = Mathf.SmoothDampAngle(transform.eulerAngles.y, targetRotation, ref _rotationVelocity, RotationSmoothTime);
+                var rotationTime = (_input.sprint) ? SprintRotationSmoothTime : RotationSmoothTime;
+                float rotation = Mathf.SmoothDampAngle(transform.eulerAngles.y, targetRotation, ref _rotationVelocity, rotationTime);
 
                 // rotate to face input direction relative to camera position
                 transform.rotation = Quaternion.Euler(0.0f, rotation, 0.0f);

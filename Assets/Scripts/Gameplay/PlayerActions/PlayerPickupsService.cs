@@ -12,8 +12,6 @@ namespace LittleLooters.Gameplay
 
 		private void OnTriggerEnter(Collider other)
 		{
-			Debug.LogError($"PickupService::TriggerCollision -> <color=yellow>{other.name}</color> ({other.tag})");
-
 			if (!other.tag.Equals(_tag)) return;
 
 			if (!other.gameObject.TryGetComponent<PickupAmmo>(out var pickup)) return;

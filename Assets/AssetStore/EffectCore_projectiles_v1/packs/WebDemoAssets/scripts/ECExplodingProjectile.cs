@@ -95,7 +95,8 @@ public class ECExplodingProjectile : MonoBehaviour
             // Check if a destructible should take damage
             if (hit.collider.gameObject.TryGetComponent<ITakeDamage>(out var destructible))
 			{
-                destructible.TakeDamage(5);
+                var damage = CalculateDamage();
+                destructible.TakeDamage(damage);
 			}
 
             Instantiate(impactPrefab, pos, rot);
@@ -166,4 +167,24 @@ public class ECExplodingProjectile : MonoBehaviour
 	{
         Explode();
 	}
+
+    #region Damage
+
+    private int _minDamage = 0;
+    private int _maxDamage = 0;
+
+    public void SetDamageLimits(int min, int max)
+	{
+        _minDamage = min;
+        _maxDamage = max;
+	}
+
+	private int CalculateDamage()
+	{
+        var damage = Random.Range(_minDamage, _maxDamage+1);
+
+        return damage;
+	}
+
+	#endregion
 }
