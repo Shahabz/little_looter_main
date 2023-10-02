@@ -25,6 +25,9 @@ namespace LittleLooters.Gameplay
 		[SerializeField] private float _aimingAssistanceAngle = default;
 		[SerializeField] private float _aimingAssistanceRadius = default;
 
+		[Header("Repairing")]
+		[SerializeField] private float _repairingSpeed = 0.1f;
+
 		#endregion
 
 		#region Private properties
@@ -47,6 +50,10 @@ namespace LittleLooters.Gameplay
 			var aimingAssistance = new PlayerAimingAssistance();
 			aimingAssistance.Init(transform, _aimingAssistanceAngle, _aimingAssistanceRadius, _levelEnemies);
 
+			// Repairing service
+			var repairingService = GetComponent<PlayerRepairService>();
+			repairingService.SetupSpeed(_repairingSpeed);
+
 			// Weapon controller
 			_weaponController = GetComponent<WeaponController>();
 			_weaponController.Init(aimingAssistance);
@@ -58,6 +65,7 @@ namespace LittleLooters.Gameplay
 			// Controller
 			_controller = GetComponent<ThirdPersonController>();
 			_controller.SetAimingAssistance(aimingAssistance);
+			_controller.SetupRepairingService(repairingService);
 		}
 
 		private void Start()
@@ -68,6 +76,8 @@ namespace LittleLooters.Gameplay
 
 			_health.OnTakeDamage += TakeDamage;
 			_health.OnDead += Dead;
+
+			UI_GameplayEvents.OnPlayerInitialization?.Invoke();
 		}
 
 		#endregion

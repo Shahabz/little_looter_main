@@ -44,6 +44,8 @@ namespace LittleLooters.Gameplay.Combat
 		#region Public properties
 
 		public bool IsReloading => _weapon.IsReloading;
+		public int ClipSize => _weapon.ClipSize;
+		public int Ammo => _weapon.Ammo;
 
 		#endregion
 

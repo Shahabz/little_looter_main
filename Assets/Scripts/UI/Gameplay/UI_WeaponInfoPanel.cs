@@ -45,20 +45,13 @@ namespace LittleLooters.Gameplay.UI
 
 		private void Awake()
 		{
-			// Ammo
-			_weaponController.OnRefreshAmmo += Refresh;
-
-			// Reloading
-			_weaponController.OnStartReloading += StartReloading;
-			_weaponController.OnStopReloading += StopReloading;
-
-			// Firing
-			_weaponController.OnStartFiring += StartFiring;
-			_weaponController.OnCompleteFiring += CompleteFiring;
+			UI_GameplayEvents.OnPlayerInitialization += Initialization;
 		}
 
 		private void OnDestroy()
 		{
+			UI_GameplayEvents.OnPlayerInitialization -= Initialization;
+
 			_weaponController.OnRefreshAmmo -= Refresh;
 			_weaponController.OnStartReloading -= StartReloading;
 			_weaponController.OnStopReloading -= StopReloading;
@@ -71,6 +64,22 @@ namespace LittleLooters.Gameplay.UI
 		#endregion
 
 		#region Private methods
+
+		private void Initialization()
+		{
+			// Ammo
+			_weaponController.OnRefreshAmmo += Refresh;
+
+			// Reloading
+			_weaponController.OnStartReloading += StartReloading;
+			_weaponController.OnStopReloading += StopReloading;
+
+			// Firing
+			_weaponController.OnStartFiring += StartFiring;
+			_weaponController.OnCompleteFiring += CompleteFiring;
+
+			Refresh(_weaponController.ClipSize, _weaponController.Ammo);
+		}
 
 		private void Refresh(int clipSize, int ammo)
 		{

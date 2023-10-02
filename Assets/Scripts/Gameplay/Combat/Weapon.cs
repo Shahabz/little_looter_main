@@ -67,6 +67,8 @@ namespace LittleLooters.Gameplay.Combat
         public float ReloadingTime => _data.ReloadingTime;
         public float FireRate => _data.FireRate;
         public bool WaitingFireRate => _waitingFireRate > 0;
+        public int ClipSize => _data.ClipSize;
+        public int Ammo => _currentAmmo;
 
 		#endregion
 

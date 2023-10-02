@@ -14,13 +14,13 @@ namespace LittleLooters.Gameplay
 		[SerializeField] private AudioClip[] _footstepAudioClips = default;
 		[Range(0, 1)] 
 		[SerializeField] private float _footstepAudioVolume = 0.5f;
+		[SerializeField] private Animator _animator = default;
 
 		#endregion
 
 		#region Private properties
 
 		private EnemyBehaviorData _data = default;
-		private Animator _animator = default;
 		private int _animSpeedId = default;
 		private int _animMotionSpeedId = default;
 		private int _animAttackId = default;
@@ -36,8 +36,6 @@ namespace LittleLooters.Gameplay
 		public void Init(EnemyState state, EnemyBehaviorData data)
 		{
 			_data = data;
-
-			_animator = GetComponent<Animator>();
 
 			// Locomotion ids
 			_animSpeedId = Animator.StringToHash("Speed");

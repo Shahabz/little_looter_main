@@ -1368,6 +1368,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _data: {fileID: 0}
+  _state: 0
   _visualController: {fileID: 4405331416515651087}
   _weaponController: {fileID: 1262842954251124798}
   _target: {fileID: 0}
@@ -1377,9 +1378,8 @@ MonoBehaviour:
   _collider: {fileID: 4405331416515651085}
   _mainCamera: {fileID: 0}
   _detection: {fileID: 4264530015595266925}
-  _canDebug: 1
-  _state: 0
   _rotationSmoothTime: 0.06
+  _canDebug: 1
 --- !u!114 &4405331416515651087
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1397,6 +1397,7 @@ MonoBehaviour:
   - {fileID: 8300000, guid: 274649b0e221539409070ebf6c18918b, type: 3}
   - {fileID: 8300000, guid: a3194b8bbc96ef84fab1f98f4b7dae3e, type: 3}
   _footstepAudioVolume: 0.5
+  _animator: {fileID: 4405331416515651084}
 --- !u!114 &1262842954251124798
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1655,18 +1656,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2db800fd63d936e498b9279fba7e4e43, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _data: {fileID: 0}
   _muzzlePivot: {fileID: 4405331416406219378}
   _muzzlePrefab: {fileID: 1000012903210382, guid: 2cc07ac0b88fafc40b730713b6dac672, type: 3}
+  _muzzle: {fileID: 0}
   _hasShells: 1
   _shellsPivot: {fileID: 4405331416050355359}
   _shellsPrefab: {fileID: 1467181274829480, guid: 41e86fd3ee46b76448791422f9949474, type: 3}
-  _projectilePivot: {fileID: 4405331416818028023}
+  _projectilePivots: []
   _projectilePrefab: {fileID: 1238843893459588, guid: a2700d7f89910434081c7dc7c92e22ca, type: 3}
   _force: 1000
-  _reloadingTime: 3
   _ammo: 54
-  _clipSize: 10
-  _isAutoFire: 0
 --- !u!1 &4405331416719656301
 GameObject:
   m_ObjectHideFlags: 0
@@ -1903,8 +1903,8 @@ SkinnedMeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 42410faed1ea032429a441c31b6ed5d3, type: 2}
   - {fileID: 2100000, guid: f8209bb944fd0ef4c80d1bf666620738, type: 2}
+  - {fileID: 2100000, guid: 42410faed1ea032429a441c31b6ed5d3, type: 2}
   - {fileID: 2100000, guid: 8d177f2eae194df4f8e9cd489b52963a, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
@@ -2996,6 +2996,10 @@ PrefabInstance:
     - target: {fileID: 1104172259794306, guid: c93dc5e6b62380f499e6ec8328bc0160, type: 3}
       propertyPath: m_Name
       value: SM_Wep_Katana_01
+      objectReference: {fileID: 0}
+    - target: {fileID: 1104172259794306, guid: c93dc5e6b62380f499e6ec8328bc0160, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 4330684416138322, guid: c93dc5e6b62380f499e6ec8328bc0160, type: 3}
       propertyPath: m_RootOrder

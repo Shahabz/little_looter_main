@@ -1,3 +1,4 @@
+using LittleLooters.Gameplay;
 using UnityEngine;
 
 namespace StarterAssets
@@ -10,26 +11,40 @@ namespace StarterAssets
         public StarterAssetsInputs starterAssetsInputs;
         [SerializeField] private bool _isAim = false;
         [SerializeField] private UIVirtualButton _btnSprint = default;
+        [SerializeField] private UIVirtualButton _btnRepair = default;
         [SerializeField] private float _deadZoneThreshold = 0.5f;
+        [SerializeField] private PlayerRepairService _playerRepairService = default;
 
         #endregion
 
         #region Private properties
 
         private readonly Vector2 _vectorUp = Vector2.up;
+        private bool _sprintState = false;
+        private bool _repairState = false;
 
-		#endregion
+        #endregion
 
-		#region Unity events
+        #region Unity events
 
-		private void Start()
+        private void Start()
 		{
             starterAssetsInputs.OnCancelSprint += CancelSprint;
+
+            if (_btnRepair == null) return;
+
+            _playerRepairService.OnDetectTarget += DetectRepairTarget;
+            _playerRepairService.OnUndetectTarget += UndetectRepairTarget;
         }
 
         private void OnDestroy()
         {
             starterAssetsInputs.OnCancelSprint -= CancelSprint;
+
+            if (_btnRepair == null) return;
+
+            _playerRepairService.OnDetectTarget -= DetectRepairTarget;
+            _playerRepairService.OnUndetectTarget -= UndetectRepairTarget;
         }
 
 		#endregion
@@ -69,9 +84,11 @@ namespace StarterAssets
             starterAssetsInputs.JumpInput(virtualJumpState);
         }
 
-        public void VirtualSprintInput(bool virtualSprintState)
+        public void VirtualSprintInput()
         {
-            starterAssetsInputs.SprintInput(virtualSprintState);
+            _sprintState = !_sprintState;
+
+            starterAssetsInputs.SprintInput(_sprintState);
         }
 
         public void VirtualFireInput()
@@ -84,18 +101,45 @@ namespace StarterAssets
             starterAssetsInputs.ReloadInput();
         }
 
-		#endregion
+        public void VirtualRepairInput()
+        {
+            _repairState = !_repairState;
 
-		#region Private methods
+            starterAssetsInputs.RepairInput(_repairState);
+        }
+
+        #endregion
+
+        #region Private methods
 
         private void CancelSprint()
 		{
             if (_btnSprint == null) return;
 
             _btnSprint.Deactivate();
+
+            _sprintState = false;
 		}
 
-		#endregion
-	}
+        private void DetectRepairTarget()
+		{
+            _btnRepair.Deactivate();
+            _btnRepair.gameObject.SetActive(true);
+
+            _repairState = false;
+		}
+
+        private void UndetectRepairTarget()
+        {
+            _btnRepair.gameObject.SetActive(false);
+            _btnRepair.Deactivate();
+
+            _repairState = false;
+
+            starterAssetsInputs.repair = false;
+        }
+
+        #endregion
+    }
 
 }

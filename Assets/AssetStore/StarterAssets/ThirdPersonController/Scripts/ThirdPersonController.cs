@@ -129,6 +129,7 @@ namespace StarterAssets
 
         private bool _hasAnimator;
         private PlayerAimingAssistance _aimingAssistance = default;
+        private PlayerRepairService _repairService = default;
 
         private bool IsCurrentDeviceMouse
         {
@@ -173,9 +174,6 @@ namespace StarterAssets
             // reset our timeouts on start
             _jumpTimeoutDelta = JumpTimeout;
             _fallTimeoutDelta = FallTimeout;
-
-            //_weaponController.Init();
-            //_visualController.Init(_weaponController);
         }
 
         private void Update()
@@ -188,6 +186,7 @@ namespace StarterAssets
             GroundedCheck();
             Move();
             FireCheck();
+            RepairCheck();
 
             _visualController.RefreshStateByInput(_input);
         }
@@ -225,6 +224,14 @@ namespace StarterAssets
 		{
             _aimingAssistance = assistance;
 		}
+
+        public void SetupRepairingService(PlayerRepairService service)
+		{
+            // Repairing service
+            _repairService = service;
+
+            _repairService.Init(OnStartRepairing, OnStopRepairing, OnCompleteRepairing);
+        }
 
         #endregion
 
@@ -513,6 +520,32 @@ namespace StarterAssets
             }
         }
 
+        private void RepairCheck()
+        {
+            //if (!Grounded) return;
+
+            _repairService.CheckInput(_input);
+        }
+
 		#endregion
-	}
+
+		#region Repairing methods
+
+        private void OnStartRepairing()
+		{
+            // TODO
+		}
+
+        private void OnStopRepairing()
+		{
+            // TODO
+		}
+
+        private void OnCompleteRepairing()
+		{
+            // TODO
+		}
+
+        #endregion
+    }
 }

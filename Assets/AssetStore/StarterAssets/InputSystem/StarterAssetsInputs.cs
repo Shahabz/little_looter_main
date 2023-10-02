@@ -16,6 +16,7 @@ namespace StarterAssets
 		public Vector2 look;
 		public bool jump;
 		public bool sprint;
+		public bool repair;
 		public Vector2 aim;
 		public bool attack;
 		public bool reload;
@@ -137,6 +138,13 @@ namespace StarterAssets
 			sprint = false;
 
 			OnCancelSprint?.Invoke();
+		}
+
+		public void RepairInput(bool state)
+		{
+			repair = state;
+
+			Debug.LogError($"Repair input: <color=magenta>{state}</color>");
 		}
 
 		#endregion
