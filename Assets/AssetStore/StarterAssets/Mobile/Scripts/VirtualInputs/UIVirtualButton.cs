@@ -15,6 +15,7 @@ public class UIVirtualButton : MonoBehaviour, IPointerDownHandler, IPointerUpHan
     [SerializeField] private Color _colorActive = default;
     [SerializeField] private bool _canActivate = false;
     [SerializeField] private bool _onlyPressUsage = false;
+    [SerializeField] private bool _onlyReleaseUsage = false;
 
     [Header("Output")]
     public BoolEvent buttonStateOutputEvent;
@@ -24,6 +25,8 @@ public class UIVirtualButton : MonoBehaviour, IPointerDownHandler, IPointerUpHan
 
     public void OnPointerDown(PointerEventData eventData)
     {
+        if (_onlyReleaseUsage) return;
+
         if (_canActivate) return;
 
         OutputButtonStateValue(true);
@@ -32,6 +35,11 @@ public class UIVirtualButton : MonoBehaviour, IPointerDownHandler, IPointerUpHan
     public void OnPointerUp(PointerEventData eventData)
     {
         if (_onlyPressUsage) return;
+
+        if (_onlyReleaseUsage)
+		{
+            OutputButtonStateValue(true);
+        }
 
         OutputButtonStateValue(false);
     }

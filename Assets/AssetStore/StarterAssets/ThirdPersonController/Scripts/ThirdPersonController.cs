@@ -130,6 +130,7 @@ namespace StarterAssets
         private bool _hasAnimator;
         private PlayerAimingAssistance _aimingAssistance = default;
         private PlayerRepairService _repairService = default;
+        private bool _autoaiming = false;
 
         private bool IsCurrentDeviceMouse
         {
@@ -189,6 +190,13 @@ namespace StarterAssets
             RepairCheck();
 
             _visualController.RefreshStateByInput(_input);
+            
+            if (_autoaiming && !_input.IsAiming)
+			{
+                _aimingAssistance?.Process(transform.forward);
+
+                _visualController.SetAutoAiming(_aimingAssistance.TargetDetected);
+            }
         }
 
 		/*private void LateUpdate()
@@ -232,6 +240,13 @@ namespace StarterAssets
 
             _repairService.Init(OnStartRepairing, OnStopRepairing, OnCompleteRepairing);
         }
+
+        public void SetAutoaiming(bool status)
+		{
+            Debug.LogError($"controller::autoaiming -> <color=yellow>{status}</color>");
+
+            _autoaiming = status;
+		}
 
         #endregion
 
@@ -495,6 +510,10 @@ namespace StarterAssets
                 _aimingAssistance?.Process(transform.forward);
 
                 return;
+            }
+            if (_autoaiming && _aimingAssistance.TargetDetected)
+			{
+                _aimingAssistance.RotateToTarget();
             }
             else
 			{

@@ -76,6 +76,11 @@ namespace LittleLooters.Gameplay
 			_rigBuilder.enabled = false;
 		}
 
+		public void SetAutoAiming(bool status)
+		{
+			_animator.SetBool(IS_AIMING, status);
+		}
+
 		#endregion
 
 		#region Private methods
