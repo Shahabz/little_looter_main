@@ -4,6 +4,7 @@
  */
 
 using LittleLooters.Gameplay.Combat;
+using LittleLooters.Model;
 using StarterAssets;
 using UnityEngine;
 
@@ -32,6 +33,7 @@ namespace LittleLooters.Gameplay
 
 		#region Private properties
 
+		private PlayerProgressData _progressData = default;
 		private PlayerHealth _health = default;
 		private WeaponController _weaponController = default;
 		private VisualCharacterController _visualController = default;
@@ -39,10 +41,18 @@ namespace LittleLooters.Gameplay
 
 		#endregion
 
+		#region Public properties
+
+		public PlayerProgressData ProgressData => _progressData;
+
+		#endregion
+
 		#region Unity events
 
 		private void Awake()
 		{
+			_progressData = new PlayerProgressData();
+
 			// Health
 			_health = GetComponent<PlayerHealth>();
 
@@ -65,7 +75,7 @@ namespace LittleLooters.Gameplay
 			// Controller
 			_controller = GetComponent<ThirdPersonController>();
 			_controller.SetAimingAssistance(aimingAssistance);
-			_controller.SetupRepairingService(repairingService);
+			_controller.SetupRepairingService(this, repairingService);
 		}
 
 		private void Start()
@@ -78,6 +88,20 @@ namespace LittleLooters.Gameplay
 			_health.OnDead += Dead;
 
 			UI_GameplayEvents.OnPlayerInitialization?.Invoke();
+		}
+
+		#endregion
+
+		#region Public methods
+
+		public void SetupRepairObjects(RepairObject[] repairObjects)
+		{
+			_progressData.SetupRepairObjects(repairObjects);
+		}
+
+		public void AddPartsToRepairObject(int objectId, int partId, int partAmount)
+		{
+			_progressData.AddPartsToRepairObject(objectId, partId, partAmount);
 		}
 
 		#endregion

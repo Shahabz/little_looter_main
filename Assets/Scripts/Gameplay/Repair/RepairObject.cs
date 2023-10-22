@@ -3,6 +3,7 @@
  * Author: Peche
  */
 
+using LittleLooters.Gameplay.UI;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
@@ -18,19 +19,16 @@ namespace LittleLooters.Gameplay
     {
 		#region Inspector
 
-		[SerializeField] private int _id = default;
 		[SerializeField] private GameObject _indicator = default;
 		[SerializeField] private Slider _progressBar = default;
 		[SerializeField] private TMPro.TextMeshProUGUI _txtRepairing = default;
 		[SerializeField] private TMPro.TextMeshProUGUI _txtRepairProgress = default;
 		[SerializeField] private Image _completed = default;
-		[SerializeField] private RepairPartData[] _parts = default;
+		[SerializeField] private RepairObjectData _data = default;
 		[SerializeField] private GameObject _neededPanel = default;
 		[SerializeField] private Image _neededPartIcon = default;
 		[SerializeField] private float _delayToHideNeeded = 3f;
-		[SerializeField] private Image[] _slotParts = default;
-		[SerializeField] private Color _colorRepaired = default;
-		[SerializeField] private Color _colorNonRepaired = default;
+		[SerializeField] private UI_ObjectToRepairPanel _uiPanel = default;
 
 		#endregion
 
@@ -48,9 +46,11 @@ namespace LittleLooters.Gameplay
 
 		#region Public properties
 
-		public int Id => _id;
+		public int Id => _data.Id;
 		public bool IsRepairing => _isProcessing;
 		public bool WasCompleted => _wasCompleted;
+
+		public RepairObjectData Data => _data;
 
 		#endregion
 
@@ -58,7 +58,8 @@ namespace LittleLooters.Gameplay
 
 		private void Start()
 		{
-			InitSlots();
+			_uiPanel.Setup(_data);
+			_uiPanel.Hide();
 		}
 
 		#endregion
@@ -67,14 +68,18 @@ namespace LittleLooters.Gameplay
 
 		public void ShowIndicator()
 		{
-			if (_wasCompleted) return;
+			//if (_wasCompleted) return;
 
-            _indicator.SetActive(true);
+			_indicator.SetActive(true);
+
+			_uiPanel.Show();
 		}
 
-        public void HideIndicator()
+		public void HideIndicator()
 		{
             _indicator.SetActive(false);
+
+			_uiPanel.Hide();
         }
 
         public void StartProcess(RepairPartData data, float speedRepairing, System.Action onComplete)
@@ -84,8 +89,6 @@ namespace LittleLooters.Gameplay
 			_onComplete = onComplete;
 
 			Debug.LogError("<color=green>START</color>");
-
-			_currentPartInUse = data.Id;
 
 			_isProcessing = true;
 
@@ -107,36 +110,6 @@ namespace LittleLooters.Gameplay
 			Debug.LogError("<color=red>STOP</color>");
 		}
 
-		public bool CheckRepairPartNeeded(RepairPartData data)
-		{
-			if (data == null) return false;
-
-			for (int i = 0; i < _parts.Length; i++)
-			{
-				var part = _parts[i];
-
-				if (part.Id == data.Id) return true;
-			}
-
-			return false;
-		}
-
-		public RepairPartData GetCurrentPart()
-		{
-			var part = _parts[0];
-
-			for (int i = 0; i < _parts.Length; i++)
-			{
-				part = _parts[i];
-
-				if (_repairedParts.Contains(part.Id)) continue;
-
-				break;
-			}
-
-			return part;
-		}
-
 		public void ShowNeeded(RepairPartData data)
 		{
 			_neededPartIcon.sprite = data.Icon;
@@ -145,12 +118,18 @@ namespace LittleLooters.Gameplay
 			Invoke(nameof(HideNeeded), _delayToHideNeeded);
 		}
 
+		public void RefreshState(Model.PlayerProgress_ObjectToRepairData data)
+		{
+			_uiPanel.Refresh(data);
+		}
+
 		#endregion
 
 		#region Private methods
 
 		private void Process()
 		{
+			/*
 			_progress += _speedRepairing * _step;
 
 			var progress = Mathf.Clamp(_progress / _progressGoal, 0, 1);
@@ -166,10 +145,12 @@ namespace LittleLooters.Gameplay
 			if (progress < 1) return;
 
 			CompleteProcess();
+			*/
 		}
 
 		private void CompleteProcess()
 		{
+			/*
 			HideIndicator();
 
 			_completed.enabled = true;
@@ -191,62 +172,12 @@ namespace LittleLooters.Gameplay
 			ConsumePart();
 
 			_currentPartInUse = -1;
+			*/
 		}
 
 		private void HideNeeded()
 		{
 			_neededPanel.SetActive(false);
-		}
-
-		#endregion
-
-		#region Slot parts
-
-		private List<RepairPartData> _remainingParts = default;
-		private List<int> _repairedParts = default;
-		private int _currentPartInUse = -1;
-
-		private void InitSlots()
-		{
-			_repairedParts = new List<int>();
-
-			_remainingParts = _parts.ToList();
-
-			HideNotNeededSlots();
-
-			RefreshSlots();
-		}
-
-		private void HideNotNeededSlots()
-		{
-			for (int i = _remainingParts.Count; i < _slotParts.Length; i++)
-			{
-				var slot = _slotParts[i];
-
-				slot.gameObject.SetActive(false);
-			}
-		}
-
-		private void RefreshSlots()
-		{
-			var slotsAmount = _parts.Length;
-			var repairedAmount = _repairedParts.Count;
-
-			for (int i = 0; i < slotsAmount; i++)
-			{
-				var wasRepaired = (i+1 >= repairedAmount);
-				
-				var slot = _slotParts[i];
-
-				slot.color = (wasRepaired) ? _colorRepaired : _colorNonRepaired;
-			}
-		}
-
-		private void ConsumePart()
-		{
-			_repairedParts.Add(_currentPartInUse);
-
-			RefreshSlots();
 		}
 
 		#endregion

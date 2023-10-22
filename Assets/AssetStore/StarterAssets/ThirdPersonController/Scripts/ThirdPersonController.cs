@@ -233,12 +233,12 @@ namespace StarterAssets
             _aimingAssistance = assistance;
 		}
 
-        public void SetupRepairingService(PlayerRepairService service)
+        public void SetupRepairingService(PlayerEntryPoint entryPoint, PlayerRepairService service)
 		{
             // Repairing service
             _repairService = service;
 
-            _repairService.Init(OnStartRepairing, OnStopRepairing, OnCompleteRepairing);
+            _repairService.Init(entryPoint, OnStartRepairing, OnStopRepairing, OnCompleteRepairing);
         }
 
         public void SetAutoaiming(bool status)

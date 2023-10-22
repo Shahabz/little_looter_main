@@ -17,8 +17,15 @@ namespace LittleLooters.Gameplay
 
 		#endregion
 
+		#region Inspector
+
+		[SerializeField] private RepairObject[] _repairObjects = default;
+
+		#endregion
+
 		#region Private properties
 
+		private PlayerEntryPoint _entryPoint = default;
 		private float _speedRepairing = default;
 		private const string _tag = "Repair";
 		private RepairObject _target = default;
@@ -55,11 +62,14 @@ namespace LittleLooters.Gameplay
 
 		#region Public methods
 
-		public void Init(Action onStart, Action onStop, Action onComplete)
+		public void Init(PlayerEntryPoint entryPoint, Action onStart, Action onStop, Action onComplete)
 		{
+			_entryPoint = entryPoint;
 			_onStart = onStart;
 			_onStop = onStop;
 			_onComplete = onComplete;
+
+			_entryPoint.SetupRepairObjects(_repairObjects);
 		}
 
 		public void Teardown()
@@ -102,6 +112,8 @@ namespace LittleLooters.Gameplay
 		{
 			_currentPart = data;
 
+			Debug.LogError($"Pick part <color=cyan>{_currentPart.Id}</color>");
+
 			UI_GameplayEvents.OnPickupedRepairPart?.Invoke(_currentPart);
 		}
 
@@ -127,26 +139,26 @@ namespace LittleLooters.Gameplay
 
 		private void DetectTarget(RepairObject target)
 		{
-			if (target.WasCompleted) return;
+			//if (target.WasCompleted) return;
 
 			if (target.Id == _lastDetectedTarget) return;
 
 			_lastDetectedTarget = target.Id;
 
-			var hasRepairPart = target.CheckRepairPartNeeded(_currentPart);
-
-			if (!hasRepairPart)
+			if (_currentPart != null)
 			{
-				var currentPart = target.GetCurrentPart();
+				_entryPoint.AddPartsToRepairObject(target.Data.Id, _currentPart.Id, 1);
 
-				target.ShowNeeded(currentPart);
+				UI_GameplayEvents.OnConsumedRepairPart?.Invoke(_currentPart);
 
-				Debug.LogError($"You need the part <color=yellow>{currentPart.Id}</color> to repair it!");
-
-				return;
+				_currentPart = null;
 			}
 
 			target.ShowIndicator();
+
+			var (index, targetProgressData) = _entryPoint.ProgressData.GetRepairObjectProgressData(target.Data.Id);
+
+			target.RefreshState(targetProgressData);
 
 			_target = target;
 

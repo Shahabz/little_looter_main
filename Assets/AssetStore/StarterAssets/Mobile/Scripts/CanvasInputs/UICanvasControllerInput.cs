@@ -123,10 +123,10 @@ namespace StarterAssets
 
         private void DetectRepairTarget()
 		{
-            _btnRepair.Deactivate();
+            /*_btnRepair.Deactivate();
             _btnRepair.gameObject.SetActive(true);
 
-            _repairState = false;
+            _repairState = false;*/
 		}
 
         private void UndetectRepairTarget()
