@@ -21,6 +21,10 @@ namespace LittleLooters.Gameplay
 		[SerializeField] private RigBuilder _rigBuilder = default;
 		[SerializeField] private ParticleSystem _damageVfx = default;
 
+		[Header("Weapons")]
+		[SerializeField] private GameObject _assaultWeaponContainer = default;
+		[SerializeField] private GameObject _meleeWeaponContainer = default;
+
 		#endregion
 
 		#region Private properties
@@ -31,6 +35,12 @@ namespace LittleLooters.Gameplay
 		private const string FIRE = "fire";
 		private const string IS_FIRING = "isFiring";
 		private const string DEAD = "dead";
+
+		#endregion
+
+		#region Public properties
+
+		public RuntimeAnimatorController AnimatorController => _animator.runtimeAnimatorController;
 
 		#endregion
 
@@ -79,6 +89,38 @@ namespace LittleLooters.Gameplay
 		public void SetAutoAiming(bool status)
 		{
 			_animator.SetBool(IS_AIMING, status);
+		}
+
+		public void OverrideAnimatorController(RuntimeAnimatorController animatorController)
+		{
+			_animator.runtimeAnimatorController = animatorController;
+		}
+
+		public void ApplyMelee()
+		{
+			_animator.SetTrigger(FIRE);
+		}
+
+		public void SetAssaultWeapon()
+		{
+			_assaultWeaponContainer.SetActive(true);
+			_meleeWeaponContainer.SetActive(false);
+		}
+
+		public void SetMeleeWeapon()
+		{
+			_assaultWeaponContainer.SetActive(false);
+			_meleeWeaponContainer.SetActive(true);
+		}
+
+		public void EnableRig()
+		{
+			_rigBuilder.layers[0].rig.weight = 1;
+		}
+
+		public void DisableRig()
+		{
+			_rigBuilder.layers[0].rig.weight = 0;
 		}
 
 		#endregion

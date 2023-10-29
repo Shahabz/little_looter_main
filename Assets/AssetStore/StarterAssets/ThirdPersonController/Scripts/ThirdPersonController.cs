@@ -131,6 +131,7 @@ namespace StarterAssets
         private PlayerAimingAssistance _aimingAssistance = default;
         private PlayerRepairService _repairService = default;
         private bool _autoaiming = false;
+        private bool _isMeleeDestructionInProgress = false;
 
         private bool IsCurrentDeviceMouse
         {
@@ -186,6 +187,9 @@ namespace StarterAssets
             JumpAndGravity();
             GroundedCheck();
             Move();
+
+            if (_isMeleeDestructionInProgress) return;
+
             FireCheck();
             RepairCheck();
 
@@ -196,6 +200,11 @@ namespace StarterAssets
                 _aimingAssistance?.Process(transform.forward);
 
                 _visualController.SetAutoAiming(_aimingAssistance.TargetDetected);
+
+                if (_aimingAssistance.TargetDetected)
+                {
+                    _aimingAssistance.RotateToTarget();
+                }
             }
         }
 
@@ -247,6 +256,25 @@ namespace StarterAssets
 
             _autoaiming = status;
 		}
+
+        public void StartMeleeDestructionInteraction()
+		{
+            if (_isMeleeDestructionInProgress) return;
+
+            _isMeleeDestructionInProgress = true;
+		}
+
+        public void StopMeleeDestructionInteraction()
+		{
+            if (!_isMeleeDestructionInProgress) return;
+
+            _isMeleeDestructionInProgress = false;
+        }
+
+        public bool IsMoving()
+		{
+            return _input.move != Vector2.zero;
+        }
 
         #endregion
 
@@ -513,7 +541,9 @@ namespace StarterAssets
             }
             if (_autoaiming && _aimingAssistance.TargetDetected)
 			{
-                _aimingAssistance.RotateToTarget();
+                //_aimingAssistance.RotateToTarget();
+
+                return;
             }
             else
 			{
