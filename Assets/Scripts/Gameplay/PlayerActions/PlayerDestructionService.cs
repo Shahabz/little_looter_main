@@ -4,6 +4,7 @@
  */
 
 using LittleLooters.Gameplay.Combat;
+using LittleLooters.Gameplay.UI;
 using StarterAssets;
 using System.Collections.Generic;
 using UnityEngine;
@@ -19,6 +20,7 @@ namespace LittleLooters.Gameplay
     {
 		#region Inspector
 
+		[SerializeField] PlayerEntryPoint _entryPoint = default;
 		[SerializeField] private RuntimeAnimatorController _assaultAnimatorController = default;
 		[SerializeField] private RuntimeAnimatorController _meleeAnimatorController = default;
 
@@ -26,9 +28,10 @@ namespace LittleLooters.Gameplay
 
 		#region Private properties
 
-		private int _damage = 2;    // TODO: this value should come from player's melee weapon data
-		private float _attackRate = 3; // TODO: this value should come from player's melee weapon data
-		private float _delayToStartProcessing = 1; // TODO: this value should come from player's melee weapon data
+		private int _damage = 5;    // TODO: this value should come from player's melee weapon data
+		private int _level = 1;		// TODO: this value should come from player's melee weapon data
+		private float _attackRate = 2.5f; // TODO: this value should come from player's melee weapon data
+		private float _delayToStartProcessing = 0.5f; // TODO: this value should come from player's melee weapon data
 		private const string _tag = "Destructible";
 		private ThirdPersonController _controller = default;
 		private VisualCharacterController _visualController = default;
@@ -37,6 +40,7 @@ namespace LittleLooters.Gameplay
 		private float _nextAttackRemainingTime = 0;
 		private bool _playerIsDead = false;
 		private bool _checkStopMoving = false;
+		private DestructibleResourceObject _lookingTarget = default;
 
 		#endregion
 
@@ -53,10 +57,14 @@ namespace LittleLooters.Gameplay
 			if (!TryGetComponent<PlayerHealth>(out var health)) return;
 
 			health.OnDead += PlayerDeath;
+
+			DestructibleResourceEvents.OnGrantRewardsByDamage += GrantRewardsByDamage;
 		}
 
 		private void OnDestroy()
 		{
+			DestructibleResourceEvents.OnGrantRewardsByDamage -= GrantRewardsByDamage;
+
 			if (!TryGetComponent<PlayerHealth>(out var health)) return;
 
 			health.OnDead -= PlayerDeath;
@@ -130,6 +138,12 @@ namespace LittleLooters.Gameplay
 
 		private void ProcessCheck(float deltaTime)
 		{
+			if (_controller.IsMoving())
+			{
+				StopByPlayerMovement();
+				return;
+			}
+
 			_nextAttackRemainingTime -= deltaTime;
 
 			if (_nextAttackRemainingTime > 0) return;
@@ -141,6 +155,8 @@ namespace LittleLooters.Gameplay
 
 		private void StopProcessing()
 		{
+			if (_canDebug) DebugStopProcessing();
+
 			_controller.StopMeleeDestructionInteraction();
 
 			if (!_animationStarted)
@@ -174,13 +190,52 @@ namespace LittleLooters.Gameplay
 
 			if (_targets.Count == 0) return;
 
+			if (_canDebug) DebugStartProcessing();
+
 			_isInProgress = true;
 
+			_lookingTarget = GetNearestTarget();
+
 			_controller.StartMeleeDestructionInteraction();
+
+			_controller.LookAtMeleeTarget(_lookingTarget.transform);
 
 			_visualController.OverrideAnimatorController(_meleeAnimatorController);
 			_visualController.SetMeleeWeapon();
 			_visualController.DisableRig();
+		}
+
+		private void GrantRewardsByDamage(int resourceId, int amountReward)
+		{
+			_entryPoint.GrantResourceByDestructionDamage(resourceId, amountReward);
+
+			UI.UI_ResourcesAnimation.OnAnimate?.Invoke(resourceId, amountReward);
+		}
+
+		private DestructibleResourceObject GetNearestTarget()
+		{
+			return _targets[0];
+		}
+
+		private void StopByPlayerMovement()
+		{
+			if (_canDebug) DebugStopByMovement();
+
+			_targets.Clear();
+
+			_controller.StopMeleeDestructionInteraction();
+
+			_animationStarted = false;
+
+			_visualController.OverrideAnimatorController(_assaultAnimatorController);
+			_visualController.SetAssaultWeapon();
+			_visualController.EnableRig();
+
+			_isInProgress = false;
+
+			_nextAttackRemainingTime = 0;
+
+			_checkStopMoving = false;
 		}
 
 		#endregion
@@ -189,22 +244,47 @@ namespace LittleLooters.Gameplay
 
 		private bool _animationStarted = false;
 
-		public void MeleeAttackStarted()
+		public void EventAnimationStart()
 		{
 			_animationStarted = true;
+
+			if (_canDebug) DebugAnimationStart();
 		}
 
-		public void CheckMeleeDamageArea()
+		public void EventAnimationImpact()
 		{
+			if (_canDebug) DebugAnimationImpact();
+
+			var destroyed = false;
+
 			for (int i = 0; i < _targets.Count; i++)
 			{
 				var target = _targets[i];
 
 				if (target.IsDead) continue;
 
-				target.TakeDamage(_damage);
+				if (target.LevelRequired > _level)
+				{
+					destroyed = true;
+
+					UI_TextDamagePanel.OnAnimateLevelRequired?.Invoke(target.transform.position, target.LevelRequired);
+
+					target.AnimateDamage();
+
+					_targets.Remove(target);
+
+					target.Undetected();
+
+					continue;
+				}
+				else
+				{
+					target.TakeDamage(_damage);
+				}
 
 				if (!target.IsDead) continue;
+
+				destroyed = true;
 
 				_targets.Remove(target);
 
@@ -212,20 +292,68 @@ namespace LittleLooters.Gameplay
 			}
 
 			// Check if all targets were destroyed
-			if (_targets.Count > 0) return;
+			if (_targets.Count > 0)
+			{
+				if (destroyed && !_targets.Contains(_lookingTarget))
+				{
+					_lookingTarget = GetNearestTarget();
+
+					_controller.LookAtMeleeTarget(_lookingTarget.transform);
+				}
+
+				return;
+			}
 
 			StopProcessing();
 		}
 
-		public void MeleeAttackCompleted()
+		public void EventAnimationEnd()
 		{
+			if (_canDebug) DebugAnimationEnd();
+
 			_animationStarted = false;
 
-			if (_isInProgress) return;
+			if (_targets.Count > 0) return;
 
 			_visualController.OverrideAnimatorController(_assaultAnimatorController);
 			_visualController.SetAssaultWeapon();
 			_visualController.EnableRig();
+		}
+
+		#endregion
+
+		#region Debug
+
+		private bool _canDebug = false;
+
+		private void DebugStartProcessing()
+		{
+			Debug.LogError("<color=green>START</color> processing");
+		}
+
+		private void DebugStopProcessing()
+		{
+			Debug.LogError("<color=red>STOP</color> processing");
+		}
+
+		private void DebugAnimationStart()
+		{
+			Debug.LogError("Animation <color=green>STARTED</color>");
+		}
+
+		private void DebugAnimationImpact()
+		{
+			Debug.LogError("Animation <color=orange>IMPACT</color>");
+		}
+
+		private void DebugAnimationEnd()
+		{
+			Debug.LogError("Animation <color=red>ENDED</color>");
+		}
+
+		private void DebugStopByMovement()
+		{
+			Debug.LogError("Stop processing by <color=magenta>PLAYER's MOVEMENT</color>");
 		}
 
 		#endregion

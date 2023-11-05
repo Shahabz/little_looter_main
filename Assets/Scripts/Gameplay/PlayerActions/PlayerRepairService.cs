@@ -112,7 +112,7 @@ namespace LittleLooters.Gameplay
 		{
 			_currentPart = data;
 
-			Debug.LogError($"Pick part <color=cyan>{_currentPart.Id}</color>");
+			if (_canDebug) DebugPickupPart();
 
 			UI_GameplayEvents.OnPickupedRepairPart?.Invoke(_currentPart);
 		}
@@ -139,8 +139,6 @@ namespace LittleLooters.Gameplay
 
 		private void DetectTarget(RepairObject target)
 		{
-			//if (target.WasCompleted) return;
-
 			if (target.Id == _lastDetectedTarget) return;
 
 			_lastDetectedTarget = target.Id;
@@ -164,7 +162,7 @@ namespace LittleLooters.Gameplay
 
 			_targetDetected = true;
 
-			Debug.LogError($"Repair object detected: <color=green>{_target.name}</color>");
+			if (_canDebug) DebugDetection();
 
 			OnDetectTarget?.Invoke();
 		}
@@ -179,7 +177,7 @@ namespace LittleLooters.Gameplay
 
 			_targetDetected = false;
 
-			Debug.LogError($"Repair object stop detection: <color=red>{target.name}</color>");
+			if (_canDebug) DebugUndetection(target);
 
 			if (target.IsRepairing)
 			{
@@ -202,6 +200,27 @@ namespace LittleLooters.Gameplay
 			UI_GameplayEvents.OnConsumedRepairPart?.Invoke(_currentPart);
 
 			_currentPart = null;
+		}
+
+		#endregion
+
+		#region Debug
+
+		private bool _canDebug = false;
+
+		private void DebugDetection()
+		{
+			Debug.LogError($"Repair object detected: <color=green>{_target.name}</color>");
+		}
+
+		private void DebugUndetection(RepairObject target)
+		{
+			Debug.LogError($"Repair object stop detection: <color=red>{target.name}</color>");
+		}
+
+		private void DebugPickupPart()
+		{
+			Debug.LogError($"Pick part <color=cyan>{_currentPart.Id}</color>");
 		}
 
 		#endregion

@@ -208,13 +208,6 @@ namespace StarterAssets
             }
         }
 
-		/*private void LateUpdate()
-        {
-            if (!canRotateCamera) return;
-
-            CameraRotation();
-        }*/
-
 		private void OnDestroy()
 		{
             _weaponController.Teardown();
@@ -252,8 +245,6 @@ namespace StarterAssets
 
         public void SetAutoaiming(bool status)
 		{
-            Debug.LogError($"controller::autoaiming -> <color=yellow>{status}</color>");
-
             _autoaiming = status;
 		}
 
@@ -262,7 +253,13 @@ namespace StarterAssets
             if (_isMeleeDestructionInProgress) return;
 
             _isMeleeDestructionInProgress = true;
-		}
+        }
+
+        public void LookAtMeleeTarget(Transform target)
+		{
+            // Rotate towards target
+            transform.LookAt(target);
+        }
 
         public void StopMeleeDestructionInteraction()
 		{

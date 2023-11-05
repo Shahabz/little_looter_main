@@ -12,6 +12,7 @@ namespace LittleLooters.Model
     public struct PlayerProgressData
     {
         public PlayerProgress_ObjectToRepairData[] repairProgress;  // TODO: replace it for PlayerProgressRepairData
+        public PlayerProgress_ResourcesData resourcesData;
 
         public void SetupRepairObjects(Gameplay.RepairObject[] repairObjects)
 		{
@@ -66,6 +67,11 @@ namespace LittleLooters.Model
             var repairDuration = repairProgress[index].duration;
 
             repairProgress[index].expiration = UnityEngine.Time.time + repairDuration;
+		}
+
+        public void GrantResourceAmount(int id, int amount)
+		{
+            this.resourcesData.Grant(id, amount);
 		}
     }
 }

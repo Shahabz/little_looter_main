@@ -21,6 +21,7 @@ namespace LittleLooters.Gameplay.UI
 
 		[SerializeField] private WeaponController _weaponController = default;
 		[SerializeField] private TMPro.TextMeshProUGUI _txt = default;
+		[SerializeField] private int _fontSize = 60;
 		[SerializeField] private GameObject _reloading = default;
 		[SerializeField] private Slider _progress = default;
 		[SerializeField] private Slider _fireRateProgress = default;
@@ -83,7 +84,7 @@ namespace LittleLooters.Gameplay.UI
 
 		private void Refresh(int clipSize, int ammo)
 		{
-			_txt.text = $"<size=25>{clipSize}</size><color=white>/{ammo}</color>";
+			_txt.text = $"<size={_fontSize}>{clipSize}</size><color=white>/{ammo}</color>";
 		}
 
 		private void StartReloading(float reloadingTime)

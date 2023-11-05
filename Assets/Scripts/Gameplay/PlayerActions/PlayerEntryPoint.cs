@@ -14,6 +14,9 @@ namespace LittleLooters.Gameplay
     {
 		#region Inspector
 
+		[Header("Progress data")]
+		[SerializeField] private PlayerProgressData _progressData = default;
+
 		[Header("Level")]
 		[SerializeField] private LevelEnemies _levelEnemies = default;
 
@@ -33,7 +36,7 @@ namespace LittleLooters.Gameplay
 
 		#region Private properties
 
-		private PlayerProgressData _progressData = default;
+		//private PlayerProgressData _progressData = default;
 		private PlayerHealth _health = default;
 		private WeaponController _weaponController = default;
 		private VisualCharacterController _visualController = default;
@@ -51,7 +54,7 @@ namespace LittleLooters.Gameplay
 
 		private void Awake()
 		{
-			_progressData = new PlayerProgressData();
+			//_progressData = new PlayerProgressData();
 
 			// Health
 			_health = GetComponent<PlayerHealth>();
@@ -102,6 +105,11 @@ namespace LittleLooters.Gameplay
 		public void AddPartsToRepairObject(int objectId, int partId, int partAmount)
 		{
 			_progressData.AddPartsToRepairObject(objectId, partId, partAmount);
+		}
+
+		public void GrantResourceByDestructionDamage(int resourceId, int amountReward)
+		{
+			_progressData.GrantResourceAmount(resourceId, amountReward);
 		}
 
 		#endregion

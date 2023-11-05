@@ -91,13 +91,13 @@ public class ECExplodingProjectile : MonoBehaviour
             transform.position = hit.point;
             Quaternion rot = Quaternion.FromToRotation(Vector3.forward, hit.normal);
             Vector3 pos = hit.point;
-           
+
             // Check if a destructible should take damage
             if (hit.collider.gameObject.TryGetComponent<ITakeDamage>(out var destructible))
-			{
+            {
                 var damage = CalculateDamage();
                 destructible.TakeDamage(damage);
-			}
+            }
 
             Instantiate(impactPrefab, pos, rot);
 
@@ -159,14 +159,14 @@ public class ECExplodingProjectile : MonoBehaviour
     }
 
     public void DestroyInTime(float time)
-	{
+    {
         Invoke(nameof(AutoDestruction), time);
-	}
+    }
 
     private void AutoDestruction()
-	{
+    {
         Explode();
-	}
+    }
 
     #region Damage
 
@@ -174,17 +174,17 @@ public class ECExplodingProjectile : MonoBehaviour
     private int _maxDamage = 0;
 
     public void SetDamageLimits(int min, int max)
-	{
+    {
         _minDamage = min;
         _maxDamage = max;
-	}
+    }
 
-	private int CalculateDamage()
-	{
-        var damage = Random.Range(_minDamage, _maxDamage+1);
+    private int CalculateDamage()
+    {
+        var damage = Random.Range(_minDamage, _maxDamage + 1);
 
         return damage;
-	}
+    }
 
-	#endregion
+    #endregion
 }

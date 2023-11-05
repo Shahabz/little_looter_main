@@ -4,8 +4,11 @@
  */
 
 using System;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.UI;
+using DG.Tweening;
+using LittleLooters.Gameplay.UI;
 
 namespace LittleLooters.Gameplay
 {
@@ -21,6 +24,7 @@ namespace LittleLooters.Gameplay
     {
 		#region Inspector
 
+		[SerializeField] private DestructibleObjectData _data = default;
 		[SerializeField] private GameObject _art = default;
 		[SerializeField] private float _hp = default;
 		[SerializeField] private float _maxHp = default;
@@ -30,6 +34,28 @@ namespace LittleLooters.Gameplay
 		[SerializeField] private GameObject _uiIndicator = default;
 		[SerializeField] private GameObject _uiProgressBar = default;
 		[SerializeField] private Slider _uiProgressBarFill = default;
+
+		[Header("Damage Animation")]
+		[SerializeField] private Vector3 _animDamagePunch = default;
+		[SerializeField] private float _animDamageDuration = default;
+		[SerializeField] [Range(0, 10)] private int _animDamageVibrato = default;
+		[SerializeField] [Range(0, 1)] private float _animDamageElasticity = default;
+
+		[Header("VFXs")]
+		[SerializeField] private ParticleSystem _vfxHit = default;
+		[SerializeField] private ParticleSystem _vfxDestruction = default;
+
+		#endregion
+
+		#region Private properties
+
+		private System.Collections.Generic.List<DestructibleRewardData> _rewards = default;
+
+		#endregion
+
+		#region Public properties
+
+		public int LevelRequired => _data.LevelRequired;
 
 		#endregion
 
@@ -54,15 +80,28 @@ namespace LittleLooters.Gameplay
 		{
 			_hp = Mathf.Clamp(_hp - damage, 0, _hp);
 
+			UI_TextDamagePanel.OnAnimateDamage?.Invoke(transform.position, Mathf.FloorToInt(damage));
+
 			RefreshHealthBar();
 
-			if (_hp > 0) return;
+			ProcessDamageReward();
+
+			if (_hp > 0)
+			{
+				AnimateDamage();
+
+				ShowVfxDamage();
+
+				return;
+			}
 
 			Death();
 		}
 
 		private void Death()
 		{
+			ShowVfxDestruction();
+
 			_art.SetActive(false);
 
 			_collider.enabled = false;
@@ -74,8 +113,15 @@ namespace LittleLooters.Gameplay
 
 		private void Start()
 		{
+			// Init health based on data
+			Init(_data.Hp, _data.Hp);
+
+			InitRewards();
+
+			// Hide indicator
 			HideIndicator();
 
+			// Hide progress bar
 			HideProgressBar();
 		}
 
@@ -97,9 +143,19 @@ namespace LittleLooters.Gameplay
 			HideProgressBar();
 		}
 
+		public void AnimateDamage()
+		{
+			_art.transform.DOPunchScale(_animDamagePunch, _animDamageDuration, _animDamageVibrato, _animDamageElasticity);
+		}
+
 		#endregion
 
 		#region Private methods
+
+		private void InitRewards()
+		{
+			_rewards = _data.Rewards.ToList();
+		}
 
 		private void ShowIndicator()
 		{
@@ -126,6 +182,43 @@ namespace LittleLooters.Gameplay
 		private void RefreshHealthBar()
 		{
 			_uiProgressBarFill.value = (_hp / _maxHp);
+		}
+
+		private void ProcessDamageReward()
+		{
+			if (_rewards.Count <= 0) return;
+
+			var damageProgress = 1 - (_hp / _maxHp);
+
+			for (int i = 0; i < _rewards.Count; i++)
+			{
+				var data = _rewards[i];
+
+				if (data.percentage > damageProgress) continue;
+
+				GrantReward(data);
+
+				_rewards.RemoveAt(i);
+			}
+		}
+
+		private void GrantReward(DestructibleRewardData data)
+		{
+			// Debug
+			var damageProgress = Mathf.FloorToInt((1 - (_hp / _maxHp)) * 100);
+			Debug.LogError($"Grant reward <color=yellow>{data.resource.DisplayName}</color>, <color=cyan>{data.amount}</color>, damage: %<color=magenta>{damageProgress}</color>");
+
+			DestructibleResourceEvents.OnGrantRewardsByDamage?.Invoke(data.resource.Id, data.amount);
+		}
+
+		private void ShowVfxDamage()
+		{
+			_vfxHit.Play();
+		}
+
+		private void ShowVfxDestruction()
+		{
+			_vfxDestruction.Play();
 		}
 
 		#endregion
