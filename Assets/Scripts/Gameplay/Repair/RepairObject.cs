@@ -68,8 +68,6 @@ namespace LittleLooters.Gameplay
 
 		public void ShowIndicator()
 		{
-			//if (_wasCompleted) return;
-
 			_indicator.SetActive(true);
 
 			_uiPanel.Show();

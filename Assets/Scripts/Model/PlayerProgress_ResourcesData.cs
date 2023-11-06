@@ -20,7 +20,9 @@ namespace LittleLooters.Model
     {
         public PlayerResourceData[] resources;
 
-        public void Grant(int id, int amount)
+		#region Public methods
+
+		public void Grant(int id, int amount)
 		{
             var index = GetIndexById(id);
 
@@ -31,6 +33,30 @@ namespace LittleLooters.Model
             PlayerProgressEvents.OnResourceHasChanged?.Invoke(id, updatedAmount);
 		}
 
+        public PlayerResourceData GetResourceAmount(int id)
+        {
+            for (int i = 0; i < resources.Length; i++)
+            {
+                if (resources[i].info.Id == id) return resources[i];
+            }
+
+            return new PlayerResourceData();
+        }
+
+        public void ConsumeResource(int id, int amount)
+		{
+            var index = GetIndexById(id);
+
+            resources[index].amount = UnityEngine.Mathf.Clamp(resources[index].amount - amount, 0, int.MaxValue);
+
+            var updatedAmount = resources[index].amount;
+
+            PlayerProgressEvents.OnResourceHasChanged?.Invoke(id, updatedAmount);
+        }
+
+        #endregion
+
+        #region Private methods
 
         private int GetIndexById(int id)
 		{
@@ -41,5 +67,7 @@ namespace LittleLooters.Model
 
             return 0;
 		}
-    }
+
+		#endregion
+	}
 }

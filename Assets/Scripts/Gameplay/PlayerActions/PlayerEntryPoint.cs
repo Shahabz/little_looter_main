@@ -16,6 +16,7 @@ namespace LittleLooters.Gameplay
 
 		[Header("Progress data")]
 		[SerializeField] private PlayerProgressData _progressData = default;
+		[SerializeField] private ConfigurationMeleeLevelData[] _meleeConfigurationLevels = default;
 
 		[Header("Level")]
 		[SerializeField] private LevelEnemies _levelEnemies = default;
@@ -36,7 +37,6 @@ namespace LittleLooters.Gameplay
 
 		#region Private properties
 
-		//private PlayerProgressData _progressData = default;
 		private PlayerHealth _health = default;
 		private WeaponController _weaponController = default;
 		private VisualCharacterController _visualController = default;
@@ -54,7 +54,8 @@ namespace LittleLooters.Gameplay
 
 		private void Awake()
 		{
-			//_progressData = new PlayerProgressData();
+			// Initialize melee data at first level
+			InitializeMeleeData();
 
 			// Health
 			_health = GetComponent<PlayerHealth>();
@@ -79,6 +80,9 @@ namespace LittleLooters.Gameplay
 			_controller = GetComponent<ThirdPersonController>();
 			_controller.SetAimingAssistance(aimingAssistance);
 			_controller.SetupRepairingService(this, repairingService);
+
+			UI_GameplayEvents.OnStartMeleeUpgrade += StartMeleeUpgrade;
+			UI_GameplayEvents.OnClaimMeleeUpgrade += ClaimMeleeUpgrade;
 		}
 
 		private void Start()
@@ -91,6 +95,12 @@ namespace LittleLooters.Gameplay
 			_health.OnDead += Dead;
 
 			UI_GameplayEvents.OnPlayerInitialization?.Invoke();
+		}
+
+		private void OnDestroy()
+		{
+			UI_GameplayEvents.OnStartMeleeUpgrade -= StartMeleeUpgrade;
+			UI_GameplayEvents.OnClaimMeleeUpgrade -= ClaimMeleeUpgrade;
 		}
 
 		#endregion
@@ -112,6 +122,28 @@ namespace LittleLooters.Gameplay
 			_progressData.GrantResourceAmount(resourceId, amountReward);
 		}
 
+		public ConfigurationMeleeLevelData GetMeleeNextLevelData()
+		{
+			var currentLevel = _progressData.meleeData.level;
+			var nextLevelData = _meleeConfigurationLevels[0];
+
+			for (int i = 0; i < _meleeConfigurationLevels.Length; i++)
+			{
+				nextLevelData = _meleeConfigurationLevels[i];
+
+				if (nextLevelData.level != currentLevel + 1) continue;
+
+				break;
+			}
+
+			return nextLevelData;
+		}
+
+		public void CompleteMeleeUpgrade()
+		{
+			_progressData.CompleteMeleeUpgrade();
+		}
+
 		#endregion
 
 		#region Private methods
@@ -124,6 +156,26 @@ namespace LittleLooters.Gameplay
 		private void Dead()
 		{
 			_controller.Dead();
+		}
+
+		private void InitializeMeleeData()
+		{
+			_progressData.SetMeleeData(_meleeConfigurationLevels[0]);
+		}
+
+		private void StartMeleeUpgrade()
+		{
+			var nextLevelData = GetMeleeNextLevelData();
+			var now = Time.time;
+			var duration = nextLevelData.upgradeTime;
+			var expiration = now + duration;
+
+			_progressData.StartMeleeUpgrade(duration, expiration, nextLevelData.requirements);
+		}
+
+		private void ClaimMeleeUpgrade()
+		{
+			_progressData.ClaimMeleeUpgrade();
 		}
 
 		#endregion

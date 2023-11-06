@@ -35,6 +35,14 @@ namespace LittleLooters.Gameplay
         /// </summary>
         public static Action<RepairPartData> OnConsumedRepairPart;
 
-        #endregion
-    }
+		#endregion
+
+		#region Melee events
+
+		public static Action OnStartMeleeUpgrade;
+
+		public static Action OnClaimMeleeUpgrade;
+
+		#endregion
+	}
 }

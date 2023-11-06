@@ -3,6 +3,7 @@
  * Author: Peche
  */
 
+using LittleLooters.Gameplay;
 using System;
 using System.Collections.Generic;
 
@@ -13,6 +14,7 @@ namespace LittleLooters.Model
     {
         public PlayerProgress_ObjectToRepairData[] repairProgress;  // TODO: replace it for PlayerProgressRepairData
         public PlayerProgress_ResourcesData resourcesData;
+        public PlayerProgress_MeleeData meleeData;
 
         public void SetupRepairObjects(Gameplay.RepairObject[] repairObjects)
 		{
@@ -73,5 +75,41 @@ namespace LittleLooters.Model
 		{
             this.resourcesData.Grant(id, amount);
 		}
-    }
+
+		#region Melee methods
+
+		public void SetMeleeData(ConfigurationMeleeLevelData levelData)
+		{
+            meleeData.SetMeleeData(levelData);
+		}
+
+        public void StartMeleeUpgrade(float duration, float expiration, MeleeUpgradeRequirementData[] requirements)
+		{
+			// Consume resources based on requirements
+			for (int i = 0; i < requirements.Length; i++)
+			{
+                var requirement = requirements[i];
+
+                var resourceId = requirement.resource.Id;
+                var resourceAmount = requirement.amount;
+
+                resourcesData.ConsumeResource(resourceId, resourceAmount);
+			}
+
+            // Start melee upgrading
+            meleeData.StartUpgrade(duration, expiration);
+		}
+
+        public void CompleteMeleeUpgrade()
+		{
+            meleeData.CompleteUpgrade();
+		}
+
+        public void ClaimMeleeUpgrade()
+		{
+            meleeData.ClaimUpgrade();
+		}
+
+		#endregion
+	}
 }

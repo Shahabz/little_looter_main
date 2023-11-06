@@ -23,15 +23,15 @@ namespace LittleLooters.Gameplay
 		[SerializeField] PlayerEntryPoint _entryPoint = default;
 		[SerializeField] private RuntimeAnimatorController _assaultAnimatorController = default;
 		[SerializeField] private RuntimeAnimatorController _meleeAnimatorController = default;
+		[SerializeField] private float _attackRate = 1.0f;
 
 		#endregion
 
 		#region Private properties
 
-		private int _damage = 5;    // TODO: this value should come from player's melee weapon data
-		private int _level = 1;		// TODO: this value should come from player's melee weapon data
-		private float _attackRate = 2.5f; // TODO: this value should come from player's melee weapon data
-		private float _delayToStartProcessing = 0.5f; // TODO: this value should come from player's melee weapon data
+		private int _damage = -1;	// This value comes from player's melee weapon data
+		private int _level = -1;	// This value comes from player's melee weapon data
+		private float _delayToStartProcessing = 0.5f;
 		private const string _tag = "Destructible";
 		private ThirdPersonController _controller = default;
 		private VisualCharacterController _visualController = default;
@@ -263,7 +263,7 @@ namespace LittleLooters.Gameplay
 
 				if (target.IsDead) continue;
 
-				if (target.LevelRequired > _level)
+				if (target.LevelRequired > _entryPoint.ProgressData.meleeData.level)
 				{
 					destroyed = true;
 
@@ -279,7 +279,7 @@ namespace LittleLooters.Gameplay
 				}
 				else
 				{
-					target.TakeDamage(_damage);
+					target.TakeDamage(_entryPoint.ProgressData.meleeData.damage);
 				}
 
 				if (!target.IsDead) continue;

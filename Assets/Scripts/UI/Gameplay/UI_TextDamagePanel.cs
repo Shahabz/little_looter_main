@@ -23,9 +23,9 @@ namespace LittleLooters.Gameplay.UI
 
 		[SerializeField] private Camera _camera = default;
 		[SerializeField] private TextMeshProUGUI[] _txts = default;
-		[SerializeField] private float _initialOffset = default;
 
 		[Header("Animation damage configuration")]
+		[SerializeField] private float _initialOffset = default;
 		[SerializeField] private int _damageFontSize = 40;
 		[SerializeField] private float _animationInDurationMin = default;
 		[SerializeField] private float _animationInDurationMax = default;
@@ -35,6 +35,7 @@ namespace LittleLooters.Gameplay.UI
 
 		[Header("Animation level required configuration")]
 		[SerializeField] private int _levelRequiredFontSize = 20;
+		[SerializeField] private float _initialLevelOffset = default;
 		[SerializeField] private float _animationLevelDurationMin = default;
 		[SerializeField] private float _animationLevelDurationMax = default;
 		[SerializeField] private float _animationLevelOffsetMin = default;
@@ -139,13 +140,13 @@ namespace LittleLooters.Gameplay.UI
 
 			var levelRequiredText = _readyTexts.Dequeue();
 
-			var initialPosition = GetInitialPosition(position);
+			var initialPosition = GetInitialLevelPosition(position);
 
 			levelRequiredText.transform.position = initialPosition;
 
 			var goalPosition = GetLevelGoalPosition(initialPosition);
 
-			levelRequiredText.text = $"Level Required {level}";
+			levelRequiredText.text = $"You need level {level}";
 			levelRequiredText.fontSize = _levelRequiredFontSize;
 
 			var duration = Random.Range(_animationLevelDurationMin, _animationLevelDurationMax);
@@ -161,6 +162,15 @@ namespace LittleLooters.Gameplay.UI
 			levelRequiredText.transform.localScale = Vector3.one;
 
 			levelRequiredText.enabled = true;
+		}
+
+		private Vector3 GetInitialLevelPosition(Vector3 position)
+		{
+			var screenPosition = _camera.WorldToScreenPoint(position);
+
+			screenPosition.y += _initialLevelOffset;
+
+			return screenPosition;
 		}
 
 		private Vector3 GetLevelGoalPosition(Vector3 position)
