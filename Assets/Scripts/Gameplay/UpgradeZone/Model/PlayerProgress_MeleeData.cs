@@ -48,12 +48,20 @@ namespace LittleLooters.Model
             PlayerProgressEvents.OnMeleeUpgradeCompleted?.Invoke();
         }
 
-        public void ClaimUpgrade()
+        public void ClaimUpgrade(int newDamage)
 		{
+            var args = new PlayerProgressEvents.MeleeUpgradeClaimedArgs()
+            {
+                level = level+1,
+                oldDamage = damage,
+                newDamage = newDamage
+            };
+
             toClaim = false;
             level++;
+            damage = newDamage;
 
-            PlayerProgressEvents.OnMeleeUpgradeClaimed?.Invoke();
+            PlayerProgressEvents.OnMeleeUpgradeClaimed?.Invoke(args);
         }
     }
 }

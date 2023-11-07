@@ -175,7 +175,9 @@ namespace LittleLooters.Gameplay
 
 		private void ClaimMeleeUpgrade()
 		{
-			_progressData.ClaimMeleeUpgrade();
+			var nextLevelData = GetMeleeNextLevelData();
+
+			_progressData.ClaimMeleeUpgrade(nextLevelData.damage);
 		}
 
 		#endregion

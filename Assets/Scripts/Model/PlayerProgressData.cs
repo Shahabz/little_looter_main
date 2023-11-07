@@ -105,9 +105,9 @@ namespace LittleLooters.Model
             meleeData.CompleteUpgrade();
 		}
 
-        public void ClaimMeleeUpgrade()
+        public void ClaimMeleeUpgrade(int newDamage)
 		{
-            meleeData.ClaimUpgrade();
+            meleeData.ClaimUpgrade(newDamage);
 		}
 
 		#endregion

@@ -190,6 +190,7 @@ namespace LittleLooters.Gameplay
 
 			var damageProgress = 1 - (_hp / _maxHp);
 
+			// Grant rewards
 			for (int i = 0; i < _rewards.Count; i++)
 			{
 				var data = _rewards[i];
@@ -197,6 +198,14 @@ namespace LittleLooters.Gameplay
 				if (data.percentage > damageProgress) continue;
 
 				GrantReward(data);
+			}
+
+			// Remove granted rewards
+			for (int i = 0; i < _rewards.Count; i++)
+			{
+				var data = _rewards[i];
+
+				if (data.percentage > damageProgress) continue;
 
 				_rewards.RemoveAt(i);
 			}
@@ -204,9 +213,9 @@ namespace LittleLooters.Gameplay
 
 		private void GrantReward(DestructibleRewardData data)
 		{
-			// Debug
 			var damageProgress = Mathf.FloorToInt((1 - (_hp / _maxHp)) * 100);
-			Debug.LogError($"Grant reward <color=yellow>{data.resource.DisplayName}</color>, <color=cyan>{data.amount}</color>, damage: %<color=magenta>{damageProgress}</color>");
+
+			if (_canDebug) DebugGrantReward(data.resource.DisplayName, data.amount, damageProgress);
 
 			DestructibleResourceEvents.OnGrantRewardsByDamage?.Invoke(data.resource.Id, data.amount);
 		}
@@ -219,6 +228,17 @@ namespace LittleLooters.Gameplay
 		private void ShowVfxDestruction()
 		{
 			_vfxDestruction.Play();
+		}
+
+		#endregion
+
+		#region Debug
+
+		private bool _canDebug = false;
+
+		private void DebugGrantReward(string displayName, int amount, float progress)
+		{
+			Debug.LogError($"Grant reward <color=yellow>{displayName}</color>, <color=cyan>{amount}</color>, damage: %<color=magenta>{progress}</color>");
 		}
 
 		#endregion
