@@ -37,11 +37,13 @@ namespace LittleLooters.Gameplay
 
 		#endregion
 
-		#region Melee events
+		#region Tool events
 
-		public static Action OnStartMeleeUpgrade;
+		public static Action OnStartToolUpgrade;
 
-		public static Action OnClaimMeleeUpgrade;
+		public static Action OnClaimToolUpgrade;
+
+		public static Action OnSpeedUpToolUpgrade;
 
 		#endregion
 	}

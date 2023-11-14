@@ -110,6 +110,11 @@ namespace LittleLooters.Model
             meleeData.ClaimUpgrade(newDamage);
 		}
 
+        public void SpeedUpToolUpgrade()
+		{
+            meleeData.CompleteUpgrade();
+        }
+
 		#endregion
 	}
 }

@@ -150,7 +150,7 @@ namespace LittleLooters.Gameplay.UI
 			Hide();
 
 			// Notify about start upgrading
-			UI_GameplayEvents.OnStartMeleeUpgrade?.Invoke();
+			UI_GameplayEvents.OnStartToolUpgrade?.Invoke();
 		}
 
 		#endregion

@@ -7,7 +7,6 @@ using LittleLooters.Model;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
-using DG.Tweening;
 
 namespace LittleLooters.Gameplay.UI
 {
@@ -19,6 +18,7 @@ namespace LittleLooters.Gameplay.UI
 		[SerializeField] private Canvas _canvas = default;
 		[SerializeField] private TextMeshProUGUI _txtTime = default;
 		[SerializeField] private Image _progressBar = default;
+		[SerializeField] private Button _btnSpeedUp = default;
 
 		#endregion
 
@@ -61,12 +61,16 @@ namespace LittleLooters.Gameplay.UI
 		{
 			PlayerProgressEvents.OnMeleeUpgradeStarted += UpgradeStarted;
 			PlayerProgressEvents.OnMeleeUpgradeCompleted += UpgradeCompleted;
+
+			_btnSpeedUp.onClick.AddListener(SpeedUp);
 		}
 
 		private void OnDestroy()
 		{
 			PlayerProgressEvents.OnMeleeUpgradeStarted -= UpgradeStarted;
 			PlayerProgressEvents.OnMeleeUpgradeCompleted -= UpgradeCompleted;
+
+			_btnSpeedUp.onClick.RemoveAllListeners();
 		}
 
 		private void Update()
@@ -88,7 +92,7 @@ namespace LittleLooters.Gameplay.UI
 			var secs = remainingTime;
 			var mins = Mathf.FloorToInt(secs / 60);
 
-			secs = Mathf.FloorToInt(secs - mins * 60);
+			secs = Mathf.CeilToInt(secs - mins * 60);
 
 			_txtTime.text = $"{mins:00}:{secs:00}";
 
@@ -107,6 +111,13 @@ namespace LittleLooters.Gameplay.UI
 			_inProgress = false;
 
 			Hide();
+		}
+
+		private void SpeedUp()
+		{
+			// TODO: play SFX
+
+			UI_GameplayEvents.OnSpeedUpToolUpgrade?.Invoke();
 		}
 
 		#endregion

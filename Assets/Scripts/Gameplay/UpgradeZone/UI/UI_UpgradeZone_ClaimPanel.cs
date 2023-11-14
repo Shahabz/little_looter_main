@@ -66,7 +66,7 @@ namespace LittleLooters.Gameplay.UI
 		{
 			// TODO: play SFX
 
-			UI_GameplayEvents.OnClaimMeleeUpgrade?.Invoke();
+			UI_GameplayEvents.OnClaimToolUpgrade?.Invoke();
 
 			Hide();
 		}

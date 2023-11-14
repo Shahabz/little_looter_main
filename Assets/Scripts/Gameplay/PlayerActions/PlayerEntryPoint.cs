@@ -81,8 +81,9 @@ namespace LittleLooters.Gameplay
 			_controller.SetAimingAssistance(aimingAssistance);
 			_controller.SetupRepairingService(this, repairingService);
 
-			UI_GameplayEvents.OnStartMeleeUpgrade += StartMeleeUpgrade;
-			UI_GameplayEvents.OnClaimMeleeUpgrade += ClaimMeleeUpgrade;
+			UI_GameplayEvents.OnStartToolUpgrade += StartMeleeUpgrade;
+			UI_GameplayEvents.OnClaimToolUpgrade += ClaimMeleeUpgrade;
+			UI_GameplayEvents.OnSpeedUpToolUpgrade += SpeedUpToolUpgrade;
 		}
 
 		private void Start()
@@ -99,8 +100,9 @@ namespace LittleLooters.Gameplay
 
 		private void OnDestroy()
 		{
-			UI_GameplayEvents.OnStartMeleeUpgrade -= StartMeleeUpgrade;
-			UI_GameplayEvents.OnClaimMeleeUpgrade -= ClaimMeleeUpgrade;
+			UI_GameplayEvents.OnStartToolUpgrade -= StartMeleeUpgrade;
+			UI_GameplayEvents.OnClaimToolUpgrade -= ClaimMeleeUpgrade;
+			UI_GameplayEvents.OnSpeedUpToolUpgrade -= SpeedUpToolUpgrade;
 		}
 
 		#endregion
@@ -178,6 +180,11 @@ namespace LittleLooters.Gameplay
 			var nextLevelData = GetMeleeNextLevelData();
 
 			_progressData.ClaimMeleeUpgrade(nextLevelData.damage);
+		}
+
+		private void SpeedUpToolUpgrade()
+		{
+			_progressData.SpeedUpToolUpgrade();
 		}
 
 		#endregion
