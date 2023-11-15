@@ -11,6 +11,8 @@ namespace LittleLooters.Gameplay
     {
         public static Action OnApplyDamage;
 
+        public static Action<int> OnDestroyed;
+
         public static Action<int, int> OnGrantRewardsByDamage;
 
         public static Action OnStopByPlayerMovement;

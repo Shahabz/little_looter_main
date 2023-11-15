@@ -43,6 +43,8 @@ namespace LittleLooters.Gameplay
 
 		public static Action OnClaimToolUpgrade;
 
+		public static Action OnSkipToolUpgrade;
+
 		public static Action OnSpeedUpToolUpgrade;
 
 		#endregion

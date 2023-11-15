@@ -105,6 +105,8 @@ namespace LittleLooters.Gameplay
 			_art.SetActive(false);
 
 			_collider.enabled = false;
+
+			DestructibleResourceEvents.OnDestroyed?.Invoke(_data.Id);
 		}
 
 		#endregion

@@ -18,7 +18,7 @@ namespace LittleLooters.Gameplay.UI
 		[SerializeField] private Canvas _canvas = default;
 		[SerializeField] private TextMeshProUGUI _txtTime = default;
 		[SerializeField] private Image _progressBar = default;
-		[SerializeField] private Button _btnSpeedUp = default;
+		[SerializeField] private Button _btnSkip = default;
 
 		#endregion
 
@@ -62,7 +62,7 @@ namespace LittleLooters.Gameplay.UI
 			PlayerProgressEvents.OnMeleeUpgradeStarted += UpgradeStarted;
 			PlayerProgressEvents.OnMeleeUpgradeCompleted += UpgradeCompleted;
 
-			_btnSpeedUp.onClick.AddListener(SpeedUp);
+			_btnSkip.onClick.AddListener(Skip);
 		}
 
 		private void OnDestroy()
@@ -70,7 +70,7 @@ namespace LittleLooters.Gameplay.UI
 			PlayerProgressEvents.OnMeleeUpgradeStarted -= UpgradeStarted;
 			PlayerProgressEvents.OnMeleeUpgradeCompleted -= UpgradeCompleted;
 
-			_btnSpeedUp.onClick.RemoveAllListeners();
+			_btnSkip.onClick.RemoveAllListeners();
 		}
 
 		private void Update()
@@ -113,11 +113,11 @@ namespace LittleLooters.Gameplay.UI
 			Hide();
 		}
 
-		private void SpeedUp()
+		private void Skip()
 		{
 			// TODO: play SFX
 
-			UI_GameplayEvents.OnSpeedUpToolUpgrade?.Invoke();
+			UI_GameplayEvents.OnSkipToolUpgrade?.Invoke();
 		}
 
 		#endregion
