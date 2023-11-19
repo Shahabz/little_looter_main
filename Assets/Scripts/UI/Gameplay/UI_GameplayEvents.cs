@@ -48,5 +48,11 @@ namespace LittleLooters.Gameplay
 		public static Action OnSpeedUpToolUpgrade;
 
 		#endregion
+
+		#region Mission events
+
+		public static Action OnMissionAssistance;
+
+		#endregion
 	}
 }

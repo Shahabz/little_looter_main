@@ -26,6 +26,12 @@ namespace LittleLooters.Gameplay.UI
 		[SerializeField] private TextMeshProUGUI _txtTime = default;
 		[SerializeField] private Image _progressBar = default;
 
+		[Header("Animation")]
+		[SerializeField] private float _animationDuration = default;
+		[SerializeField] private float _animationEndValue = default;
+		[SerializeField] private float _animationDelay = default;
+		[SerializeField] private Ease _animationEase = default;
+
 		#endregion
 
 		#region Private properties
@@ -76,6 +82,7 @@ namespace LittleLooters.Gameplay.UI
 			_content.SetActive(false);
 		}
 
+		[ContextMenu("TEST")]
 		private void Show()
 		{
 			_content.SetActive(true);
@@ -134,7 +141,7 @@ namespace LittleLooters.Gameplay.UI
 		private void AnimatePanel()
 		{
 			_panel.transform.localScale = Vector3.zero;
-			_panel.transform.DOScale(1, 0.5f).SetEase(Ease.InOutFlash).SetDelay(0.25f);
+			_panel.transform.DOScale(_animationEndValue, _animationDuration).SetEase(_animationEase).SetDelay(_animationDelay);
 		}
 
 		private void RefreshProgress()

@@ -76,9 +76,16 @@ namespace LittleLooters.Model
             this.resourcesData.Grant(id, amount);
 		}
 
-		#region Melee methods
+        public int GetResourceAmount(int id)
+		{
+            var resourceData = this.resourcesData.GetResourceAmount(id);
 
-		public void SetMeleeData(ConfigurationMeleeLevelData levelData)
+            return resourceData.amount;
+		}
+
+        #region Melee methods
+
+        public void SetMeleeData(ConfigurationMeleeLevelData levelData)
 		{
             meleeData.SetMeleeData(levelData);
 		}

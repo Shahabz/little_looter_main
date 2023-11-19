@@ -50,6 +50,7 @@ namespace LittleLooters.Gameplay
 		#region Private properties
 
 		private System.Collections.Generic.List<DestructibleRewardData> _rewards = default;
+		public int Id => _data.Id;
 
 		#endregion
 

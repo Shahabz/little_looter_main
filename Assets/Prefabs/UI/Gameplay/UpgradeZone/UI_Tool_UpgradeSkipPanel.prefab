@@ -2017,6 +2017,10 @@ MonoBehaviour:
   _playerEntryPoint: {fileID: 0}
   _txtTime: {fileID: 4159199936503512118}
   _progressBar: {fileID: 8729106350398324216}
+  _animationDuration: 0.4
+  _animationEndValue: 1
+  _animationDelay: 0.25
+  _animationEase: 18
 --- !u!1 &5305577344008687919
 GameObject:
   m_ObjectHideFlags: 0

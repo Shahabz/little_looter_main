@@ -5,6 +5,7 @@
 
 using LittleLooters.Gameplay.Combat;
 using StarterAssets;
+using System.Collections;
 using UnityEngine;
 using UnityEngine.Animations.Rigging;
 
@@ -115,12 +116,16 @@ namespace LittleLooters.Gameplay
 
 		public void EnableRig()
 		{
-			_rigBuilder.layers[0].rig.weight = 1;
+			var rig = _rigBuilder.layers[0].rig;
+
+			StartCoroutine(RefreshRigWithDelay(rig, 1));
 		}
 
 		public void DisableRig()
 		{
-			_rigBuilder.layers[0].rig.weight = 0;
+			var rig = _rigBuilder.layers[0].rig;
+
+			StartCoroutine(RefreshRigWithDelay(rig, 0));
 		}
 
 		#endregion
@@ -167,6 +172,13 @@ namespace LittleLooters.Gameplay
 		private void TakeDamage(float damage)
 		{
 			_damageVfx.Play();
+		}
+
+		private IEnumerator RefreshRigWithDelay(Rig rig, float weight)
+		{
+			yield return new WaitForEndOfFrame();
+
+			rig.weight = weight;
 		}
 
 		#endregion

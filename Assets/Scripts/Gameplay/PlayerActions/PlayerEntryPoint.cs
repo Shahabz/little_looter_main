@@ -41,6 +41,7 @@ namespace LittleLooters.Gameplay
 		private WeaponController _weaponController = default;
 		private VisualCharacterController _visualController = default;
 		private ThirdPersonController _controller = default;
+		private PlayerMissionsService _missionsService = default;
 
 		#endregion
 
@@ -81,6 +82,9 @@ namespace LittleLooters.Gameplay
 			_controller.SetAimingAssistance(aimingAssistance);
 			_controller.SetupRepairingService(this, repairingService);
 
+			// Missions service
+			_missionsService = GetComponent<PlayerMissionsService>();
+
 			UI_GameplayEvents.OnStartToolUpgrade += StartMeleeUpgrade;
 			UI_GameplayEvents.OnClaimToolUpgrade += ClaimMeleeUpgrade;
 			UI_GameplayEvents.OnSpeedUpToolUpgrade += SpeedUpToolUpgrade;
@@ -94,6 +98,8 @@ namespace LittleLooters.Gameplay
 
 			_health.OnTakeDamage += TakeDamage;
 			_health.OnDead += Dead;
+
+			_missionsService.Init();
 
 			UI_GameplayEvents.OnPlayerInitialization?.Invoke();
 		}
@@ -144,6 +150,11 @@ namespace LittleLooters.Gameplay
 		public void CompleteMeleeUpgrade()
 		{
 			_progressData.CompleteMeleeUpgrade();
+		}
+
+		public MissionConfigurationData GetMissionInProgress()
+		{
+			return _missionsService.GetCurrentMission();
 		}
 
 		#endregion

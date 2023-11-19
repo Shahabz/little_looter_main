@@ -55,6 +55,11 @@ namespace LittleLooters.Gameplay.UI
             _isEnable = false;
         }
 
+        public void RefreshTransform(Transform target)
+		{
+            _transform = target;
+		}
+
         #endregion
 
         #region Unity events
@@ -66,7 +71,7 @@ namespace LittleLooters.Gameplay.UI
             Init();
         }
 
-        private void Update()
+        private void LateUpdate()
         {
             if (!_initialized) return;
 

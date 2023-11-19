@@ -9,31 +9,44 @@ namespace LittleLooters.Gameplay
 {
     public class PlayerMissionsService : MonoBehaviour
     {
-        [SerializeField] private MissionConfigurationData[] _missions = default;
+		#region Inspector
 
-        private int _missionId = -1;
+		[SerializeField] private MissionConfigurationData[] _missions = default;
+
+		#endregion
+
+		#region Private properties
+
+		private int _missionId = -1;
         private PlayerMissionTriggerDestruction _triggerDestruction = default;
         private PlayerMissionTriggerToolUpgrade _triggerToolUpgrade = default;
 
-        private void Awake()
+		#endregion
+
+		#region Unity events
+
+		private void Awake()
 		{
             _triggerDestruction = new PlayerMissionTriggerDestruction();
-            _triggerDestruction.Initialize(DestructionCompleted);
 
             _triggerToolUpgrade = new PlayerMissionTriggerToolUpgrade();
-            _triggerToolUpgrade.Initialize(ToolUpgradeCompleted);
-
-            FirstMission();
 		}
 
-        private void OnDestroy()
+		private void OnDestroy()
 		{
             _triggerDestruction.Teardown();
             _triggerToolUpgrade.Teardown();
         }
 
-        private void FirstMission()
-        {
+		#endregion
+
+		#region Public methods
+
+        public void Init()
+		{
+            _triggerDestruction.Initialize(DestructionCompleted);
+            _triggerToolUpgrade.Initialize(ToolUpgradeCompleted);
+
             _missionId = 0;
 
             var mission = _missions[_missionId];
@@ -42,6 +55,17 @@ namespace LittleLooters.Gameplay
 
             PlayerMissionsEvents.OnInitialization?.Invoke(_missions[_missionId]);
         }
+
+        public MissionConfigurationData GetCurrentMission()
+		{
+            var id = (_missionId >= _missions.Length) ? _missions.Length - 1 : _missionId;
+
+            return _missions[id];
+		}
+
+		#endregion
+
+		#region Private methods
 
         private void NextMission()
 		{
@@ -79,5 +103,7 @@ namespace LittleLooters.Gameplay
             _triggerDestruction.ResetStatus(data.Type, data);
             _triggerToolUpgrade.ResetStatus(data.Type, data);
 		}
-    }
+
+		#endregion
+	}
 }
