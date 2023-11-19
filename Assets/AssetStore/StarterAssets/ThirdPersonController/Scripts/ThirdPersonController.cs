@@ -188,7 +188,7 @@ namespace StarterAssets
             GroundedCheck();
             Move();
 
-            if (_isMeleeDestructionInProgress) return;
+            //if (_isMeleeDestructionInProgress) return;
 
             FireCheck();
             RepairCheck();

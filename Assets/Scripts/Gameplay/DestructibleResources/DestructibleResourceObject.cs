@@ -50,6 +50,12 @@ namespace LittleLooters.Gameplay
 		#region Private properties
 
 		private System.Collections.Generic.List<DestructibleRewardData> _rewards = default;
+		private bool _isAnimating = false;
+
+		#endregion
+
+		#region Public properties
+
 		public int Id => _data.Id;
 
 		#endregion
@@ -148,7 +154,9 @@ namespace LittleLooters.Gameplay
 
 		public void AnimateDamage()
 		{
-			_art.transform.DOPunchScale(_animDamagePunch, _animDamageDuration, _animDamageVibrato, _animDamageElasticity);
+			if (_isAnimating) return;
+
+			_art.transform.DOPunchScale(_animDamagePunch, _animDamageDuration, _animDamageVibrato, _animDamageElasticity).OnComplete( () => _isAnimating = false );
 		}
 
 		#endregion

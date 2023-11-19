@@ -664,10 +664,10 @@ MonoBehaviour:
   _animationPunchDuration: 0.5
   _animationPunchVibrato: 5
   _animationPunchElasticity: 0.193
-  _animationInGoal: -350
+  _animationInGoal: 100
   _animationInDuration: 0.25
   _animationInDelay: 1
-  _animationOutGoal: 50
+  _animationOutGoal: -45
   _animationOutDuration: 0.5
   _animationOutDelay: 0.5
   _animationOutEase: 28

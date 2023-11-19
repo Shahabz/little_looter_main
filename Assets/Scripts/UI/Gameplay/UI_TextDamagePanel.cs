@@ -47,6 +47,8 @@ namespace LittleLooters.Gameplay.UI
 		#region Private properties
 
 		private Queue<TextMeshProUGUI> _readyTexts = default;
+		private float _delayTimeForNextLevelRequiredMessage = 2;
+		private float _remainingTimeForNextLevelRequiredMessage = 0;
 
 		#endregion
 
@@ -66,6 +68,14 @@ namespace LittleLooters.Gameplay.UI
 			OnAnimateDamage -= SpawnDamage;
 
 			OnAnimateLevelRequired -= SpawnLevelRequired;
+		}
+
+		private void Update()
+		{
+			if (_remainingTimeForNextLevelRequiredMessage > 0)
+			{
+				_remainingTimeForNextLevelRequiredMessage -= Time.deltaTime;
+			}
 		}
 
 		#endregion
@@ -136,6 +146,8 @@ namespace LittleLooters.Gameplay.UI
 
 		private void SpawnLevelRequired(Vector3 position, int level)
 		{
+			if (_remainingTimeForNextLevelRequiredMessage > 0) return;
+
 			if (_readyTexts.Count <= 0) return;
 
 			var levelRequiredText = _readyTexts.Dequeue();
@@ -162,6 +174,8 @@ namespace LittleLooters.Gameplay.UI
 			levelRequiredText.transform.localScale = Vector3.one;
 
 			levelRequiredText.enabled = true;
+
+			_remainingTimeForNextLevelRequiredMessage = _delayTimeForNextLevelRequiredMessage;
 		}
 
 		private Vector3 GetInitialLevelPosition(Vector3 position)

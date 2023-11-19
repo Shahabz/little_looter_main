@@ -24,11 +24,15 @@ namespace LittleLooters.Gameplay
 		[SerializeField] private RuntimeAnimatorController _assaultAnimatorController = default;
 		[SerializeField] private RuntimeAnimatorController _meleeAnimatorController = default;
 		[SerializeField] private float _attackRate = 1.0f;
+		[SerializeField] private float _radiusDetection = default;
+		[SerializeField] private LayerMask _layer = default;
+		[SerializeField] private float _angleFieldOfView = default;
 
 		#endregion
 
 		#region Private properties
 
+		private bool _isPlayerAiming = false;
 		private int _damage = -1;	// This value comes from player's melee weapon data
 		private int _level = -1;	// This value comes from player's melee weapon data
 		private float _delayToStartProcessing = 0.5f;
@@ -41,6 +45,10 @@ namespace LittleLooters.Gameplay
 		private bool _playerIsDead = false;
 		private bool _checkStopMoving = false;
 		private DestructibleResourceObject _lookingTarget = default;
+		private Collider[] _hits = default;
+		private int _lastNotEnabledObject = -1;
+		private float _lastNotEnabledDelay = 10;
+		private float _remainingLastNotEnabledDelay = 0;
 
 		#endregion
 
@@ -48,6 +56,11 @@ namespace LittleLooters.Gameplay
 
 		private void Awake()
 		{
+			PlayerAimingAssistance.OnStartAiming += StartAiming;
+			PlayerAimingAssistance.OnStopAiming += StopAiming;
+
+			_hits = new Collider[100];
+
 			_targets = new List<DestructibleResourceObject>();
 
 			_controller = GetComponent<ThirdPersonController>();
@@ -64,6 +77,9 @@ namespace LittleLooters.Gameplay
 		private void OnDestroy()
 		{
 			DestructibleResourceEvents.OnGrantRewardsByDamage -= GrantRewardsByDamage;
+			
+			PlayerAimingAssistance.OnStartAiming -= StartAiming;
+			PlayerAimingAssistance.OnStopAiming -= StopAiming;
 
 			if (!TryGetComponent<PlayerHealth>(out var health)) return;
 
@@ -74,19 +90,21 @@ namespace LittleLooters.Gameplay
 		{
 			if (_playerIsDead) return;
 
-			if (_checkStopMoving)
+			CheckNotEnabledObject(Time.deltaTime);
+
+			if (!CanProcess()) return;
+
+			if (!_isInProgress)
 			{
-				_checkStopMoving = false;
-				Invoke(nameof(StartProcessing), _delayToStartProcessing);
+				CheckTargetsAround();
+
 				return;
 			}
-
-			if (!_isInProgress) return;
 
 			ProcessCheck(Time.deltaTime);
 		}
 
-		private void OnTriggerEnter(Collider other)
+		/*private void OnTriggerEnter(Collider other)
 		{
 			if (_playerIsDead) return;
 
@@ -96,8 +114,9 @@ namespace LittleLooters.Gameplay
 
 			DetectTarget(destructible);
 		}
+		*/
 
-		private void OnTriggerExit(Collider other)
+		/*private void OnTriggerExit(Collider other)
 		{
 			if (_playerIsDead) return;
 
@@ -107,13 +126,24 @@ namespace LittleLooters.Gameplay
 
 			UndetectTarget(destructible);
 		}
+		*/
 
 		#endregion
 
 		#region Private methods
 
+		private bool CanProcess()
+		{
+			if (_isPlayerAiming) return false;
+
+			return true;
+		}
+
 		private void DetectTarget(DestructibleResourceObject target)
 		{
+			/*
+			if (!CanProcess()) return;
+
 			if (target.IsDead) return;
 
 			target.Detected();
@@ -123,10 +153,14 @@ namespace LittleLooters.Gameplay
 			if (_isInProgress) return;
 
 			Invoke(nameof(StartProcessing), _delayToStartProcessing);
+			*/
 		}
 
 		private void UndetectTarget(DestructibleResourceObject target)
 		{
+			/*
+			if (!CanProcess()) return;
+
 			target.Undetected();
 
 			_targets.Remove(target);
@@ -134,10 +168,13 @@ namespace LittleLooters.Gameplay
 			if (_targets.Count > 0) return;
 
 			StopProcessing();
+			*/
 		}
 
 		private void ProcessCheck(float deltaTime)
 		{
+			if (!CanProcess()) return;
+
 			if (_controller.IsMoving())
 			{
 				StopByPlayerMovement();
@@ -156,6 +193,8 @@ namespace LittleLooters.Gameplay
 		private void StopProcessing()
 		{
 			if (_canDebug) DebugStopProcessing();
+
+			StopAllTargets();
 
 			_controller.StopMeleeDestructionInteraction();
 
@@ -182,14 +221,6 @@ namespace LittleLooters.Gameplay
 
 		private void StartProcessing()
 		{
-			if (_controller.IsMoving())
-			{
-				_checkStopMoving = true;
-				return;
-			}
-
-			if (_targets.Count == 0) return;
-
 			if (_canDebug) DebugStartProcessing();
 
 			_isInProgress = true;
@@ -221,6 +252,15 @@ namespace LittleLooters.Gameplay
 		{
 			if (_canDebug) DebugStopByMovement();
 
+			CancelProcessing();
+
+			GetTargetsOut();
+		}
+
+		private void CancelProcessing()
+		{
+			StopAllTargets();
+
 			_targets.Clear();
 
 			_controller.StopMeleeDestructionInteraction();
@@ -236,6 +276,178 @@ namespace LittleLooters.Gameplay
 			_nextAttackRemainingTime = 0;
 
 			_checkStopMoving = false;
+		}
+
+		private void StartAiming()
+		{
+			_isPlayerAiming = true;
+
+			//if (!_isInProgress && !_animationStarted) return;
+
+			CancelProcessing();
+		}
+
+		private void StopAiming()
+		{
+			_isPlayerAiming = false;
+		}
+
+		private void StopAllTargets()
+		{
+			for (int i = 0; i < _targets.Count; i++)
+			{
+				var target = _targets[i];
+
+				target.Undetected();
+			}
+		}
+
+		private void CheckNotEnabledObject(float deltaTime)
+		{
+			if (_remainingLastNotEnabledDelay < 0) return;
+
+			_remainingLastNotEnabledDelay -= deltaTime;
+
+			if (_remainingLastNotEnabledDelay > 0) return;
+
+			_remainingLastNotEnabledDelay = 0;
+			_lastNotEnabledObject = -1;
+		}
+
+		#endregion
+
+		#region Detection methods
+
+		private void CheckTargetsAround()
+		{
+			GetTargetsOut();
+
+			_targets.Clear();
+
+			// Calculate possible targets inside a circle
+			var targetsAround = GetTargetsAround();
+
+			if (targetsAround.Count == 0) return;
+
+			var playerPosition = transform.position;
+			var playerForward = transform.forward;
+			var targetsInsideFoV = new List<DestructibleResourceObject>();
+
+			// For each possible target check if there is at least one in the cone vision
+			for (int i = 0; i < targetsAround.Count; i++)
+			{
+				var possibleTarget = targetsAround[i];
+
+				var directionToTarget = possibleTarget.transform.position - playerPosition;
+
+				var angle = GetAngle(directionToTarget, playerForward);
+
+				if (angle > _angleFieldOfView) continue;
+
+				targetsInsideFoV.Add(possibleTarget);
+			}
+
+			if (targetsInsideFoV.Count > 0)
+			{
+				_targets = targetsInsideFoV;
+			}
+			else if (targetsAround.Count > 0)
+			{
+				_targets = targetsAround;
+			}
+			else
+			{
+				return;
+			}
+
+			MarkAsDetected();
+
+			// If player is moving, skip process
+			if (_controller.IsMoving()) return;
+
+			var nearest = GetNearestTarget();
+
+			if (_lastNotEnabledObject == nearest.Id) return;
+
+			var currentToolLevel = _entryPoint.ProgressData.meleeData.level;
+
+			if (nearest.LevelRequired > currentToolLevel)
+			{
+				_lastNotEnabledObject = nearest.Id;
+				_remainingLastNotEnabledDelay = _lastNotEnabledDelay;
+			}
+
+			// Start process
+			StartProcessing();
+		}
+
+		private void MarkAsDetected()
+		{
+			for (int i = 0; i < _targets.Count; i++)
+			{
+				var target = _targets[i];
+
+				target.Detected();
+			}
+		}
+
+		private void MarkAsNoDetected(DestructibleResourceObject[] targets)
+		{
+			for (int i = 0; i < targets.Length; i++)
+			{
+				var target = targets[i];
+
+				target.Undetected();
+			}
+		}
+
+		private List<DestructibleResourceObject> GetTargetsAround()
+		{
+			var currentPosition = transform.position;
+
+			var amount = Physics.OverlapSphereNonAlloc(currentPosition, _radiusDetection, _hits, _layer);
+
+			var result = new List<DestructibleResourceObject>(amount);
+
+			for (int i = 0; i < amount; i++)
+			{
+				var hit = _hits[i];
+
+				var target = hit.gameObject.GetComponent<DestructibleResourceObject>();
+
+				if (target.IsDead) continue;
+
+				result.Add(target);
+			}
+
+			return result;
+		}
+
+		private float GetAngle(Vector3 direction, Vector3 forward)
+		{
+			var angleToTarget = Mathf.Abs(Vector3.Angle(direction, forward));
+
+			return angleToTarget;
+		}
+
+		private void GetTargetsOut()
+		{
+			var currentPosition = transform.position;
+
+			var amount = Physics.OverlapSphereNonAlloc(currentPosition, _radiusDetection + 10, _hits, _layer);
+
+			var result = new List<DestructibleResourceObject>(amount);
+
+			for (int i = 0; i < amount; i++)
+			{
+				var hit = _hits[i];
+
+				var target = hit.gameObject.GetComponent<DestructibleResourceObject>();
+
+				result.Add(target);
+			}
+
+			MarkAsNoDetected(result.ToArray());
 		}
 
 		#endregion

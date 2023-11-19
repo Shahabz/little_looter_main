@@ -10,9 +10,16 @@ namespace LittleLooters.Gameplay.Combat
 {
     public class PlayerAimingAssistance
     {
-        #region Private properties
+		#region Events
 
-        private Transform localTransform = default;
+		public static System.Action OnStartAiming;
+        public static System.Action OnStopAiming;
+
+		#endregion
+
+		#region Private properties
+
+		private Transform localTransform = default;
         private float angleThreshold = default;
         private float radiusDetection = default;
         private LevelEnemies levelEnemies = default;
@@ -63,6 +70,8 @@ namespace LittleLooters.Gameplay.Combat
 
             _target = response.target.transform;
 
+            OnStartAiming?.Invoke();
+
             return true;
 		}
 
@@ -72,6 +81,8 @@ namespace LittleLooters.Gameplay.Combat
 
             _targetDetected = false;
             _target = null;
+
+            OnStopAiming?.Invoke();
 
             levelEnemies.StopDetection();
         }
@@ -95,6 +106,8 @@ namespace LittleLooters.Gameplay.Combat
 		{
             var inRange = false;
             EnemyController targetEnemy = null;
+            EnemyController nearestTarget = null;
+            var minDistance = float.MaxValue;
 
             // Calculate possible targets inside a circle
             var targetsAround = GetTargetsAround();
@@ -103,12 +116,14 @@ namespace LittleLooters.Gameplay.Combat
 
             var minAngle = float.MaxValue;
 
-			// For each possible target check if there is at least one in the cone vision
-			for (int i = 0; i < this.results.Length; i++)
+            var playerPosition = this.localTransform.position;
+
+            // For each possible target check if there is at least one in the cone vision
+            for (int i = 0; i < this.results.Length; i++)
 			{
                 var possibleTarget = results[i];
 
-                var directionToTarget = possibleTarget.transform.position - this.localTransform.position;
+                var directionToTarget = possibleTarget.transform.position - playerPosition;
 
                 var response = GetAngle(directionToTarget, forward);
 
@@ -116,14 +131,22 @@ namespace LittleLooters.Gameplay.Combat
 
                 inRange = true;
 
-                if (response.angle > minAngle) continue;
+                //if (response.angle > minAngle) continue;
 
                 targetEnemy = possibleTarget;
 
-                minAngle = response.angle;
+                //minAngle = response.angle;
+
+                var distance = directionToTarget.sqrMagnitude;
+
+                if (distance >= minDistance) continue;
+
+                nearestTarget = targetEnemy;
+
+                minDistance = distance;
 			}
 
-            return (inRange, targetEnemy);
+            return (inRange, nearestTarget);
 		}
 
         private (bool found, float angle) GetAngle(Vector3 direction, Vector3 forward)

@@ -55,7 +55,12 @@ namespace LittleLooters.Gameplay.UI
 
 		#endregion
 
+		#region Private peroperties
+
 		private bool _wasCompleted = false;
+		private bool _assistanceInProgress = false;
+
+		#endregion
 
 		#region Unity
 
@@ -65,6 +70,8 @@ namespace LittleLooters.Gameplay.UI
 			PlayerMissionsEvents.OnMoveToMission += MoveToMission;
 			PlayerMissionsEvents.OnMissionProgress += MissionProgress;
 
+			UI_GameplayEvents.OnMissionAssistanceFinished += MissionAssistanceFinished;
+
 			_btnAssistance.onClick.AddListener(Assistance);
 		}
 
@@ -73,6 +80,8 @@ namespace LittleLooters.Gameplay.UI
 			PlayerMissionsEvents.OnInitialization -= Initialization;
 			PlayerMissionsEvents.OnMoveToMission -= MoveToMission;
 			PlayerMissionsEvents.OnMissionProgress -= MissionProgress;
+
+			UI_GameplayEvents.OnMissionAssistanceFinished -= MissionAssistanceFinished;
 
 			_btnAssistance.onClick.RemoveAllListeners();
 		}
@@ -135,7 +144,7 @@ namespace LittleLooters.Gameplay.UI
 		{
 			_animatedPanel.DOPunchScale(Vector3.one * _animationPunchGoal, _animationPunchDuration, _animationPunchVibrato, _animationPunchElasticity).SetDelay(_animationPunchDelay);
 
-			_animatedPanel.DOLocalMoveX(_animationInGoal, _animationInDuration).SetDelay(_animationInDelay).OnComplete(
+			_animatedPanel.DOLocalMoveY(_animationInGoal, _animationInDuration).SetDelay(_animationInDelay).OnComplete(
 				() => 
 				{
 					OnAnimationInCompleted(data);
@@ -162,24 +171,44 @@ namespace LittleLooters.Gameplay.UI
 
 		private void AnimateCompletionOut()
 		{
-			_animatedPanel.DOLocalMoveX(_animationOutGoal, _animationOutDuration).SetDelay(_animationOutDelay).SetEase(_animationOutEase);
+			_animatedPanel.DOLocalMoveY(_animationOutGoal, _animationOutDuration).SetDelay(_animationOutDelay).SetEase(_animationOutEase);
 		}
 
 		private void Assistance()
 		{
-			// Check if mission was completed
-			if (_wasCompleted) return;
-
 			// TODO: play SFX
 
 			AnimatePanelInteraction();
 
-			UI_GameplayEvents.OnMissionAssistance?.Invoke();
+			// Check if mission was completed
+			if (_wasCompleted) return;
+
+			if (_assistanceInProgress)
+			{
+				MissionAssistanceFinished();
+
+				UI_GameplayEvents.OnCancelMissionAssistance?.Invoke();
+
+				return;
+			}
+
+			_assistanceInProgress = true;
+
+			_iconInfo.SetActive(false);
+
+			UI_GameplayEvents.OnTriggerMissionAssistance?.Invoke();
 		}
 
 		private void AnimatePanelInteraction()
 		{
 			_animatedPanel.DOPunchScale(Vector3.one * _animationInteractionGoal, _animationInteractionDuration, _animationInteractionVibrato, _animationInteractionElasticity).SetEase(_animationInteractionEase);
+		}
+
+		private void MissionAssistanceFinished()
+		{
+			_iconInfo.SetActive(true);
+
+			_assistanceInProgress = false;
 		}
 
 		#endregion

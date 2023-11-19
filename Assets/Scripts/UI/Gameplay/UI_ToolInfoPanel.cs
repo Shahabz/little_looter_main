@@ -71,7 +71,7 @@ namespace LittleLooters.Gameplay.UI
 
         private void RefreshLevel(int level)
 		{
-            _txtLevel.text = $"LEVEL {level}";
+            _txtLevel.text = $"LVL {level}";
 		}
 
         private void ShowUpgradeCompleted()

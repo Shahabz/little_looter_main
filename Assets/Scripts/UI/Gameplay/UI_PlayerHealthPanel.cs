@@ -64,7 +64,7 @@ namespace LittleLooters.Gameplay.UI
 		{
 			var hp = Mathf.CeilToInt(_playerHealth.Health);
 			var maxHp = _playerHealth.MaxHealth;
-			var progress = hp / maxHp;
+			var progress = (float)hp / (float)maxHp;
 
 			_slider.value = progress;
 

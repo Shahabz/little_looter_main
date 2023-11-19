@@ -17,6 +17,13 @@ namespace LittleLooters.Gameplay
 		[SerializeField] private UI_UpgradeZone_Panel _uiPanel = default;
 		[SerializeField] private UI_UpgradeZone_ClaimPanel _uiClaimPanel = default;
 		[SerializeField] private UI_UpgradeZone_InProgressPanel _uiInProgressPanel = default;
+		[SerializeField] private Transform _pivotAssistance = default;
+
+		#endregion
+
+		#region Public properties
+
+		public Transform PivotAssistance => _pivotAssistance;
 
 		#endregion
 

@@ -8,6 +8,11 @@ using DG.Tweening;
 
 namespace LittleLooters.Gameplay.UI
 {
+	/// <summary>
+	/// Logic in charge to show mission indicator above the target.
+	/// If target is offscreen it shows another indicator at the screen pointing towards the target.
+	/// Ref: https://github.com/jinincarnate/off-screen-indicator
+	/// </summary>
 	public class UI_CurrentMission_Assistance : MonoBehaviour
 	{
 		#region Inspector
@@ -15,17 +20,21 @@ namespace LittleLooters.Gameplay.UI
 		[SerializeField] private PlayerEntryPoint _playerEntryPoint = default;
 		[SerializeField] private GameObject _indicator = default;
 		[SerializeField] private UI_FollowCamera _followCameraComponent = default;
-		[SerializeField] private Transform _target = default;
-		[SerializeField] private Vector3 _targetOffset = default;
 		[SerializeField] private Transform _indicatorIcon = default;
 		[SerializeField] private float _animationScale = default;
 		[SerializeField] private float _animationDuration = default;
 		[SerializeField] private float _animationDelay = default;
-		[SerializeField] private GameObject _indicatorOffScreen = default;
 		[SerializeField] private float _assistanceDuration = default;
 		[SerializeField] private float _animationVerticalOffset = default;
 		[SerializeField] private float _animationVerticalDuration = default;
 		[SerializeField] private float _animationVerticalDelay = default;
+
+		[Header("Offscreen")]
+		[SerializeField] private Camera _camera = default;
+		[SerializeField] private GameObject _indicatorOffScreen = default;
+		[SerializeField] private Transform _indicatorOffScreenDirection = default;
+		[SerializeField] private float _verticalOffscreenOffset = default;
+		[SerializeField] private float _offset = default;
 
 		#endregion
 
@@ -35,6 +44,7 @@ namespace LittleLooters.Gameplay.UI
 		private Sequence _tweenSequenceVerticalMovement = default;
 		private MissionDestructionAssistance _destructionAssistance = default;
 		private MissionUpgradeToolAssistance _upgradeToolAssistance = default;
+		private Transform _target = default;
 
 		#endregion
 
@@ -42,7 +52,8 @@ namespace LittleLooters.Gameplay.UI
 
 		private void Awake()
 		{
-			UI_GameplayEvents.OnMissionAssistance += StartAssistance;
+			UI_GameplayEvents.OnTriggerMissionAssistance += StartAssistance;
+			UI_GameplayEvents.OnCancelMissionAssistance += CancelAssistance;
 
 			_destructionAssistance = GetComponent<MissionDestructionAssistance>();
 			_upgradeToolAssistance = GetComponent<MissionUpgradeToolAssistance>();
@@ -60,7 +71,8 @@ namespace LittleLooters.Gameplay.UI
 
 		private void OnDestroy()
 		{
-			UI_GameplayEvents.OnMissionAssistance -= StartAssistance;
+			UI_GameplayEvents.OnTriggerMissionAssistance -= StartAssistance;
+			UI_GameplayEvents.OnCancelMissionAssistance -= CancelAssistance;
 
 			_tweenSequence = null;
 
@@ -93,6 +105,8 @@ namespace LittleLooters.Gameplay.UI
 
 			if (!found) return;
 
+			_target = target;
+
 			_indicator.transform.SetParent(target);
 			_indicator.transform.localScale = Vector3.one * 0.01f;
 			_indicator.transform.localPosition = Vector3.zero + targetOffset;
@@ -103,20 +117,16 @@ namespace LittleLooters.Gameplay.UI
 
 			StartIndicatorAnimation();
 
+			StartIndicatorOffScreen();
+
 			Invoke(nameof(StopAssistance), _assistanceDuration);
 		}
 
 		private void StopAssistance()
 		{
-			_indicator.SetActive(false);
+			CancelAssistance();
 
-			_followCameraComponent.enabled = false;
-
-			_indicator.transform.SetParent(transform);
-			_indicator.transform.localScale = Vector3.one;
-			_indicator.transform.localPosition = Vector3.zero;
-
-			StopIndicatorAnimation();
+			UI_GameplayEvents.OnMissionAssistanceFinished?.Invoke();
 		}
 
 		private (Transform target, Vector3 targetOffset, bool found) GetTargetInfo()
@@ -140,6 +150,76 @@ namespace LittleLooters.Gameplay.UI
 			}
 
 			return (target, offset, found);
+		}
+
+		private void StartIndicatorOffScreen()
+		{
+			_indicatorOffScreen.SetActive(true);
+
+			InvokeRepeating(nameof(RefreshIndicatorOffScreen), 0, 0.1f);
+		}
+
+		private void StopIndicatorOffScreen()
+		{
+			_indicatorOffScreen.SetActive(false);
+
+			CancelInvoke(nameof(RefreshIndicatorOffScreen));
+		}
+
+		private void RefreshIndicatorOffScreen()
+		{
+			var targetPosition = _target.position;
+			targetPosition.y = 0;
+			var targetScreenPosition = _camera.WorldToScreenPoint(targetPosition);
+			
+			// Check if target is on screen
+			var isTargetVisible = IsTargetVisible(targetScreenPosition);
+
+			if (isTargetVisible)
+			{
+				_indicatorOffScreen.SetActive(false);
+				return;
+			}
+
+			_indicatorOffScreen.SetActive(true);
+
+			var playerPosition = _playerEntryPoint.transform.position;
+			playerPosition.y = 0;
+			var playerScreenPosition = _camera.WorldToScreenPoint(playerPosition);
+			playerScreenPosition.y = _verticalOffscreenOffset;
+
+			Vector3 targetDirection = (targetScreenPosition - playerScreenPosition).normalized;
+
+			var angle = Mathf.Atan2(targetDirection.y, targetDirection.x) * Mathf.Rad2Deg;
+
+			_indicatorOffScreenDirection.transform.localEulerAngles = new Vector3(0, 0, angle);
+		}
+
+		/// <summary>
+		/// Gets if the target is within the view frustrum.
+		/// </summary>
+		/// <param name="screenPosition">Position of the target mapped to screen cordinates</param>
+		/// <returns></returns>
+		private bool IsTargetVisible(Vector3 screenPosition)
+		{
+			bool isTargetVisible = screenPosition.z > 0 && (screenPosition.x > _offset) && screenPosition.x < (Screen.width - _offset) && (screenPosition.y > _offset) && screenPosition.y < (Screen.height - _offset);
+
+			return isTargetVisible;
+		}
+
+		private void CancelAssistance()
+		{
+			_indicator.SetActive(false);
+
+			_followCameraComponent.enabled = false;
+
+			_indicator.transform.SetParent(transform);
+			_indicator.transform.localScale = Vector3.one;
+			_indicator.transform.localPosition = Vector3.zero;
+
+			StopIndicatorAnimation();
+
+			StopIndicatorOffScreen();
 		}
 
 		#endregion
