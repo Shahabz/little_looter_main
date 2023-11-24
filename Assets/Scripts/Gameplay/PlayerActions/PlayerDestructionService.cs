@@ -104,30 +104,6 @@ namespace LittleLooters.Gameplay
 			ProcessCheck(Time.deltaTime);
 		}
 
-		/*private void OnTriggerEnter(Collider other)
-		{
-			if (_playerIsDead) return;
-
-			if (!other.tag.Equals(_tag)) return;
-
-			if (!other.gameObject.TryGetComponent<DestructibleResourceObject>(out var destructible)) return;
-
-			DetectTarget(destructible);
-		}
-		*/
-
-		/*private void OnTriggerExit(Collider other)
-		{
-			if (_playerIsDead) return;
-
-			if (!other.tag.Equals(_tag)) return;
-
-			if (!other.gameObject.TryGetComponent<DestructibleResourceObject>(out var destructible)) return;
-
-			UndetectTarget(destructible);
-		}
-		*/
-
 		#endregion
 
 		#region Private methods

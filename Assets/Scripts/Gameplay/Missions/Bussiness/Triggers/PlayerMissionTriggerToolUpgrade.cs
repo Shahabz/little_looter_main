@@ -19,11 +19,15 @@ namespace LittleLooters.Gameplay
 			_callback = callback;
 
 			PlayerProgressEvents.OnMeleeUpgradeClaimed += ToolUpgradeClaimed;
+
+			ExplorableObjectEvents.OnEnter += ExplorableFound;
 		}
 
 		public void Teardown()
 		{
 			PlayerProgressEvents.OnMeleeUpgradeClaimed -= ToolUpgradeClaimed;
+
+			ExplorableObjectEvents.OnEnter -= ExplorableFound;
 
 			_callback = null;
 		}
@@ -62,6 +66,15 @@ namespace LittleLooters.Gameplay
 			PlayerMissionsEvents.OnMissionProgress?.Invoke(1, 1);
 
 			_callback?.Invoke();
+		}
+
+		private void ExplorableFound(ExplorableObjectType explorableType)
+		{
+			if (!_inProgress) return;
+
+			if (explorableType != ExplorableObjectType.UPGRADE_TOOL) return;
+
+			UI_GameplayEvents.OnStopMissionAssistance?.Invoke();
 		}
 	}
 }

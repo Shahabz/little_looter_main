@@ -9,12 +9,25 @@ namespace LittleLooters.Gameplay
 {
     public class DestructibleResourceEvents
     {
-        public static Action OnApplyDamage;
+        public static Action<DestructibleResourceApplyDamageArgs> OnApplyDamage;
 
         public static Action<int> OnDestroyed;
 
         public static Action<int, int> OnGrantRewardsByDamage;
 
         public static Action OnStopByPlayerMovement;
+	}
+
+	public struct DestructibleResourceApplyDamageArgs
+	{
+        public int id;
+        public DestructibleResourceType type;
+    }
+
+    public enum DestructibleResourceType 
+    {
+        NONE,
+        SMALL_BOX,
+        GRILL
     }
 }

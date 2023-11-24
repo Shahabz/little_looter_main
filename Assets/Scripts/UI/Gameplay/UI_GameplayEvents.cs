@@ -54,6 +54,7 @@ namespace LittleLooters.Gameplay
 		public static Action OnTriggerMissionAssistance;
 		public static Action OnCancelMissionAssistance;
 		public static Action OnMissionAssistanceFinished;
+		public static Action OnStopMissionAssistance;
 
 		#endregion
 	}

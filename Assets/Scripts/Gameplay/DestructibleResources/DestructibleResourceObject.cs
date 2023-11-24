@@ -89,6 +89,14 @@ namespace LittleLooters.Gameplay
 
 			UI_TextDamagePanel.OnAnimateDamage?.Invoke(transform.position, Mathf.FloorToInt(damage));
 
+			var args = new DestructibleResourceApplyDamageArgs()
+			{
+				id = _data.Id,
+				type = _data.Type
+			};
+
+			DestructibleResourceEvents.OnApplyDamage?.Invoke(args);
+
 			RefreshHealthBar();
 
 			ProcessDamageReward();
@@ -140,7 +148,7 @@ namespace LittleLooters.Gameplay
 
 		public void Detected()
 		{
-			ShowIndicator();
+			//ShowIndicator();
 
 			ShowProgressBar();
 		}

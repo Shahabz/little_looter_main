@@ -1554,6 +1554,7 @@ GameObject:
   - component: {fileID: 3672721258747491948}
   - component: {fileID: 6697962230720899629}
   - component: {fileID: 3672721258747491951}
+  - component: {fileID: 1348358464781368271}
   m_Layer: 0
   m_Name: upgradeZone
   m_TagString: UpgradeZone
@@ -1613,6 +1614,19 @@ MonoBehaviour:
   _uiClaimPanel: {fileID: 3672721259500111330}
   _uiInProgressPanel: {fileID: 3771411117078221122}
   _pivotAssistance: {fileID: 2008161248587955021}
+--- !u!114 &1348358464781368271
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3672721258747491949}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ddecbbf244ae4434a9cd10de442ca7f9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _type: 1
 --- !u!1 &3672721259232011207
 GameObject:
   m_ObjectHideFlags: 0
@@ -4042,11 +4056,6 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 138d10f28321e8440873d052b9cc490e, type: 3}
---- !u!224 &3672721259500111331 stripped
-RectTransform:
-  m_CorrespondingSourceObject: {fileID: 4987366471548630026, guid: 138d10f28321e8440873d052b9cc490e, type: 3}
-  m_PrefabInstance: {fileID: 8632995760077468137}
-  m_PrefabAsset: {fileID: 0}
 --- !u!114 &3672721259500111330 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 4987366471548630027, guid: 138d10f28321e8440873d052b9cc490e, type: 3}
@@ -4058,3 +4067,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: dadd7196f2335c84b80c89b7aa84936e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!224 &3672721259500111331 stripped
+RectTransform:
+  m_CorrespondingSourceObject: {fileID: 4987366471548630026, guid: 138d10f28321e8440873d052b9cc490e, type: 3}
+  m_PrefabInstance: {fileID: 8632995760077468137}
+  m_PrefabAsset: {fileID: 0}

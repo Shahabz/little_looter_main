@@ -71,6 +71,7 @@ namespace LittleLooters.Gameplay.UI
 			PlayerMissionsEvents.OnMissionProgress += MissionProgress;
 
 			UI_GameplayEvents.OnMissionAssistanceFinished += MissionAssistanceFinished;
+			UI_GameplayEvents.OnStopMissionAssistance += MissionAssistanceFinished;
 
 			_btnAssistance.onClick.AddListener(Assistance);
 		}
@@ -82,6 +83,7 @@ namespace LittleLooters.Gameplay.UI
 			PlayerMissionsEvents.OnMissionProgress -= MissionProgress;
 
 			UI_GameplayEvents.OnMissionAssistanceFinished -= MissionAssistanceFinished;
+			UI_GameplayEvents.OnStopMissionAssistance -= MissionAssistanceFinished;
 
 			_btnAssistance.onClick.RemoveAllListeners();
 		}

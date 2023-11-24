@@ -11,6 +11,7 @@ namespace LittleLooters.Gameplay
     public class DestructibleObjectData : ScriptableObject
     {
         public int Id;
+        public DestructibleResourceType Type;
         public int Hp;
         public int LevelRequired;
         public DestructibleRewardData[] Rewards;

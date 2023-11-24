@@ -54,6 +54,7 @@ namespace LittleLooters.Gameplay.UI
 		{
 			UI_GameplayEvents.OnTriggerMissionAssistance += StartAssistance;
 			UI_GameplayEvents.OnCancelMissionAssistance += CancelAssistance;
+			UI_GameplayEvents.OnStopMissionAssistance += CancelAssistance;
 
 			_destructionAssistance = GetComponent<MissionDestructionAssistance>();
 			_upgradeToolAssistance = GetComponent<MissionUpgradeToolAssistance>();
@@ -73,6 +74,7 @@ namespace LittleLooters.Gameplay.UI
 		{
 			UI_GameplayEvents.OnTriggerMissionAssistance -= StartAssistance;
 			UI_GameplayEvents.OnCancelMissionAssistance -= CancelAssistance;
+			UI_GameplayEvents.OnStopMissionAssistance -= CancelAssistance;
 
 			_tweenSequence = null;
 

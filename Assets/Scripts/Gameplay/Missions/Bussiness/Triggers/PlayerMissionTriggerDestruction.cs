@@ -3,21 +3,25 @@
  * Author: Peche
  */
 
+using System;
+
 namespace LittleLooters.Gameplay
 {
     public class PlayerMissionTriggerDestruction
     {
         private const MissionType _missionType = MissionType.DESTRUCTION;
         private int _id = -1;
+        private DestructibleResourceType _destructibleResourceType = DestructibleResourceType.NONE;
         private int _amountGoal = 0;
         private int _amount = 0;
         private bool _inProgress = false;
-        private System.Action _callback = null;
+        private Action _callback = null;
 
-        public void Initialize(System.Action callback)
+        public void Initialize(Action callback)
 		{
             _callback = callback;
 
+            DestructibleResourceEvents.OnApplyDamage += ObjectDamaged;
             DestructibleResourceEvents.OnDestroyed += ObjectDestroyed;
         }
 
@@ -25,10 +29,11 @@ namespace LittleLooters.Gameplay
 		{
             _callback = null;
 
+            DestructibleResourceEvents.OnApplyDamage -= ObjectDamaged;
             DestructibleResourceEvents.OnDestroyed -= ObjectDestroyed;
         }
 
-        public void ResetStatus(MissionType type, MissionConfigurationData mission)
+		public void ResetStatus(MissionType type, MissionConfigurationData mission)
 		{
             if (_missionType != type)
 			{
@@ -39,12 +44,13 @@ namespace LittleLooters.Gameplay
 
             var data = (MissionResourceDestructionData) mission;
 
-            Start(data.Amount, data.Destructible.Id);
+            Start(data.Amount, data.Destructible.Id, data.Destructible.Type);
 		}
 
-        public void Start(int amount, int id)
+        public void Start(int amount, int id, DestructibleResourceType type)
 		{
             _id = id;
+            _destructibleResourceType = type;
             _amountGoal = amount;
             _amount = 0;
             _inProgress = true;
@@ -72,5 +78,14 @@ namespace LittleLooters.Gameplay
 
             _callback?.Invoke();
 		}
+
+        private void ObjectDamaged(DestructibleResourceApplyDamageArgs args)
+        {
+            if (!_inProgress) return;
+
+            if (_destructibleResourceType != args.type) return;
+
+            UI_GameplayEvents.OnStopMissionAssistance?.Invoke();
+        }
     }
 }
