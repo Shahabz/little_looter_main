@@ -14,6 +14,6 @@ namespace LittleLooters.Gameplay
         public string Description;
         public MissionType Type;
 
-        public virtual int GetProgressGoal() { return 0; }
+        public virtual int GetProgressGoal() { return 1; }
     }
 }

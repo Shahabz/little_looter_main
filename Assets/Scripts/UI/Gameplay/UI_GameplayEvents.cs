@@ -35,6 +35,11 @@ namespace LittleLooters.Gameplay
         /// </summary>
         public static Action<RepairPartData> OnConsumedRepairPart;
 
+		/// <summary>
+		/// Invoked when player tries to fix a slot (second param) from an object (first param)
+		/// </summary>
+		public static Action<int, int> OnFixSlot;
+
 		#endregion
 
 		#region Tool events

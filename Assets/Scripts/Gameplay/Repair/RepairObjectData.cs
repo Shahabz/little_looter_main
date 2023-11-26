@@ -3,6 +3,7 @@
  * Author: Peche
  */
 
+using LittleLooters.General;
 using UnityEngine;
 
 namespace LittleLooters.Gameplay
@@ -10,7 +11,7 @@ namespace LittleLooters.Gameplay
     [System.Serializable]
     public struct PartsData
 	{
-        public RepairPartData data;
+        public ResourceData resourceData;
         public int amount;
     }
 
@@ -18,6 +19,7 @@ namespace LittleLooters.Gameplay
     public class RepairObjectData : ScriptableObject
     {
         public int Id;
+        public string DisplayName;
         [Tooltip("Parts needed to start repairing")]
         public PartsData[] Parts;
         [Tooltip("Time (in secs) to complete repairing")]

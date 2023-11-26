@@ -42,7 +42,7 @@ namespace LittleLooters.Model
                 var partData = data.Parts[i];
                 var partProgress = new PartProgress()
                 {
-                    id = partData.data.Id,
+                    id = partData.resourceData.Id,
                     amount = 0,
                     total = partData.amount
                 };
@@ -95,6 +95,19 @@ namespace LittleLooters.Model
 			}
 
             return true;
+		}
+
+        public int Fix(int id, int amount)
+		{
+            var progress = GetPartProgress(id);
+
+            var remaining = progress.total - progress.amount;
+
+            var toConsume = Math.Min(amount, remaining);
+
+            AddPartsTo(id, toConsume);
+
+            return toConsume;
 		}
     }
 }

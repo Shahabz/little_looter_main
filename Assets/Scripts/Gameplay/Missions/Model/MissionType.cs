@@ -10,6 +10,7 @@ namespace LittleLooters.Gameplay
     {
         NONE,
         DESTRUCTION,
-        TOOL_UPGRADE
+        TOOL_UPGRADE,
+        EXPLORATION,
     }
 }

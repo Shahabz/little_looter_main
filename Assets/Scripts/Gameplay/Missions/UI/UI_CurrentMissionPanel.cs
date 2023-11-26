@@ -121,6 +121,8 @@ namespace LittleLooters.Gameplay.UI
 			RefreshProgress(0, goal);
 
 			_extraInfoPanel.Refresh(data);
+
+			Assistance();
 		}
 
 		private void RefreshProgress(int current, int goal)

@@ -20,22 +20,24 @@ namespace LittleLooters.Gameplay
 		private int _missionId = -1;
         private PlayerMissionTriggerDestruction _triggerDestruction = default;
         private PlayerMissionTriggerToolUpgrade _triggerToolUpgrade = default;
+        private PlayerMissionTriggerExploration _triggerExploration = default;
 
-		#endregion
+        #endregion
 
-		#region Unity events
+        #region Unity events
 
-		private void Awake()
+        private void Awake()
 		{
             _triggerDestruction = new PlayerMissionTriggerDestruction();
-
             _triggerToolUpgrade = new PlayerMissionTriggerToolUpgrade();
+            _triggerExploration = new PlayerMissionTriggerExploration();
 		}
 
 		private void OnDestroy()
 		{
             _triggerDestruction.Teardown();
             _triggerToolUpgrade.Teardown();
+            _triggerExploration.Teardown();
         }
 
 		#endregion
@@ -44,8 +46,9 @@ namespace LittleLooters.Gameplay
 
         public void Init()
 		{
-            _triggerDestruction.Initialize(DestructionCompleted);
-            _triggerToolUpgrade.Initialize(ToolUpgradeCompleted);
+            _triggerDestruction.Initialize(MissionCompleted);
+            _triggerToolUpgrade.Initialize(MissionCompleted);
+            _triggerExploration.Initialize(MissionCompleted);
 
             _missionId = 0;
 
@@ -84,24 +87,18 @@ namespace LittleLooters.Gameplay
             PlayerMissionsEvents.OnMoveToMission?.Invoke(_missions[_missionId]);
         }
 
-        private void ToolUpgradeCompleted()
-		{
+        private void MissionCompleted()
+        {
             _missionId++;
 
             NextMission();
-		}
-
-        private void DestructionCompleted()
-		{
-            _missionId++;
-
-            NextMission();
-		}
+        }
 
         private void StartTrigger(MissionConfigurationData data)
 		{
             _triggerDestruction.ResetStatus(data.Type, data);
             _triggerToolUpgrade.ResetStatus(data.Type, data);
+            _triggerExploration.ResetStatus(data.Type, data);
 		}
 
 		#endregion

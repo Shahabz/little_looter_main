@@ -13,6 +13,8 @@ namespace LittleLooters.Gameplay
 
 		private const string _tag = "Player";
 
+		public ExplorableObjectType Type => _type;
+
 		private void OnTriggerEnter(Collider other)
 		{
 			if (!other.tag.Equals(_tag)) return;

@@ -118,7 +118,7 @@ namespace LittleLooters.Gameplay
 
 		public void RefreshState(Model.PlayerProgress_ObjectToRepairData data)
 		{
-			_uiPanel.Refresh(data);
+			//_uiPanel.Refresh(data);
 		}
 
 		#endregion

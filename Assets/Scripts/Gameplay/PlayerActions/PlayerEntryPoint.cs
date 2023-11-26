@@ -88,6 +88,8 @@ namespace LittleLooters.Gameplay
 			UI_GameplayEvents.OnStartToolUpgrade += StartMeleeUpgrade;
 			UI_GameplayEvents.OnClaimToolUpgrade += ClaimMeleeUpgrade;
 			UI_GameplayEvents.OnSpeedUpToolUpgrade += SpeedUpToolUpgrade;
+
+			UI_GameplayEvents.OnFixSlot += FixSlot;
 		}
 
 		private void Start()
@@ -109,6 +111,8 @@ namespace LittleLooters.Gameplay
 			UI_GameplayEvents.OnStartToolUpgrade -= StartMeleeUpgrade;
 			UI_GameplayEvents.OnClaimToolUpgrade -= ClaimMeleeUpgrade;
 			UI_GameplayEvents.OnSpeedUpToolUpgrade -= SpeedUpToolUpgrade;
+
+			UI_GameplayEvents.OnFixSlot -= FixSlot;
 		}
 
 		#endregion
@@ -196,6 +200,11 @@ namespace LittleLooters.Gameplay
 		private void SpeedUpToolUpgrade()
 		{
 			_progressData.SpeedUpToolUpgrade();
+		}
+
+		private void FixSlot(int objectId, int resourceId)
+		{
+			_progressData.Fix(objectId, resourceId);
 		}
 
 		#endregion

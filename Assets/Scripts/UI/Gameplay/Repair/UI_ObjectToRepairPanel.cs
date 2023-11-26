@@ -3,6 +3,8 @@
  * Author: Peche
  */
 
+using DG.Tweening;
+using LittleLooters.Model;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -12,11 +14,21 @@ namespace LittleLooters.Gameplay.UI
     {
 		#region Inspector
 
+		[SerializeField] private PlayerEntryPoint _playerEntry = default;
+		[SerializeField] private TMPro.TextMeshProUGUI _txtDisplayName = default;
 		[SerializeField] private GameObject _content = default;
 		[SerializeField] private Slider _progressBar = default;
 		[SerializeField] private TMPro.TextMeshProUGUI _txtRepairProgress = default;
 		[SerializeField] private UI_ObjectToRepairPanel_Slot[] _slots = default;
 		[SerializeField] private GameObject _completed = default;
+
+		[Header("Repair button")]
+		[SerializeField] private Button _btnRepair = default;
+		[SerializeField] private Image _btnRepairBackground = default;
+		[SerializeField] private Color _btnRepairColorEnabled = default;
+		[SerializeField] private Transform _btnRepairAlert = default;
+		[SerializeField] private float _alertAnimationScale = default;
+		[SerializeField] private float _alertAnimationDuration = default;
 
 		#endregion
 
@@ -26,10 +38,26 @@ namespace LittleLooters.Gameplay.UI
 		private bool _isReparing = false;
 		private int _duration = 0;
 		private float _expiration = 0;
+		private Sequence _tweenSequence = default;
 
 		#endregion
 
 		#region Unity events
+
+		private void Awake()
+		{
+			_tweenSequence = DOTween.Sequence()
+								.Append(_btnRepairAlert.DOScale(Vector3.one * _alertAnimationScale, _alertAnimationDuration).SetDelay(0.1f))
+								.Append(_btnRepairAlert.DOScale(Vector2.one, _alertAnimationDuration))
+								.SetLoops(-1, LoopType.Restart);
+
+			PlayerProgressEvents.OnSlotFixDone += HandleSlotFixDone;
+		}
+
+		private void OnDestroy()
+		{
+			PlayerProgressEvents.OnSlotFixDone -= HandleSlotFixDone;
+		}
 
 		private void Update()
 		{
@@ -48,6 +76,8 @@ namespace LittleLooters.Gameplay.UI
 
 		public void Setup(RepairObjectData data)
 		{
+			_txtDisplayName.text = data.DisplayName.ToUpperInvariant();
+
             HideSlots();
 
 			HideProgressBar();
@@ -62,7 +92,7 @@ namespace LittleLooters.Gameplay.UI
 
 				var slot = _slots[i];
 
-				slot.Setup(partData);
+				slot.Setup(data.Id, partData.resourceData.Id, partData.resourceData.Icon, partData.amount, partData.resourceData.DisplayName);
 
 				slot.gameObject.SetActive(true);
 			}
@@ -71,6 +101,8 @@ namespace LittleLooters.Gameplay.UI
 		public void Show()
 		{
 			_content.SetActive(true);
+
+			RefreshSlots();
 		}
 
 		public void Hide()
@@ -80,6 +112,7 @@ namespace LittleLooters.Gameplay.UI
 
 		public void Refresh(Model.PlayerProgress_ObjectToRepairData data)
 		{
+			/*
 			if (_wasCompleted) return;
 
 			for (int i = 0; i < _slots.Length; i++)
@@ -117,6 +150,7 @@ namespace LittleLooters.Gameplay.UI
 			_expiration = data.expiration;
 
 			ShowRepairProgress(data.duration, data.expiration);
+			*/
 		}
 
 		#endregion
@@ -177,6 +211,35 @@ namespace LittleLooters.Gameplay.UI
 			_wasCompleted = true;
 
 			HideProgressBar();
+		}
+
+		private void RefreshSlots()
+		{
+			for (int i = 0; i < _slots.Length; i++)
+			{
+				var slot = _slots[i];
+
+				if (!slot.gameObject.activeSelf) continue;
+
+				var playerResourceAmount = _playerEntry.ProgressData.GetResourceAmount(slot.ResourceId);
+				var (_, objectData) = _playerEntry.ProgressData.GetRepairObjectProgressData(slot.ObjectId);
+				var objectPartProgressData = objectData.GetPartProgress(slot.ResourceId);
+
+				slot.Refresh(playerResourceAmount, objectPartProgressData.amount, objectPartProgressData.total);
+			}
+		}
+
+		private void HandleSlotFixDone(PlayerProgressEvents.RepairSlotArgs args)
+		{
+			if (!args.allSlotsDone) return;
+
+			_btnRepair.interactable = true;
+
+			_btnRepairBackground.color = _btnRepairColorEnabled;
+
+			_btnRepairAlert.gameObject.SetActive(true);
+
+			_tweenSequence.Restart();
 		}
 
 		#endregion

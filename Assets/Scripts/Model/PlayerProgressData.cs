@@ -123,5 +123,34 @@ namespace LittleLooters.Model
         }
 
 		#endregion
+
+		#region Repair methods
+
+        public void Fix(int objectId, int resourceId)
+		{
+            var resourceAmount = GetResourceAmount(resourceId);
+            var (index, repairObject) = GetRepairObjectProgressData(objectId);
+
+            var consumedResourceAmount = repairObject.Fix(resourceId, resourceAmount);
+
+            repairProgress[index] = repairObject;
+
+            resourcesData.ConsumeResource(resourceId, consumedResourceAmount);
+
+            var resourceProgress = repairObject.GetPartProgress(resourceId);
+
+            var args = new PlayerProgressEvents.RepairSlotArgs()
+            {
+                objectId = objectId,
+                resourceId = resourceId,
+                currentAmount = resourceProgress.amount,
+                totalAmount = resourceProgress.total,
+                allSlotsDone = repairObject.AllPartsCompleted()
+            };
+
+            PlayerProgressEvents.OnSlotFixDone?.Invoke(args);
+		}
+
+		#endregion
 	}
 }

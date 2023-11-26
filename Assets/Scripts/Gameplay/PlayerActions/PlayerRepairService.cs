@@ -154,9 +154,9 @@ namespace LittleLooters.Gameplay
 
 			target.ShowIndicator();
 
-			var (index, targetProgressData) = _entryPoint.ProgressData.GetRepairObjectProgressData(target.Data.Id);
+			//var (index, targetProgressData) = _entryPoint.ProgressData.GetRepairObjectProgressData(target.Data.Id);
 
-			target.RefreshState(targetProgressData);
+			//target.RefreshState(targetProgressData);
 
 			_target = target;
 

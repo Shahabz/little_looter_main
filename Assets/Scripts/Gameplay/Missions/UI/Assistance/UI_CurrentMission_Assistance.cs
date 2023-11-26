@@ -44,6 +44,7 @@ namespace LittleLooters.Gameplay.UI
 		private Sequence _tweenSequenceVerticalMovement = default;
 		private MissionDestructionAssistance _destructionAssistance = default;
 		private MissionUpgradeToolAssistance _upgradeToolAssistance = default;
+		private MissionExplorationAssistance _explorationAssistance = default;
 		private Transform _target = default;
 
 		#endregion
@@ -58,6 +59,7 @@ namespace LittleLooters.Gameplay.UI
 
 			_destructionAssistance = GetComponent<MissionDestructionAssistance>();
 			_upgradeToolAssistance = GetComponent<MissionUpgradeToolAssistance>();
+			_explorationAssistance = GetComponent<MissionExplorationAssistance>();
 
 			_tweenSequence = DOTween.Sequence()
 									.Append(_indicatorIcon.DOScale(Vector3.one * _animationScale, _animationDuration).SetDelay(_animationDelay))
@@ -149,6 +151,13 @@ namespace LittleLooters.Gameplay.UI
 			if (currentMission.Type == MissionType.TOOL_UPGRADE)
 			{
 				return _upgradeToolAssistance.Process(currentMission, _playerEntryPoint.ProgressData);
+			}
+
+			if (currentMission.Type == MissionType.EXPLORATION)
+			{
+				var missionInfo = (MissionExplorationData)currentMission;
+
+				return _explorationAssistance.Process(currentMission, missionInfo.explorableType);
 			}
 
 			return (target, offset, found);
