@@ -40,6 +40,21 @@ namespace LittleLooters.Gameplay
 		/// </summary>
 		public static Action<int, int> OnFixSlot;
 
+		/// <summary>
+		/// Invoked when player tries to start the object repairing
+		/// </summary>
+		public static Action<int> OnStartRepairing;
+
+		/// <summary>
+		/// Invoked by player when it wants to skip the progress
+		/// </summary>
+		public static Action<int, float, int> OnSkipRepairing;
+
+		/// <summary>
+		/// Invoked when player wants to skip the repairing in progress
+		/// </summary>
+		public static Action<int> OnSpeedUpRepairing;
+
 		#endregion
 
 		#region Tool events

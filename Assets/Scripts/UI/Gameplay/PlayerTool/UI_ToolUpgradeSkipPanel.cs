@@ -13,6 +13,8 @@ namespace LittleLooters.Gameplay.UI
 {
     public class UI_ToolUpgradeSkipPanel : MonoBehaviour
     {
+		public enum SkipPanelOpeningReason { NONE, TOOL_UPGRADE, REPAIR }
+
 		#region Inspector
 
 		[SerializeField] private GameObject _content = default;
@@ -36,9 +38,11 @@ namespace LittleLooters.Gameplay.UI
 
 		#region Private properties
 
+		private int _objectId = -1;
 		private bool _inProgress = false;
 		private float _expiration = default;
 		private float _duration = default;
+		private SkipPanelOpeningReason _openingReason = SkipPanelOpeningReason.NONE;
 
 		#endregion
 
@@ -46,8 +50,11 @@ namespace LittleLooters.Gameplay.UI
 
 		private void Awake()
 		{
-			UI_GameplayEvents.OnSkipToolUpgrade += SkipUpgrade;
-			PlayerProgressEvents.OnMeleeUpgradeCompleted += UpgradeCompleted;
+			UI_GameplayEvents.OnSkipToolUpgrade += SkipToolUpgrade;
+			PlayerProgressEvents.OnMeleeUpgradeCompleted += ToolUpgradeCompleted;
+
+			UI_GameplayEvents.OnSkipRepairing += HandleSkipRepair;
+			PlayerProgressEvents.OnCompleteRepairing += HandleRepairCompleted;
 
 			_btnWatchAd.onClick.AddListener(WatchAd);
 			_btnInstant.onClick.AddListener(InstantUpgrade);
@@ -58,8 +65,11 @@ namespace LittleLooters.Gameplay.UI
 
 		private void OnDestroy()
 		{
-			UI_GameplayEvents.OnSkipToolUpgrade -= SkipUpgrade;
-			PlayerProgressEvents.OnMeleeUpgradeCompleted -= UpgradeCompleted;
+			UI_GameplayEvents.OnSkipToolUpgrade -= SkipToolUpgrade;
+			PlayerProgressEvents.OnMeleeUpgradeCompleted -= ToolUpgradeCompleted;
+
+			UI_GameplayEvents.OnSkipRepairing -= HandleSkipRepair;
+			PlayerProgressEvents.OnCompleteRepairing -= HandleRepairCompleted;
 
 			_btnWatchAd.onClick.RemoveAllListeners();
 			_btnInstant.onClick.RemoveAllListeners();
@@ -90,41 +100,31 @@ namespace LittleLooters.Gameplay.UI
 			AnimatePanel();
 		}
 
-		private void SkipUpgrade()
-		{
-			_expiration = _playerEntryPoint.ProgressData.meleeData.upgradeExpiration;
-			_duration = _playerEntryPoint.GetMeleeNextLevelData().upgradeTime;
-
-			_inProgress = true;
-
-			Show();
-		}
-
-		private void UpgradeCompleted()
-		{
-			_inProgress = false;
-
-			Hide();
-		}
-
 		private void WatchAd()
 		{
 			// TODO: play SFX
 
-			UI_GameplayEvents.OnSpeedUpToolUpgrade?.Invoke();
+			if (_openingReason == SkipPanelOpeningReason.TOOL_UPGRADE)
+			{
+				UI_GameplayEvents.OnSpeedUpToolUpgrade?.Invoke();
+			}
+			else if (_openingReason == SkipPanelOpeningReason.REPAIR)
+			{
+				UI_GameplayEvents.OnSpeedUpRepairing?.Invoke(_objectId);
+			}
 
 			_inProgress = false;
+
+			_objectId = -1;
 
 			Hide();
 		}
 
 		private void InstantUpgrade()
 		{
-			// TODO: play SFX
+			// TODO: SFX
 
 			// TODO
-
-			_inProgress = false;
 
 			Debug.LogError("TODO");
 		}
@@ -132,6 +132,8 @@ namespace LittleLooters.Gameplay.UI
 		private void Close()
 		{
 			// TODO: play SFX
+
+			_openingReason = SkipPanelOpeningReason.NONE;
 
 			_inProgress = false;
 
@@ -162,5 +164,61 @@ namespace LittleLooters.Gameplay.UI
 		}
 
 		#endregion
+
+		#region Tool upgrade
+
+		private void SkipToolUpgrade()
+		{
+			_openingReason = SkipPanelOpeningReason.TOOL_UPGRADE;
+
+			_expiration = _playerEntryPoint.ProgressData.meleeData.upgradeExpiration;
+			_duration = _playerEntryPoint.GetMeleeNextLevelData().upgradeTime;
+
+			_inProgress = true;
+
+			Show();
+		}
+
+		private void ToolUpgradeCompleted()
+		{
+			if (_openingReason != SkipPanelOpeningReason.TOOL_UPGRADE) return;
+
+			_openingReason = SkipPanelOpeningReason.NONE;
+
+			_inProgress = false;
+
+			Hide();
+		}
+
+		#endregion
+
+		#region Repair
+
+		private void HandleSkipRepair(int objectId, float expiration, int duration)
+		{
+			_openingReason = SkipPanelOpeningReason.REPAIR;
+
+			_objectId = objectId;
+			_expiration = expiration;
+			_duration = duration;
+
+			_inProgress = true;
+
+			Show();
+		}
+
+		private void HandleRepairCompleted(int id)
+		{
+			if (_openingReason != SkipPanelOpeningReason.REPAIR) return;
+
+			_openingReason = SkipPanelOpeningReason.NONE;
+
+			_inProgress = false;
+
+			Hide();
+		}
+
+		#endregion
+
 	}
 }

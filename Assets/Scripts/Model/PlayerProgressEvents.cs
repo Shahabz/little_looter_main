@@ -9,6 +9,8 @@ namespace LittleLooters.Model
 {
 	public class PlayerProgressEvents
 	{
+		public static int SKIP_TIME_SECS = 900;	// 15 mins
+
 		public static Action<int, int> OnResourceHasChanged;
 
 		#region Melee
@@ -37,6 +39,12 @@ namespace LittleLooters.Model
 
 		public static Action<RepairSlotArgs> OnSlotFixDone;
 
+		public static Action<RepairStartActionArgs> OnStartRepairing;
+
+		public static Action<int> OnCompleteRepairing;
+
+		public static Action<RepairSpeedUpArgs> OnSpeedUpRepairing;
+
 		public struct RepairSlotArgs
 		{
 			public int objectId;
@@ -44,6 +52,20 @@ namespace LittleLooters.Model
 			public int currentAmount;
 			public int totalAmount;
 			public bool allSlotsDone;
+		}
+
+		public struct RepairStartActionArgs
+		{
+			public int id;
+			public float expiration;
+			public int duration;
+		}
+
+		public struct RepairSpeedUpArgs
+		{
+			public int id;
+			public float expiration;
+			public int duration;
 		}
 
 		#endregion

@@ -90,6 +90,8 @@ namespace LittleLooters.Gameplay
 			UI_GameplayEvents.OnSpeedUpToolUpgrade += SpeedUpToolUpgrade;
 
 			UI_GameplayEvents.OnFixSlot += FixSlot;
+			UI_GameplayEvents.OnStartRepairing += StartRepairing;
+			UI_GameplayEvents.OnSpeedUpRepairing += SpeedUpRepairing;
 		}
 
 		private void Start()
@@ -113,6 +115,8 @@ namespace LittleLooters.Gameplay
 			UI_GameplayEvents.OnSpeedUpToolUpgrade -= SpeedUpToolUpgrade;
 
 			UI_GameplayEvents.OnFixSlot -= FixSlot;
+			UI_GameplayEvents.OnStartRepairing -= StartRepairing;
+			UI_GameplayEvents.OnSpeedUpRepairing -= SpeedUpRepairing;
 		}
 
 		#endregion
@@ -124,10 +128,10 @@ namespace LittleLooters.Gameplay
 			_progressData.SetupRepairObjects(repairObjects);
 		}
 
-		public void AddPartsToRepairObject(int objectId, int partId, int partAmount)
-		{
-			_progressData.AddPartsToRepairObject(objectId, partId, partAmount);
-		}
+		//public void AddPartsToRepairObject(int objectId, int partId, int partAmount)
+		//{
+		//	_progressData.AddPartsToRepairObject(objectId, partId, partAmount);
+		//}
 
 		public void GrantResourceByDestructionDamage(int resourceId, int amountReward)
 		{
@@ -159,6 +163,11 @@ namespace LittleLooters.Gameplay
 		public MissionConfigurationData GetMissionInProgress()
 		{
 			return _missionsService.GetCurrentMission();
+		}
+
+		public void CompleteRepairing(int objectId)
+		{
+			_progressData.CompleteRepairing(objectId);
 		}
 
 		#endregion
@@ -205,6 +214,18 @@ namespace LittleLooters.Gameplay
 		private void FixSlot(int objectId, int resourceId)
 		{
 			_progressData.Fix(objectId, resourceId);
+		}
+
+		private void StartRepairing(int id)
+		{
+			var now = Time.time;
+
+			_progressData.StartRepairing(id, now);
+		}
+
+		private void SpeedUpRepairing(int objectId)
+		{
+			_progressData.SpeedUpRepairing(objectId);
 		}
 
 		#endregion

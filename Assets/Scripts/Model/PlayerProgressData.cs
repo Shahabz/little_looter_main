@@ -50,7 +50,7 @@ namespace LittleLooters.Model
             return (0, new PlayerProgress_ObjectToRepairData());
 		}
 
-        public void AddPartsToRepairObject(int objectId, int partId, int partAmount)
+        /*public void AddPartsToRepairObject(int objectId, int partId, int partAmount)
 		{
             UnityEngine.Debug.LogError($"Add part <color=cyan>{partId}</color> to object <color=yellow>{objectId}</color>");
 
@@ -69,7 +69,7 @@ namespace LittleLooters.Model
             var repairDuration = repairProgress[index].duration;
 
             repairProgress[index].expiration = UnityEngine.Time.time + repairDuration;
-		}
+		}*/
 
         public void GrantResourceAmount(int id, int amount)
 		{
@@ -150,6 +150,59 @@ namespace LittleLooters.Model
 
             PlayerProgressEvents.OnSlotFixDone?.Invoke(args);
 		}
+
+        public void StartRepairing(int objectId, float startTimestamp)
+		{
+            var (index, repairObject) = GetRepairObjectProgressData(objectId);
+
+            repairObject.StartRepairing(startTimestamp);
+
+            repairProgress[index] = repairObject;
+
+            var args = new PlayerProgressEvents.RepairStartActionArgs()
+            {
+                id = objectId,
+                expiration = startTimestamp + repairObject.duration,
+                duration = repairObject.duration
+            };
+
+            PlayerProgressEvents.OnStartRepairing?.Invoke(args);
+        }
+
+        public void CompleteRepairing(int objectId)
+		{
+            var (index, repairObject) = GetRepairObjectProgressData(objectId);
+
+            repairObject.CompleteRepairing();
+
+            repairProgress[index] = repairObject;
+
+            PlayerProgressEvents.OnCompleteRepairing?.Invoke(objectId);
+        }
+
+        public void SpeedUpRepairing(int objectId)
+		{
+            var (index, repairObject) = GetRepairObjectProgressData(objectId);
+
+            repairObject.SpeedUp();
+
+            repairProgress[index] = repairObject;
+
+            var args = new PlayerProgressEvents.RepairSpeedUpArgs()
+            {
+                id = objectId,
+                expiration = repairObject.expiration,
+                duration = repairObject.duration
+            };
+
+            if (repairObject.expiration > 0)
+            {
+                PlayerProgressEvents.OnSpeedUpRepairing?.Invoke(args);
+                return;
+            }
+
+            CompleteRepairing(objectId);
+        }
 
 		#endregion
 	}

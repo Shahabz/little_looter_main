@@ -3,6 +3,7 @@
  * Author: Peche
  */
 
+using LittleLooters.Model;
 using System;
 using UnityEngine;
 
@@ -35,10 +36,25 @@ namespace LittleLooters.Gameplay
 		private Action _onComplete = default;
 		private RepairPartData _currentPart = null;
 		private int _lastDetectedTarget = -1;
+		private bool _isRepairing = false;
+		private float _expiration = default;
+		private int _objectId = -1;
 
 		#endregion
 
 		#region Unity events
+
+		private void Awake()
+		{
+			PlayerProgressEvents.OnStartRepairing += HandleStartRepairing;
+			PlayerProgressEvents.OnSpeedUpRepairing += HandleSpeedUpRepairing;
+		}
+
+		private void OnDestroy()
+		{
+			PlayerProgressEvents.OnStartRepairing -= HandleStartRepairing;
+			PlayerProgressEvents.OnSpeedUpRepairing -= HandleSpeedUpRepairing;
+		}
 
 		private void OnTriggerEnter(Collider other)
 		{
@@ -56,6 +72,13 @@ namespace LittleLooters.Gameplay
 			if (!other.gameObject.TryGetComponent<RepairObject>(out var repairObject)) return;
 
 			UndetectTarget(repairObject);
+		}
+
+		private void Update()
+		{
+			if (!_isRepairing) return;
+
+			ProcessRepairingProgress();
 		}
 
 		#endregion
@@ -84,25 +107,6 @@ namespace LittleLooters.Gameplay
 			_speedRepairing = speed;
 		}
 
-		public void CheckInput(StarterAssets.StarterAssetsInputs input)
-		{
-			// Check if there is a detected target
-			if (!_targetDetected) return;
-
-			// Check if repair input state is the same as the current target repairing state
-			if (input.repair == _target.IsRepairing) return;
-
-			// Check if it should start repairing
-			if (input.repair)
-			{
-				StartRepairing();
-				return;
-			}
-
-			// Else stop current target repairing state
-			StopRepairing();
-		}
-
 		public bool CanPickup()
 		{
 			return _currentPart == null;
@@ -121,42 +125,13 @@ namespace LittleLooters.Gameplay
 
 		#region Private methods
 
-		private void StartRepairing()
-		{
-			_target.StartProcess(_currentPart, _speedRepairing, CompleteRepairing);
-
-			_onStart?.Invoke();
-		}
-
-		private void StopRepairing()
-		{
-			if (!_targetDetected) return;
-
-			_target.StopProcess();
-
-			_onStop?.Invoke();
-		}
-
 		private void DetectTarget(RepairObject target)
 		{
 			if (target.Id == _lastDetectedTarget) return;
 
 			_lastDetectedTarget = target.Id;
 
-			if (_currentPart != null)
-			{
-				_entryPoint.AddPartsToRepairObject(target.Data.Id, _currentPart.Id, 1);
-
-				UI_GameplayEvents.OnConsumedRepairPart?.Invoke(_currentPart);
-
-				_currentPart = null;
-			}
-
 			target.ShowIndicator();
-
-			//var (index, targetProgressData) = _entryPoint.ProgressData.GetRepairObjectProgressData(target.Data.Id);
-
-			//target.RefreshState(targetProgressData);
 
 			_target = target;
 
@@ -179,27 +154,45 @@ namespace LittleLooters.Gameplay
 
 			if (_canDebug) DebugUndetection(target);
 
-			if (target.IsRepairing)
-			{
-				target.StopProcess();
-
-				_onStop?.Invoke();
-			}
-
 			_target = null;
 
 			OnUndetectTarget?.Invoke();
 		}
 
+		private void HandleStartRepairing(PlayerProgressEvents.RepairStartActionArgs args)
+		{
+			_objectId = args.id;
+			_expiration = args.expiration;
+			_isRepairing = true;
+		}
+
 		private void CompleteRepairing()
 		{
-			_onComplete?.Invoke();
+			if (_canDebug) DebugRepairingCompletion();
 
-			OnUndetectTarget?.Invoke();
+			_entryPoint.CompleteRepairing(_objectId);
 
-			UI_GameplayEvents.OnConsumedRepairPart?.Invoke(_currentPart);
+			_isRepairing = false;
+			_objectId = -1;
+			_expiration = 0;
+		}
 
-			_currentPart = null;
+		private void HandleSpeedUpRepairing(PlayerProgressEvents.RepairSpeedUpArgs args)
+		{
+			_objectId = args.id;
+			_expiration = args.expiration;
+			_isRepairing = true;
+		}
+
+		private void ProcessRepairingProgress()
+		{
+			if (_canDebug) DebugRepairingProgress();
+
+			var remainingTime = _expiration - Time.time;
+
+			if (remainingTime > 0) return;
+
+			CompleteRepairing();
 		}
 
 		#endregion
@@ -221,6 +214,16 @@ namespace LittleLooters.Gameplay
 		private void DebugPickupPart()
 		{
 			Debug.LogError($"Pick part <color=cyan>{_currentPart.Id}</color>");
+		}
+
+		private void DebugRepairingProgress()
+		{
+			Debug.LogError($"Repairing progress -> remaining time: <color=cyan>{_expiration - Time.time}</color>");
+		}
+
+		private void DebugRepairingCompletion()
+		{
+			Debug.LogError($"Repairing progress -> <color=green>COMPLETED</color>");
 		}
 
 		#endregion

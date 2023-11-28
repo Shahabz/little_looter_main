@@ -22,7 +22,6 @@ namespace LittleLooters.Model
         public int id;
         public PartProgress[] progress;
         public bool isRepairing;
-        public long startRepairing;
         public float expiration;
         public bool wasRepaired;
         public int duration;
@@ -35,7 +34,6 @@ namespace LittleLooters.Model
 
             wasRepaired = false;
             isRepairing = false;
-            startRepairing = 0;
 
 			for (int i = 0; i < data.Parts.Length; i++)
 			{
@@ -108,6 +106,24 @@ namespace LittleLooters.Model
             AddPartsTo(id, toConsume);
 
             return toConsume;
+		}
+
+        public void StartRepairing(float startTimestamp)
+		{
+            isRepairing = true;
+            expiration = startTimestamp + duration;
+		}
+
+        public void CompleteRepairing()
+		{
+            isRepairing = false;
+            expiration = 0;
+            wasRepaired = true;
+		}
+
+        public void SpeedUp()
+		{
+            expiration = UnityEngine.Mathf.Clamp(expiration - PlayerProgressEvents.SKIP_TIME_SECS, 0, expiration);
 		}
     }
 }

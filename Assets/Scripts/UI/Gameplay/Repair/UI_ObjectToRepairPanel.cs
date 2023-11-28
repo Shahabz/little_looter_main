@@ -14,14 +14,14 @@ namespace LittleLooters.Gameplay.UI
     {
 		#region Inspector
 
-		[SerializeField] private PlayerEntryPoint _playerEntry = default;
-		[SerializeField] private TMPro.TextMeshProUGUI _txtDisplayName = default;
 		[SerializeField] private GameObject _content = default;
-		[SerializeField] private Slider _progressBar = default;
-		[SerializeField] private TMPro.TextMeshProUGUI _txtRepairProgress = default;
-		[SerializeField] private UI_ObjectToRepairPanel_Slot[] _slots = default;
-		[SerializeField] private GameObject _completed = default;
+		[SerializeField] private PlayerEntryPoint _playerEntry = default;
 
+		[Header("Slots panel")]
+		[SerializeField] private GameObject _slotsPanel = default;
+		[SerializeField] private TMPro.TextMeshProUGUI _txtDisplayName = default;
+		[SerializeField] private UI_ObjectToRepairPanel_Slot[] _slots = default;
+		
 		[Header("Repair button")]
 		[SerializeField] private Button _btnRepair = default;
 		[SerializeField] private Image _btnRepairBackground = default;
@@ -30,10 +30,20 @@ namespace LittleLooters.Gameplay.UI
 		[SerializeField] private float _alertAnimationScale = default;
 		[SerializeField] private float _alertAnimationDuration = default;
 
+		[Header("Progress panel")]
+		[SerializeField] private GameObject _progressPanel = default;
+		[SerializeField] private Slider _progressBar = default;
+		[SerializeField] private TMPro.TextMeshProUGUI _txtRepairProgress = default;
+		[SerializeField] private Button _btnSkip = default;
+
+		[Header("Completed panel")]
+		[SerializeField] private GameObject _completedPanel = default;
+
 		#endregion
 
 		#region Private properties
 
+		private int _id = default;
 		private bool _wasCompleted = false;
 		private bool _isReparing = false;
 		private int _duration = 0;
@@ -52,11 +62,29 @@ namespace LittleLooters.Gameplay.UI
 								.SetLoops(-1, LoopType.Restart);
 
 			PlayerProgressEvents.OnSlotFixDone += HandleSlotFixDone;
+			PlayerProgressEvents.OnStartRepairing += HandleRepairingStarted;
+			PlayerProgressEvents.OnCompleteRepairing += HandleRepairingCompleted;
+			PlayerProgressEvents.OnSpeedUpRepairing += HandleRepairingSpeedUp;
+		}
+
+		private void OnEnable()
+		{
+			_btnRepair.onClick.AddListener(StartRepairingInput);
+			_btnSkip.onClick.AddListener(Skip);
+		}
+
+		private void OnDisable()
+		{
+			_btnRepair.onClick.RemoveAllListeners();
+			_btnSkip.onClick.RemoveAllListeners();
 		}
 
 		private void OnDestroy()
 		{
 			PlayerProgressEvents.OnSlotFixDone -= HandleSlotFixDone;
+			PlayerProgressEvents.OnStartRepairing -= HandleRepairingStarted;
+			PlayerProgressEvents.OnCompleteRepairing -= HandleRepairingCompleted;
+			PlayerProgressEvents.OnSpeedUpRepairing -= HandleRepairingSpeedUp;
 		}
 
 		private void Update()
@@ -66,8 +94,6 @@ namespace LittleLooters.Gameplay.UI
 			if (!_isReparing) return;
 
 			ShowRepairProgress(_duration, _expiration);
-
-			CheckCompletion();
 		}
 
 		#endregion
@@ -76,13 +102,15 @@ namespace LittleLooters.Gameplay.UI
 
 		public void Setup(RepairObjectData data)
 		{
+			_id = data.Id;
+
 			_txtDisplayName.text = data.DisplayName.ToUpperInvariant();
 
             HideSlots();
 
 			HideProgressBar();
 
-			_completed.SetActive(false);
+			HideCompleted();
 
 			for (int i = 0; i < data.Parts.Length; i++)
 			{
@@ -102,60 +130,50 @@ namespace LittleLooters.Gameplay.UI
 		{
 			_content.SetActive(true);
 
+			if (_wasCompleted)
+			{
+				ShowCompleted();
+				HideSlotsPanel();
+				HideProgressBar();
+				return;
+			}
+
+			if (_isReparing)
+			{
+				ShowProgressBar();
+				HideCompleted();
+				HideSlotsPanel();
+				return;
+			}
+
+			ShowSlotsPanel();
 			RefreshSlots();
+			HideProgressBar();
+			HideCompleted();
 		}
 
 		public void Hide()
 		{
 			_content.SetActive(false);
-		}
 
-		public void Refresh(Model.PlayerProgress_ObjectToRepairData data)
-		{
-			/*
-			if (_wasCompleted) return;
-
-			for (int i = 0; i < _slots.Length; i++)
-			{
-				var slot = _slots[i];
-
-				if (!slot.gameObject.activeSelf) continue;
-
-				var slotId = slot.Id;
-
-				var partProgressData = data.GetPartProgress(slotId);
-
-				slot.Refresh(partProgressData);
-			}
-
-			var isRepairing = data.AllPartsCompleted();
-
-			if (!isRepairing) return;
-
-			var wasRepaired = Time.time >= data.expiration;
-
-			if (wasRepaired)
-			{
-				MarkCompleted();
-
-				return;
-			}
-
-			_isReparing = true;
-
-			ShowProgressBar();
-
-			_duration = data.duration;
-
-			_expiration = data.expiration;
-
-			ShowRepairProgress(data.duration, data.expiration);
-			*/
+			HideCompleted();
+			HideSlotsPanel();
+			HideSlotsPanel();
 		}
 
 		#endregion
 
 		#region Private methods
+
+		private void HideSlotsPanel()
+		{
+			_slotsPanel.SetActive(false);
+		}
+
+		private void ShowSlotsPanel()
+		{
+			_slotsPanel.SetActive(true);
+		}
 
 		private void HideSlots()
 		{
@@ -169,12 +187,12 @@ namespace LittleLooters.Gameplay.UI
 
 		private void HideProgressBar()
 		{
-			_progressBar.gameObject.SetActive(false);
+			_progressPanel.SetActive(false);
 		}
 
 		private void ShowProgressBar()
 		{
-			_progressBar.gameObject.SetActive(true);
+			_progressPanel.SetActive(true);
 		}
 
 		private void ShowRepairProgress(int duration, float expiration)
@@ -187,30 +205,11 @@ namespace LittleLooters.Gameplay.UI
 
 			secs = Mathf.FloorToInt(secs - mins * 60);
 
-			_txtRepairProgress.text = $"{mins:00}:{secs:00}";
+			_txtRepairProgress.text = $"{mins:00}:{secs:00}";	// TODO: use UTILS functionality to get formated time
 
 			var progress = 1 - remainingTime / duration;
 
 			_progressBar.value = progress;
-		}
-
-		private void CheckCompletion()
-		{
-			var now = Time.time;
-			var remainingTime = _expiration - now;
-
-			if (remainingTime > 0) return;
-
-			MarkCompleted();
-		}
-
-		private void MarkCompleted()
-		{
-			_completed.SetActive(true);
-
-			_wasCompleted = true;
-
-			HideProgressBar();
 		}
 
 		private void RefreshSlots()
@@ -240,6 +239,69 @@ namespace LittleLooters.Gameplay.UI
 			_btnRepairAlert.gameObject.SetActive(true);
 
 			_tweenSequence.Restart();
+		}
+
+		private void StartRepairingInput()
+		{
+			// TODO: SFX
+
+			HideSlots();
+
+			UI_GameplayEvents.OnStartRepairing?.Invoke(_id);
+		}
+
+		private void HandleRepairingCompleted(int id)
+		{
+			if (_id != id) return;
+
+			_isReparing = false;
+			_wasCompleted = true;
+			_expiration = 0;
+
+			HideSlots();
+			HideProgressBar();
+			ShowCompleted();
+		}
+
+		private void HandleRepairingStarted(PlayerProgressEvents.RepairStartActionArgs args)
+		{
+			if (_id != args.id) return;
+
+			_expiration = args.expiration;
+			_duration = args.duration;
+			_isReparing = true;
+			_wasCompleted = false;
+
+			HideSlotsPanel();
+			ShowProgressBar();
+			HideCompleted();
+		}
+
+		private void HandleRepairingSpeedUp(PlayerProgressEvents.RepairSpeedUpArgs args)
+		{
+			if (!_isReparing) return;
+
+			if (_id != args.id) return;
+
+			_expiration = args.expiration;
+			_duration = args.duration;
+		}
+
+		private void ShowCompleted()
+		{
+			_completedPanel.SetActive(true);
+		}
+
+		private void HideCompleted()
+		{
+			_completedPanel.SetActive(false);
+		}
+
+		private void Skip()
+		{
+			// TODO: SFX
+
+			UI_GameplayEvents.OnSkipRepairing?.Invoke(_id, _expiration, _duration);
 		}
 
 		#endregion

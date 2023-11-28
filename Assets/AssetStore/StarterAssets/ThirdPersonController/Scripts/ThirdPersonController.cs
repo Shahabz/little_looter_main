@@ -191,7 +191,6 @@ namespace StarterAssets
             //if (_isMeleeDestructionInProgress) return;
 
             FireCheck();
-            RepairCheck();
 
             _visualController.RefreshStateByInput(_input);
             
@@ -564,13 +563,6 @@ namespace StarterAssets
 
                 return;
             }
-        }
-
-        private void RepairCheck()
-        {
-            //if (!Grounded) return;
-
-            _repairService.CheckInput(_input);
         }
 
 		#endregion

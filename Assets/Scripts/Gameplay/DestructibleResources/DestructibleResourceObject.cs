@@ -164,6 +164,8 @@ namespace LittleLooters.Gameplay
 		{
 			if (_isAnimating) return;
 
+			_isAnimating = true;
+
 			_art.transform.DOPunchScale(_animDamagePunch, _animDamageDuration, _animDamageVibrato, _animDamageElasticity).OnComplete( () => _isAnimating = false );
 		}
 
