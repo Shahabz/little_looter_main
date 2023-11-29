@@ -24,6 +24,7 @@ namespace LittleLooters.Gameplay
     {
 		#region Inspector
 
+		[SerializeField] private int _id = default;
 		[SerializeField] private DestructibleObjectData _data = default;
 		[SerializeField] private GameObject _art = default;
 		[SerializeField] private float _hp = default;
@@ -96,6 +97,8 @@ namespace LittleLooters.Gameplay
 			};
 
 			DestructibleResourceEvents.OnApplyDamage?.Invoke(args);
+
+			if (_canDebug) DebugTakeDamage();
 
 			RefreshHealthBar();
 
@@ -260,6 +263,11 @@ namespace LittleLooters.Gameplay
 		private void DebugGrantReward(string displayName, int amount, float progress)
 		{
 			Debug.LogError($"Grant reward <color=yellow>{displayName}</color>, <color=cyan>{amount}</color>, damage: %<color=magenta>{progress}</color>");
+		}
+
+		private void DebugTakeDamage()
+		{
+			Debug.LogError($"Destructible [<color=yellow>{_id}</color>][<color=magenta>{_data.Type}</color>] take damage");
 		}
 
 		#endregion

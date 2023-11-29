@@ -17,7 +17,7 @@ namespace LittleLooters.Gameplay.UI
         [SerializeField] private Button _btnApply = default;
         [SerializeField] private TextMeshProUGUI _txtSize = default;
         [SerializeField] private CinemachineVirtualCamera _camera = default;
-        [SerializeField] private int[] _optionValues = default;
+        [SerializeField] private float[] _optionValues = default;
 
         #endregion
 

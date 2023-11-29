@@ -67,6 +67,8 @@ namespace LittleLooters.Gameplay
 
 		public static Action OnSpeedUpToolUpgrade;
 
+		public static Action OnIncreaseToolDamage;
+
 		#endregion
 
 		#region Mission events

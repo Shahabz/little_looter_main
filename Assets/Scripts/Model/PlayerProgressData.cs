@@ -122,6 +122,20 @@ namespace LittleLooters.Model
             meleeData.CompleteUpgrade();
         }
 
+        public void IncreaseToolDamage(float now, int durationInSecs)
+		{
+            var expiration = now + durationInSecs;
+
+            meleeData.StartIncreaseDamage(expiration, durationInSecs);
+		}
+
+        public void CompleteIncreaseToolDamage(ConfigurationMeleeLevelData toolLevelData)
+		{
+            var realDamage = toolLevelData.damage;
+
+            meleeData.CompleteIncreaseDamage(realDamage);
+		}
+
 		#endregion
 
 		#region Repair methods

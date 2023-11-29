@@ -19,6 +19,7 @@ namespace LittleLooters.Gameplay.UI
 
 		[SerializeField] private GameObject _content = default;
 		[SerializeField] private GameObject _panel = default;
+		[SerializeField] private TextMeshProUGUI _txtTitle = default;
 		[SerializeField] private Button _btnWatchAd = default;
 		[SerializeField] private Button _btnInstant = default;
 		[SerializeField] private Button _btnClose = default;
@@ -102,15 +103,15 @@ namespace LittleLooters.Gameplay.UI
 
 		private void WatchAd()
 		{
-			// TODO: play SFX
+			// TODO: SFX
 
 			if (_openingReason == SkipPanelOpeningReason.TOOL_UPGRADE)
 			{
-				UI_GameplayEvents.OnSpeedUpToolUpgrade?.Invoke();
+				SkipToolUpgradeByWatchingAd();
 			}
 			else if (_openingReason == SkipPanelOpeningReason.REPAIR)
 			{
-				UI_GameplayEvents.OnSpeedUpRepairing?.Invoke(_objectId);
+				SkipRepairByWatchingAd();
 			}
 
 			_inProgress = false;
@@ -176,6 +177,8 @@ namespace LittleLooters.Gameplay.UI
 
 			_inProgress = true;
 
+			_txtTitle.text = "SKIP TOOL UPGRADE"; // TODO: localize
+
 			Show();
 		}
 
@@ -188,6 +191,11 @@ namespace LittleLooters.Gameplay.UI
 			_inProgress = false;
 
 			Hide();
+		}
+
+		private void SkipToolUpgradeByWatchingAd()
+		{
+			UI_GameplayEvents.OnSpeedUpToolUpgrade?.Invoke();
 		}
 
 		#endregion
@@ -204,6 +212,8 @@ namespace LittleLooters.Gameplay.UI
 
 			_inProgress = true;
 
+			_txtTitle.text = "SKIP REPAIR";	// TODO: localize
+
 			Show();
 		}
 
@@ -216,6 +226,11 @@ namespace LittleLooters.Gameplay.UI
 			_inProgress = false;
 
 			Hide();
+		}
+
+		private void SkipRepairByWatchingAd()
+		{
+			UI_GameplayEvents.OnSpeedUpRepairing?.Invoke(_objectId);
 		}
 
 		#endregion

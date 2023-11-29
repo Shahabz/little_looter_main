@@ -5,6 +5,7 @@
 
 using LittleLooters.Gameplay.Combat;
 using LittleLooters.Gameplay.UI;
+using LittleLooters.Model;
 using StarterAssets;
 using System.Collections.Generic;
 using UnityEngine;
@@ -59,6 +60,8 @@ namespace LittleLooters.Gameplay
 			PlayerAimingAssistance.OnStartAiming += StartAiming;
 			PlayerAimingAssistance.OnStopAiming += StopAiming;
 
+			PlayerProgressEvents.OnToolDamageIncreaseStarted += HandleStartToolDamageIncrease;
+
 			_hits = new Collider[100];
 
 			_targets = new List<DestructibleResourceObject>();
@@ -76,10 +79,12 @@ namespace LittleLooters.Gameplay
 
 		private void OnDestroy()
 		{
-			DestructibleResourceEvents.OnGrantRewardsByDamage -= GrantRewardsByDamage;
-			
 			PlayerAimingAssistance.OnStartAiming -= StartAiming;
 			PlayerAimingAssistance.OnStopAiming -= StopAiming;
+
+			PlayerProgressEvents.OnToolDamageIncreaseStarted -= HandleStartToolDamageIncrease;
+			
+			DestructibleResourceEvents.OnGrantRewardsByDamage -= GrantRewardsByDamage;
 
 			if (!TryGetComponent<PlayerHealth>(out var health)) return;
 
@@ -90,9 +95,21 @@ namespace LittleLooters.Gameplay
 		{
 			if (_playerIsDead) return;
 
+			CheckToolExtraDamageProgress();
+
 			CheckNotEnabledObject(Time.deltaTime);
 
 			if (!CanProcess()) return;
+
+			if (_controller.IsMoving())
+			{
+				if (_isInProgress)
+				{
+					StopByPlayerMovement();
+				}
+
+				return;
+			}
 
 			if (!_isInProgress)
 			{
@@ -149,13 +166,13 @@ namespace LittleLooters.Gameplay
 
 		private void ProcessCheck(float deltaTime)
 		{
-			if (!CanProcess()) return;
+			//if (!CanProcess()) return;
 
-			if (_controller.IsMoving())
-			{
-				StopByPlayerMovement();
-				return;
-			}
+			//if (_controller.IsMoving())
+			//{
+			//	StopByPlayerMovement();
+			//	return;
+			//}
 
 			_nextAttackRemainingTime -= deltaTime;
 
@@ -171,6 +188,8 @@ namespace LittleLooters.Gameplay
 			if (_canDebug) DebugStopProcessing();
 
 			StopAllTargets();
+
+			_targets.Clear();
 
 			_controller.StopMeleeDestructionInteraction();
 
@@ -197,7 +216,7 @@ namespace LittleLooters.Gameplay
 
 		private void StartProcessing()
 		{
-			if (_canDebug) DebugStartProcessing();
+			if (_canDebug) DebugStartProcessing(_targets.Count);
 
 			_isInProgress = true;
 
@@ -292,6 +311,38 @@ namespace LittleLooters.Gameplay
 
 		#endregion
 
+		#region Tool damage increase
+
+		private float _toolExtraDamageExpiration = 0;
+		private bool _toolExtraDamageInProgress = false;
+
+		private void HandleStartToolDamageIncrease(PlayerProgressEvents.ToolExtraDamageStartedArgs args)
+		{
+			_toolExtraDamageExpiration = args.expiration;
+
+			_toolExtraDamageInProgress = true;
+		}
+
+		private void CheckToolExtraDamageProgress()
+		{
+			if (!_toolExtraDamageInProgress) return;
+
+			if (_toolExtraDamageExpiration > Time.time) return;
+
+			CompleteToolExtraDamage();
+		}
+
+		private void CompleteToolExtraDamage()
+		{
+			_toolExtraDamageExpiration = 0;
+
+			_toolExtraDamageInProgress = false;
+
+			_entryPoint.CompleteToolExtraDamage();
+		}
+
+		#endregion
+
 		#region Detection methods
 
 		private void CheckTargetsAround()
@@ -319,6 +370,8 @@ namespace LittleLooters.Gameplay
 				var angle = GetAngle(directionToTarget, playerForward);
 
 				if (angle > _angleFieldOfView) continue;
+
+				if (targetsInsideFoV.Contains(possibleTarget)) continue;
 
 				targetsInsideFoV.Add(possibleTarget);
 			}
@@ -392,6 +445,8 @@ namespace LittleLooters.Gameplay
 				var target = hit.gameObject.GetComponent<DestructibleResourceObject>();
 
 				if (target.IsDead) continue;
+
+				if (result.Contains(target)) continue;
 
 				result.Add(target);
 			}
@@ -514,9 +569,9 @@ namespace LittleLooters.Gameplay
 
 		private bool _canDebug = false;
 
-		private void DebugStartProcessing()
+		private void DebugStartProcessing(int amount)
 		{
-			Debug.LogError("<color=green>START</color> processing");
+			Debug.LogError($"<color=green>START</color> processing -> amount detected: <color=yellow>{amount}</color>");
 		}
 
 		private void DebugStopProcessing()

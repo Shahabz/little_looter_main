@@ -13,12 +13,14 @@ namespace LittleLooters.Model
 
 		public static Action<int, int> OnResourceHasChanged;
 
-		#region Melee
+		#region Tool
 
 		public static Action OnMeleeLevelUp;
 		public static Action<MeleeUpgradeStartedArgs> OnMeleeUpgradeStarted;
 		public static Action OnMeleeUpgradeCompleted;
 		public static Action<MeleeUpgradeClaimedArgs> OnMeleeUpgradeClaimed;
+		public static Action<ToolExtraDamageStartedArgs> OnToolDamageIncreaseStarted;
+		public static Action OnToolDamageIncreaseCompleted;
 
 		public struct MeleeUpgradeStartedArgs
 		{
@@ -31,6 +33,12 @@ namespace LittleLooters.Model
 			public int level;
 			public int oldDamage;
 			public int newDamage;
+		}
+
+		public struct ToolExtraDamageStartedArgs
+		{
+			public float expiration;
+			public int duration;
 		}
 
 		#endregion

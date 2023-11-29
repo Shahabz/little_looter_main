@@ -42,6 +42,7 @@ namespace LittleLooters.Gameplay
 		private VisualCharacterController _visualController = default;
 		private ThirdPersonController _controller = default;
 		private PlayerMissionsService _missionsService = default;
+		private const int TOOL_EXTRA_DAMAGE_DURATION_SECS = 10;
 
 		#endregion
 
@@ -88,6 +89,7 @@ namespace LittleLooters.Gameplay
 			UI_GameplayEvents.OnStartToolUpgrade += StartMeleeUpgrade;
 			UI_GameplayEvents.OnClaimToolUpgrade += ClaimMeleeUpgrade;
 			UI_GameplayEvents.OnSpeedUpToolUpgrade += SpeedUpToolUpgrade;
+			UI_GameplayEvents.OnIncreaseToolDamage += HandleIncreaseToolDamage;
 
 			UI_GameplayEvents.OnFixSlot += FixSlot;
 			UI_GameplayEvents.OnStartRepairing += StartRepairing;
@@ -113,6 +115,7 @@ namespace LittleLooters.Gameplay
 			UI_GameplayEvents.OnStartToolUpgrade -= StartMeleeUpgrade;
 			UI_GameplayEvents.OnClaimToolUpgrade -= ClaimMeleeUpgrade;
 			UI_GameplayEvents.OnSpeedUpToolUpgrade -= SpeedUpToolUpgrade;
+			UI_GameplayEvents.OnIncreaseToolDamage -= HandleIncreaseToolDamage;
 
 			UI_GameplayEvents.OnFixSlot -= FixSlot;
 			UI_GameplayEvents.OnStartRepairing -= StartRepairing;
@@ -170,6 +173,13 @@ namespace LittleLooters.Gameplay
 			_progressData.CompleteRepairing(objectId);
 		}
 
+		public void CompleteToolExtraDamage()
+		{
+			var toolLevelData = GetCurrentToolLevelData();
+
+			_progressData.CompleteIncreaseToolDamage(toolLevelData);
+		}
+
 		#endregion
 
 		#region Private methods
@@ -209,6 +219,31 @@ namespace LittleLooters.Gameplay
 		private void SpeedUpToolUpgrade()
 		{
 			_progressData.SpeedUpToolUpgrade();
+		}
+
+		private void HandleIncreaseToolDamage()
+		{
+			var now = Time.time;
+			var duration = TOOL_EXTRA_DAMAGE_DURATION_SECS;
+
+			_progressData.IncreaseToolDamage(now, duration);
+		}
+
+		private ConfigurationMeleeLevelData GetCurrentToolLevelData()
+		{
+			var currentLevel = _progressData.meleeData.level;
+			var levelData = _meleeConfigurationLevels[0];
+
+			for (int i = 0; i < _meleeConfigurationLevels.Length; i++)
+			{
+				levelData = _meleeConfigurationLevels[i];
+
+				if (levelData.level != currentLevel) continue;
+
+				break;
+			}
+
+			return levelData;
 		}
 
 		private void FixSlot(int objectId, int resourceId)

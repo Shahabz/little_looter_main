@@ -5489,7 +5489,14 @@ MonoBehaviour:
   _btnApply: {fileID: 4061657730722436560}
   _txtSize: {fileID: 3230528443247465000}
   _camera: {fileID: 0}
-  _optionValues: 05000000060000000700000004000000
+  _optionValues:
+  - 5
+  - 5.5
+  - 6
+  - 6.5
+  - 7
+  - 4
+  - 4.5
 --- !u!1 &7707826273381740786
 GameObject:
   m_ObjectHideFlags: 0
