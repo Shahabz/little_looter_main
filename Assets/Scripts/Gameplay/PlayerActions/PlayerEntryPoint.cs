@@ -141,6 +141,23 @@ namespace LittleLooters.Gameplay
 			_progressData.GrantResourceAmount(resourceId, amountReward);
 		}
 
+		public ConfigurationMeleeLevelData GetCurrentToolLevelData()
+		{
+			var currentLevel = _progressData.meleeData.level;
+			var levelData = _meleeConfigurationLevels[0];
+
+			for (int i = 0; i < _meleeConfigurationLevels.Length; i++)
+			{
+				levelData = _meleeConfigurationLevels[i];
+
+				if (levelData.level != currentLevel) continue;
+
+				break;
+			}
+
+			return levelData;
+		}
+
 		public ConfigurationMeleeLevelData GetMeleeNextLevelData()
 		{
 			var currentLevel = _progressData.meleeData.level;
@@ -206,7 +223,7 @@ namespace LittleLooters.Gameplay
 			var duration = nextLevelData.upgradeTime;
 			var expiration = now + duration;
 
-			_progressData.StartMeleeUpgrade(duration, expiration, nextLevelData.requirements);
+			_progressData.StartMeleeUpgrade(duration, expiration, nextLevelData.requirements, nextLevelData.damage);
 		}
 
 		private void ClaimMeleeUpgrade()
@@ -227,23 +244,6 @@ namespace LittleLooters.Gameplay
 			var duration = TOOL_EXTRA_DAMAGE_DURATION_SECS;
 
 			_progressData.IncreaseToolDamage(now, duration);
-		}
-
-		private ConfigurationMeleeLevelData GetCurrentToolLevelData()
-		{
-			var currentLevel = _progressData.meleeData.level;
-			var levelData = _meleeConfigurationLevels[0];
-
-			for (int i = 0; i < _meleeConfigurationLevels.Length; i++)
-			{
-				levelData = _meleeConfigurationLevels[i];
-
-				if (levelData.level != currentLevel) continue;
-
-				break;
-			}
-
-			return levelData;
 		}
 
 		private void FixSlot(int objectId, int resourceId)

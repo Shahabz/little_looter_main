@@ -20,10 +20,11 @@ namespace LittleLooters.Gameplay.UI
         [SerializeField] private TMPro.TextMeshProUGUI _progressBarText = default;
         [SerializeField] private GameObject _progressBarCompleted = default;
 
-		#endregion
+        #endregion
 
-		#region Private properties
+        #region Private properties
 
+        private int _toolLevelGoal = 0;
 		private bool _inProgress = false;
         private float _duration = 0;
         private float _expiration = 0;
@@ -38,6 +39,7 @@ namespace LittleLooters.Gameplay.UI
 
             PlayerProgressEvents.OnMeleeUpgradeStarted += ToolUpgradeStarted;
             PlayerProgressEvents.OnMeleeUpgradeCompleted += ToolUpgradeCompleted;
+            PlayerProgressEvents.OnMeleeUpgradeClaimed += HandleToolUpgradeClaimed;
         }
 
 		private void OnDisable()
@@ -59,8 +61,10 @@ namespace LittleLooters.Gameplay.UI
 
 		#endregion
 
-		public void Setup()
+		public void Setup(int toolLevel)
         {
+            _toolLevelGoal = toolLevel;
+
             HideProgressBar();
 
             HideSlots();
@@ -74,6 +78,7 @@ namespace LittleLooters.Gameplay.UI
 
             PlayerProgressEvents.OnMeleeUpgradeStarted -= ToolUpgradeStarted;
             PlayerProgressEvents.OnMeleeUpgradeCompleted -= ToolUpgradeCompleted;
+            PlayerProgressEvents.OnMeleeUpgradeClaimed -= HandleToolUpgradeClaimed;
         }
 
 		private void HideSlots()
@@ -179,6 +184,17 @@ namespace LittleLooters.Gameplay.UI
             var progress = 1 - remainingTime / _duration;
 
             _progressBarFill.fillAmount = progress;
+        }
+
+        private void HandleToolUpgradeClaimed(PlayerProgressEvents.MeleeUpgradeClaimedArgs args)
+        {
+            if (args.level >= _toolLevelGoal) return;
+
+            HideProgressBar();
+
+            HideSlots();
+
+            RefreshSlots();
         }
     }
 }

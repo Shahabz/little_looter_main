@@ -27,7 +27,7 @@ namespace LittleLooters.Gameplay.UI
 
 		[Header("Progress")]
 		[SerializeField] private TextMeshProUGUI _txtTime = default;
-		[SerializeField] private Image _progressBar = default;
+		[SerializeField] private Slider _progressBar = default;
 
 		[Header("Animation")]
 		[SerializeField] private float _animationDuration = default;
@@ -44,6 +44,7 @@ namespace LittleLooters.Gameplay.UI
 		private float _expiration = default;
 		private float _duration = default;
 		private SkipPanelOpeningReason _openingReason = SkipPanelOpeningReason.NONE;
+		private float _remainingTime = 0;
 
 		#endregion
 
@@ -82,6 +83,8 @@ namespace LittleLooters.Gameplay.UI
 			if (!_inProgress) return;
 
 			RefreshProgress();
+
+			RefreshProgressBar();
 		}
 
 		#endregion
@@ -114,10 +117,6 @@ namespace LittleLooters.Gameplay.UI
 				SkipRepairByWatchingAd();
 			}
 
-			_inProgress = false;
-
-			_objectId = -1;
-
 			Hide();
 		}
 
@@ -134,34 +133,33 @@ namespace LittleLooters.Gameplay.UI
 		{
 			// TODO: play SFX
 
-			_openingReason = SkipPanelOpeningReason.NONE;
-
-			_inProgress = false;
+			//_inProgress = false;
 
 			Hide();
 		}
 
 		private void AnimatePanel()
 		{
-			_panel.transform.localScale = Vector3.zero;
-			_panel.transform.DOScale(_animationEndValue, _animationDuration).SetEase(_animationEase).SetDelay(_animationDelay);
+			_panel.transform.DOPunchScale(Vector3.one * _animationEndValue, _animationDuration).SetEase(_animationEase).SetDelay(_animationDelay);
 		}
 
 		private void RefreshProgress()
 		{
 			var now = Time.time;
-			var remainingTime = _expiration - now;
+			var remainingTime = Mathf.CeilToInt(_expiration - now);
 
-			var secs = remainingTime;
-			var mins = Mathf.FloorToInt(secs / 60);
+			var timeToShow = UI_Utils.GetFormatTime(remainingTime);
 
-			secs = Mathf.CeilToInt(secs - mins * 60);
+			_txtTime.text = $"{timeToShow}";
+		}
 
-			_txtTime.text = $"{mins:00}:{secs:00}";
+		private void RefreshProgressBar()
+		{
+			_remainingTime -= Time.deltaTime;
 
-			var progress = 1 - remainingTime / _duration;
+			var progress = (float)_remainingTime / (float)_duration;
 
-			_progressBar.fillAmount = progress;
+			_progressBar.value = progress;
 		}
 
 		#endregion
@@ -170,10 +168,13 @@ namespace LittleLooters.Gameplay.UI
 
 		private void SkipToolUpgrade()
 		{
-			_openingReason = SkipPanelOpeningReason.TOOL_UPGRADE;
-
 			_expiration = _playerEntryPoint.ProgressData.meleeData.upgradeExpiration;
 			_duration = _playerEntryPoint.GetMeleeNextLevelData().upgradeTime;
+
+			var now = Time.time;
+			_remainingTime = _expiration - now;
+
+			_openingReason = SkipPanelOpeningReason.TOOL_UPGRADE;
 
 			_inProgress = true;
 
@@ -204,11 +205,14 @@ namespace LittleLooters.Gameplay.UI
 
 		private void HandleSkipRepair(int objectId, float expiration, int duration)
 		{
-			_openingReason = SkipPanelOpeningReason.REPAIR;
-
 			_objectId = objectId;
 			_expiration = expiration;
 			_duration = duration;
+
+			var now = Time.time;
+			_remainingTime = expiration - now;
+
+			_openingReason = SkipPanelOpeningReason.REPAIR;
 
 			_inProgress = true;
 

@@ -27,7 +27,7 @@ namespace LittleLooters.Model
             PlayerProgressEvents.OnMeleeLevelUp?.Invoke();
 		}
 
-        public void StartUpgrade(float duration, float expiration)
+        public void StartUpgrade(float duration, float expiration, int nextLevelDamage)
 		{
             isUpgrading = true;
             upgradeExpiration = expiration;
@@ -35,7 +35,9 @@ namespace LittleLooters.Model
             var args = new PlayerProgressEvents.MeleeUpgradeStartedArgs()
             {
                 duration = duration,
-                expiration = expiration
+                expiration = expiration,
+                currentDamage = damage,
+                nextLevelDamage = nextLevelDamage
             };
 
             PlayerProgressEvents.OnMeleeUpgradeStarted?.Invoke(args);

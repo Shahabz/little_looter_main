@@ -17,8 +17,10 @@ namespace LittleLooters.Gameplay.UI
 		[SerializeField] private GameObject _panel = default;
 		[SerializeField] private Canvas _canvas = default;
 		[SerializeField] private TextMeshProUGUI _txtTime = default;
-		[SerializeField] private Image _progressBar = default;
+		[SerializeField] private Slider _progressBar = default;
 		[SerializeField] private Button _btnSkip = default;
+		[SerializeField] private TextMeshProUGUI _txtCurrentDamage = default;
+		[SerializeField] private TextMeshProUGUI _txtNextDamage = default;
 
 		#endregion
 
@@ -27,30 +29,25 @@ namespace LittleLooters.Gameplay.UI
 		private bool _inProgress = false;
 		private float _duration = 0;
 		private float _expiration = 0;
+		private float _remainingTime = 0;
 
 		#endregion
 
 		#region Public methods
 
-		public void Show(float duration, float expiration)
+		public void Show()
 		{
 			_panel.SetActive(true);
 			_canvas.enabled = true;
 
-			_inProgress = true;
-
-			_duration = duration;
-			_expiration = expiration;
-
-			RefreshProgress();
+			RefreshProgressTime();
+			RefreshProgressBar();
 		}
 
 		public void Hide()
 		{
 			_panel.SetActive(false);
 			_canvas.enabled = false;
-
-			_inProgress = false;
 		}
 
 		#endregion
@@ -77,33 +74,43 @@ namespace LittleLooters.Gameplay.UI
 		{
 			if (!_inProgress) return;
 
-			RefreshProgress();
+			RefreshProgressTime();
+
+			RefreshProgressBar();
 		}
 
 		#endregion
 
 		#region Private methods
 
-		private void RefreshProgress()
+		private void RefreshProgressTime()
 		{
 			var now = Time.time;
-			var remainingTime = _expiration - now;
+			var remainingTime = Mathf.CeilToInt(_expiration - now);
 
-			var secs = remainingTime;
-			var mins = Mathf.FloorToInt(secs / 60);
+			_txtTime.text = UI_Utils.GetFormatTime(remainingTime);
+		}
 
-			secs = Mathf.CeilToInt(secs - mins * 60);
+		private void RefreshProgressBar()
+		{
+			_remainingTime -= Time.deltaTime;
 
-			_txtTime.text = $"{mins:00}:{secs:00}";
+			var progress = _remainingTime / _duration;
 
-			var progress = 1 - remainingTime / _duration;
-
-			_progressBar.fillAmount = progress;
+			_progressBar.value = progress;
 		}
 
 		private void UpgradeStarted(PlayerProgressEvents.MeleeUpgradeStartedArgs args)
 		{
-			Show(args.duration, args.expiration);
+			_inProgress = true;
+
+			_duration = args.duration;
+			_expiration = args.expiration;
+			_remainingTime = args.duration;
+
+			RefreshDamage(args.currentDamage, args.nextLevelDamage);
+
+			Show();
 		}
 
 		private void UpgradeCompleted()
@@ -118,6 +125,14 @@ namespace LittleLooters.Gameplay.UI
 			// TODO: play SFX
 
 			UI_GameplayEvents.OnSkipToolUpgrade?.Invoke();
+		}
+
+		private void RefreshDamage(int current, int next)
+		{
+			var extraDamage = next - current;
+
+			_txtCurrentDamage.text = $"{current}";
+			_txtNextDamage.text = $"+{extraDamage}";
 		}
 
 		#endregion

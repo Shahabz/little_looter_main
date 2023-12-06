@@ -26,6 +26,8 @@ namespace LittleLooters.Model
 		{
 			public float duration;
 			public float expiration;
+			public int currentDamage;
+			public int nextLevelDamage;
 		}
 
 		public struct MeleeUpgradeClaimedArgs

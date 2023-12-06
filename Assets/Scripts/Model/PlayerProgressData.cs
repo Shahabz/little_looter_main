@@ -90,7 +90,7 @@ namespace LittleLooters.Model
             meleeData.SetMeleeData(levelData);
 		}
 
-        public void StartMeleeUpgrade(float duration, float expiration, MeleeUpgradeRequirementData[] requirements)
+        public void StartMeleeUpgrade(float duration, float expiration, MeleeUpgradeRequirementData[] requirements, int nextLevelDamage)
 		{
 			// Consume resources based on requirements
 			for (int i = 0; i < requirements.Length; i++)
@@ -104,7 +104,7 @@ namespace LittleLooters.Model
 			}
 
             // Start melee upgrading
-            meleeData.StartUpgrade(duration, expiration);
+            meleeData.StartUpgrade(duration, expiration, nextLevelDamage);
 		}
 
         public void CompleteMeleeUpgrade()

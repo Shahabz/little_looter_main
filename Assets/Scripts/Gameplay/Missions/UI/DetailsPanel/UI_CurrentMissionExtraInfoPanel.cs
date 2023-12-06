@@ -28,7 +28,7 @@ namespace LittleLooters.Gameplay.UI
 
 			if (mission.Type == MissionType.TOOL_UPGRADE)
 			{
-				ShowUpgradeToolPanel();
+				ShowUpgradeToolPanel(mission);
 				return;
 			}
 		}
@@ -47,17 +47,22 @@ namespace LittleLooters.Gameplay.UI
 		{
 			HidePanels();
 
-			// NOTE: there is no need to show anything yet
-			//_destructionPanel.gameObject.SetActive(true);
-			//_destructionPanel.Setup(mission);
+			_destructionPanel.gameObject.SetActive(true);
+
+			var missionInfo = (MissionResourceDestructionData)mission;
+
+			_destructionPanel.Setup(missionInfo.Destructible.LevelRequired);
 		}
 
-		private void ShowUpgradeToolPanel()
+		private void ShowUpgradeToolPanel(MissionConfigurationData mission)
 		{
 			HidePanels();
 
 			_upgradeToolPanel.gameObject.SetActive(true);
-			_upgradeToolPanel.Setup();
+
+			var missionInfo = (MissionToolUpgradeData)mission;
+
+			_upgradeToolPanel.Setup(missionInfo.ToolLevel);
 		}
 
 		#endregion

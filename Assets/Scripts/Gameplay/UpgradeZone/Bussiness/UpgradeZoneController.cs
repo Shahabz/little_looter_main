@@ -33,7 +33,7 @@ namespace LittleLooters.Gameplay
 		{
 			_uiClaimPanel.Hide();
 			_uiPanel.Hide();
-			_uiInProgressPanel.Hide();
+			//_uiInProgressPanel.Hide();
 
 			_indicator.SetActive(true);
 
@@ -42,10 +42,10 @@ namespace LittleLooters.Gameplay
 			if (meleeIsUpgrading)
 			{
 				// Show upgrade in progress panel
-				var duration = _playerEntryPoint.GetMeleeNextLevelData().upgradeTime;
-				var expiration = _playerEntryPoint.ProgressData.meleeData.upgradeExpiration;
+				//var duration = _playerEntryPoint.GetMeleeNextLevelData().upgradeTime;
+				//var expiration = _playerEntryPoint.ProgressData.meleeData.upgradeExpiration;
 
-				_uiInProgressPanel.Show(duration, expiration);
+				_uiInProgressPanel.Show();	// duration, expiration);
 
 				return;
 			}
@@ -60,9 +60,10 @@ namespace LittleLooters.Gameplay
 				return;
 			}
 
+			var currentLevelData = _playerEntryPoint.GetCurrentToolLevelData();
 			var nextLevelData = _playerEntryPoint.GetMeleeNextLevelData();
 
-			_uiPanel.Show(_playerEntryPoint.ProgressData.resourcesData, nextLevelData);
+			_uiPanel.Show(_playerEntryPoint.ProgressData.resourcesData, currentLevelData, nextLevelData);
 		}
 
 		public void HideIndicator()

@@ -193,18 +193,8 @@ namespace StarterAssets
             FireCheck();
 
             _visualController.RefreshStateByInput(_input);
-            
-            if (_autoaiming && !_input.IsAiming)
-			{
-                _aimingAssistance?.Process(transform.forward);
 
-                _visualController.SetAutoAiming(_aimingAssistance.TargetDetected);
-
-                if (_aimingAssistance.TargetDetected)
-                {
-                    _aimingAssistance.RotateToTarget();
-                }
-            }
+            ProcessAimingRotation();
         }
 
 		private void OnDestroy()
@@ -535,7 +525,7 @@ namespace StarterAssets
 
                 return;
             }
-            if (_autoaiming && _aimingAssistance.TargetDetected)
+            if (!_weaponController.IsReloading && _autoaiming && _aimingAssistance.TargetDetected)
 			{
                 //_aimingAssistance.RotateToTarget();
 
@@ -562,6 +552,22 @@ namespace StarterAssets
                 transform.rotation = Quaternion.Euler(0.0f, rotation, 0.0f);
 
                 return;
+            }
+        }
+
+        private void ProcessAimingRotation()
+		{
+            if (_weaponController.IsReloading) return;
+            
+            if (_autoaiming && !_input.IsAiming)
+            {
+                _aimingAssistance?.Process(transform.forward);
+
+                _visualController.SetAutoAiming(_aimingAssistance.TargetDetected);
+
+                if (!_aimingAssistance.TargetDetected) return;
+
+                _aimingAssistance.RotateToTarget();
             }
         }
 
