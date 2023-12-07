@@ -3,6 +3,7 @@
  * Author: Peche
  */
 
+using DG.Tweening;
 using LittleLooters.Gameplay.Combat;
 using System;
 using UnityEngine;
@@ -31,11 +32,17 @@ namespace LittleLooters.Gameplay
         [SerializeField] private Vector3 _leftHandIdlePosition = default;
         [SerializeField] private Vector3 _leftHandIdleRotation = default;
 
-		#endregion
+        [Header("Firing IK configuration")]
+        [SerializeField] private float _animDuration = default;
+        [SerializeField] private Vector3 _animPositionGoal = default;
+        [SerializeField] private bool _canAnimateFiring = true;
 
-		#region Private properties
+        #endregion
 
-		private bool _isAiming = false;
+        #region Private properties
+
+        private bool _isAiming = false;
+        private bool _isAnimatingFiring = false;
 
 		#endregion
 
@@ -137,11 +144,31 @@ namespace LittleLooters.Gameplay
 
         private void HandleOnStartFiring(float fireRate)
         {
+            ApplyFiringAnimation();
+
             if (_isAiming) return;
 
             SetupAimingConfiguration();
         }
 
-        #endregion
-    }
+        private void ApplyFiringAnimation()
+		{
+            if (!_canAnimateFiring) return;
+
+            if (_isAnimatingFiring) return;
+
+            _isAnimatingFiring = true;
+
+            _rightHandGrip.transform.DOLocalMove(_animPositionGoal, _animDuration).OnComplete(OnHandlleFiringAnimationCompletion);
+		}
+
+		private void OnHandlleFiringAnimationCompletion()
+		{
+            var goal = (_isAiming) ? _rightHandAimPosition : _rightHandIdlePosition;
+
+            _rightHandGrip.transform.DOLocalMove(goal, _animDuration).OnComplete( () => _isAnimatingFiring = false );
+        }
+
+		#endregion
+	}
 }

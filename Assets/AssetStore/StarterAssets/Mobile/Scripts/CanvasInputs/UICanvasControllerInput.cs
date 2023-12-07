@@ -108,6 +108,11 @@ namespace StarterAssets
             starterAssetsInputs.RepairInput(_repairState);
         }
 
+        public void VirtualRollingInput()
+        {
+            starterAssetsInputs.RollInput();
+        }
+
         #endregion
 
         #region Private methods

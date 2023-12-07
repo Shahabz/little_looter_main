@@ -187,6 +187,7 @@ namespace StarterAssets
 
             JumpAndGravity();
             GroundedCheck();
+            RollingCheck();
             Move();
 
             //if (_isMeleeDestructionInProgress) return;
@@ -295,6 +296,8 @@ namespace StarterAssets
 		{
             if (!Grounded) return;
 
+            if (_isRolling) return;
+
             _weaponController.CheckInput(_input);
         }
 
@@ -322,6 +325,8 @@ namespace StarterAssets
 
         private void Move()
         {
+            if (_isRolling) return;
+
             if (_input.IsAiming && _input.sprint)
 			{
                 _input.CancelSprint();
@@ -560,6 +565,8 @@ namespace StarterAssets
 
         private void ProcessAimingRotation()
 		{
+            if (_isRolling) return;
+
             if (_weaponController.IsReloading) return;
             
             if (_autoaiming && !_input.IsAiming)
@@ -573,6 +580,117 @@ namespace StarterAssets
                 _aimingAssistance.RotateToTarget();
             }
         }
+
+        private void InstantRotationToInputDirection()
+		{
+            if (_input.move == Vector2.zero) return;
+
+            // normalise input direction
+            var dir = _input.move;
+
+            Vector3 inputDirection = new Vector3(dir.x, 0.0f, dir.y).normalized;
+
+            var targetRotation = Mathf.Atan2(inputDirection.x, inputDirection.z) * Mathf.Rad2Deg + _mainCamera.transform.eulerAngles.y;
+
+            //var rotationTime = (_input.sprint) ? SprintRotationSmoothTime : RotationSmoothTime;
+            //float rotation = Mathf.SmoothDampAngle(transform.eulerAngles.y, targetRotation, ref _rotationVelocity, rotationTime);
+
+            // rotate to face input direction relative to camera position
+            transform.rotation = Quaternion.Euler(0.0f, targetRotation, 0.0f); ; // transform.rotation = Quaternion.Euler(0.0f, rotation, 0.0f);
+        }
+
+        #endregion
+
+        #region Rolling
+
+        [SerializeField] private float _rollingSpeed = 4;
+
+        private float _rollTimeoutDelta = 0;
+        private float _rollDelay = 2f;
+        private float _rollDuration = 1;
+        private bool _isRolling = false;
+        private Vector3 _rollingDirection = default;
+
+        public System.Action OnStartRolling;
+        public System.Action OnStopRolling;
+
+        public bool IsRolling => _isRolling;
+
+        private void RollingCheck()
+        {
+            if (_isRolling)
+            {
+                ProcessRolling();
+            }
+
+            // jump timeout
+            if (_rollTimeoutDelta > 0.0f)
+            {
+                _rollTimeoutDelta -= Time.deltaTime;
+
+                _input.roll = false;
+
+                return;
+            }
+
+            if (_isRolling)
+            {
+                _input.roll = false;
+                return;
+            }
+
+            if (!Grounded)
+            {
+                _input.roll = false;
+                return;
+            }
+
+            if (!_input.roll) return;
+
+            StartRolling();
+        }
+
+        private void StartRolling()
+		{
+            OnStartRolling?.Invoke();
+
+            // Check if aiming is active
+            if (_aimingAssistance.TargetDetected)
+            {
+                // Cancel aiming
+                _aimingAssistance.StopProcessing();
+
+                // Rotate towards input direction
+                InstantRotationToInputDirection();
+            }
+
+            _input.roll = false;
+            
+            _rollTimeoutDelta = _rollDelay;
+
+            _isRolling = true;
+
+            // normalise input direction
+            Vector3 inputDirection = new Vector3(_input.move.x, 0.0f, _input.move.y).normalized;
+
+            _rollingDirection = (Quaternion.Euler(0.0f, _targetRotation, 0.0f) * Vector3.forward).normalized;
+
+            _visualController.SetRolling();
+
+            Invoke(nameof(StopRolling), _rollDuration);
+        }
+
+        private void ProcessRolling()
+		{
+            _controller.Move(_rollingDirection * (_rollingSpeed * Time.deltaTime) + new Vector3(0.0f, _verticalVelocity, 0.0f) * Time.deltaTime);
+        }
+
+        private void StopRolling()
+		{
+            _isRolling = false;
+
+            OnStopRolling?.Invoke();
+		}
 
 		#endregion
 

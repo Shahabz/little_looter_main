@@ -34,6 +34,7 @@ namespace LittleLooters.Gameplay
 		#region Private properties
 
 		private bool _isPlayerAiming = false;
+		private bool _isPlayerRolling = false;
 		private int _damage = -1;	// This value comes from player's melee weapon data
 		private int _level = -1;	// This value comes from player's melee weapon data
 		private float _delayToStartProcessing = 0.5f;
@@ -68,6 +69,9 @@ namespace LittleLooters.Gameplay
 
 			_controller = GetComponent<ThirdPersonController>();
 
+			_controller.OnStartRolling += HandleOnStartRolling;
+			_controller.OnStopRolling += HandleOnStopRolling;
+
 			_visualController = GetComponent<VisualCharacterController>();
 
 			if (!TryGetComponent<PlayerHealth>(out var health)) return;
@@ -85,6 +89,12 @@ namespace LittleLooters.Gameplay
 			PlayerProgressEvents.OnToolDamageIncreaseStarted -= HandleStartToolDamageIncrease;
 			
 			DestructibleResourceEvents.OnGrantRewardsByDamage -= GrantRewardsByDamage;
+
+			if (_controller != null)
+			{
+				_controller.OnStartRolling -= HandleOnStartRolling;
+				_controller.OnStopRolling -= HandleOnStopRolling;
+			}
 
 			if (!TryGetComponent<PlayerHealth>(out var health)) return;
 
@@ -111,6 +121,16 @@ namespace LittleLooters.Gameplay
 				return;
 			}
 
+			if (_controller.IsRolling)
+			{
+				if (_isInProgress)
+				{
+					StopByPlayerMovement();
+				}
+
+				return;
+			}
+
 			if (!_isInProgress)
 			{
 				CheckTargetsAround();
@@ -128,6 +148,8 @@ namespace LittleLooters.Gameplay
 		private bool CanProcess()
 		{
 			if (_isPlayerAiming) return false;
+
+			if (_isPlayerRolling) return false;
 
 			return true;
 		}
@@ -307,6 +329,17 @@ namespace LittleLooters.Gameplay
 
 			_remainingLastNotEnabledDelay = 0;
 			_lastNotEnabledObject = -1;
+		}
+
+		private void HandleOnStartRolling()
+		{
+			_isPlayerRolling = true;
+			CancelProcessing();
+		}
+
+		private void HandleOnStopRolling()
+		{
+			_isPlayerRolling = false;
 		}
 
 		#endregion

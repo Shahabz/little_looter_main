@@ -39,6 +39,7 @@ namespace LittleLooters.Gameplay
 		private const string DEAD = "dead";
 		private const string VELOCITY_X = "velocityX";
 		private const string VELOCITY_Z = "velocityZ";
+		private const string ROLL = "roll";
 
 		#endregion
 
@@ -138,6 +139,11 @@ namespace LittleLooters.Gameplay
 
 			_animator.SetFloat(VELOCITY_X, velocityX, _dampTime, Time.deltaTime);
 			_animator.SetFloat(VELOCITY_Z, velocityZ, _dampTime, Time.deltaTime);
+		}
+
+		public void SetRolling()
+		{
+			_animator.SetTrigger(ROLL);
 		}
 
 		#endregion

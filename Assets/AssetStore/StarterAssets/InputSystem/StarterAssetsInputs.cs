@@ -20,6 +20,7 @@ namespace StarterAssets
 		public Vector2 aim;
 		public bool attack;
 		public bool reload;
+		public bool roll;
 
 		[Header("Movement Settings")]
 		public bool analogMovement;
@@ -87,6 +88,12 @@ namespace StarterAssets
 			ReloadInput();
 		}
 
+		public void OnRoll(InputValue value)
+		{
+			if (!value.isPressed) return;
+
+			RollInput();
+		}
 #endif
 
 		public void MoveInput(Vector2 newMoveDirection)
@@ -145,6 +152,11 @@ namespace StarterAssets
 			repair = state;
 
 			Debug.LogError($"Repair input: <color=magenta>{state}</color>");
+		}
+
+		public void RollInput()
+		{
+			roll = true;
 		}
 
 		#endregion
