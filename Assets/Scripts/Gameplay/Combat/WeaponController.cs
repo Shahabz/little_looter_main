@@ -156,6 +156,9 @@ namespace LittleLooters.Gameplay.Combat
 
 			_isFiring = true;
 
+			// NOTE: this method should be invoked from firing animation
+			FireWeapon();
+
 			_weapon.ConsumeAmmo();
 		}
 

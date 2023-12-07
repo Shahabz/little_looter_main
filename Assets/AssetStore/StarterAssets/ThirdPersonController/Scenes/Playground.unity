@@ -2649,6 +2649,7 @@ GameObject:
   - component: {fileID: 132945888}
   - component: {fileID: 132945889}
   - component: {fileID: 132945890}
+  - component: {fileID: 132945891}
   m_Layer: 8
   m_Name: player
   m_TagString: Player
@@ -2856,7 +2857,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 26e54e5a728a9234ab24fcf1460ed8a2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  MoveSpeed: 2.5
+  MoveSpeed: 3
   SprintSpeed: 5
   RotationSmoothTime: 0.12
   SprintRotationSmoothTime: 0.06
@@ -2921,15 +2922,12 @@ Animator:
   m_GameObject: {fileID: 132945872}
   m_Enabled: 1
   m_Avatar: {fileID: 9000000, guid: 36078ab0369161e49a29d349ae3e0739, type: 3}
-  m_Controller: {fileID: 9100000, guid: eaa02065b9209c940b1c7cab8a57793a, type: 2}
+  m_Controller: {fileID: 9100000, guid: 66e4f4d13cd3eda4bad49c69e04f94d5, type: 2}
   m_CullingMode: 1
   m_UpdateMode: 0
   m_ApplyRootMotion: 0
   m_LinearVelocityBlending: 0
-  m_WarningMessage: "\nBinding warning: Some generic clip(s) animate transforms that
-    are already bound by a Humanoid avatar. These transforms can only be changed
-    by Humanoid clips.\n\tTransform 'Left_LowerArm'\n\tTransform 'Left_Hand'\n\tFrom
-    animation clip 'infantry_combat_reload_shotgun 1'"
+  m_WarningMessage: 
   m_HasTransformHierarchy: 1
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorControllerStateOnDisable: 0
@@ -3063,7 +3061,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _entryPoint: {fileID: 132945884}
-  _assaultAnimatorController: {fileID: 9100000, guid: eaa02065b9209c940b1c7cab8a57793a, type: 2}
+  _assaultAnimatorController: {fileID: 9100000, guid: 66e4f4d13cd3eda4bad49c69e04f94d5, type: 2}
   _meleeAnimatorController: {fileID: 9100000, guid: 68c3a66379181854b9c1400b4aaf46d9, type: 2}
   _attackRate: 2
   _radiusDetection: 0.5
@@ -3102,6 +3100,30 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 7e26806d3c7873f43ab9d884c045b865, type: 2}
   - {fileID: 11400000, guid: 108e83a9b7ea4fb49a9b95db6f77316f, type: 2}
   - {fileID: 11400000, guid: bc57716828b58dd45b2ca3e39aca4d28, type: 2}
+--- !u!114 &132945891
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 132945872}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 64100847badf6d140992b8e77a7b3a30, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _rightHandGrip: {fileID: 1896330441}
+  _leftHandGrip: {fileID: 884677788}
+  _rigBuilder: {fileID: 132945873}
+  _weaponController: {fileID: 132945875}
+  _rightHandAimPosition: {x: -0.006, y: -0.16, z: -0.158}
+  _rightHandAimRotation: {x: 61.695, y: 93.576, z: -99.036}
+  _leftHandAimPosition: {x: -0.079, y: 0.012, z: 0.169}
+  _leftHandAimRotation: {x: 251.386, y: -56.12399, z: 283.268}
+  _rightHandIdlePosition: {x: -0.034, y: 0.0022, z: -0.204}
+  _rightHandIdleRotation: {x: 64.295, y: 60.768, z: -118.78}
+  _leftHandIdlePosition: {x: -0.056, y: 0.003, z: 0.312}
+  _leftHandIdleRotation: {x: 138.91, y: 2.1, z: 250.7}
 --- !u!1 &140811731
 GameObject:
   m_ObjectHideFlags: 0
@@ -18811,16 +18833,16 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1119501239}
-  m_LocalRotation: {x: -0.6335373, y: 0.1798369, z: 0.70136493, w: 0.27272055}
-  m_LocalPosition: {x: -0.012, y: 0.095, z: -0.2}
+  m_LocalRotation: {x: -0.24398233, y: 0.62609565, z: -0.72438663, w: -0.15408096}
+  m_LocalPosition: {x: 0.0257, y: -0.0983, z: -0.0151}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 1896330441}
   - {fileID: 884677788}
   - {fileID: 1492684137}
-  m_Father: {fileID: 1991928510}
-  m_RootOrder: 0
-  m_LocalEulerAnglesHint: {x: -143.286, y: 99.52, z: -11.126007}
+  m_Father: {fileID: 1775295738}
+  m_RootOrder: 6
+  m_LocalEulerAnglesHint: {x: 79.191, y: 58.871, z: -153.976}
 --- !u!1 &1123399656
 GameObject:
   m_ObjectHideFlags: 0
@@ -19374,7 +19396,7 @@ Transform:
   m_Children:
   - {fileID: 148932883}
   m_Father: {fileID: 1991928510}
-  m_RootOrder: 1
+  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1142322169
 GameObject:
@@ -29777,6 +29799,7 @@ Transform:
   - {fileID: 335727878}
   - {fileID: 1509042968}
   - {fileID: 821139342}
+  - {fileID: 1119501240}
   m_Father: {fileID: 148932883}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -34071,7 +34094,6 @@ Transform:
   m_LocalPosition: {x: 0.0009571358, y: 0.19149381, z: -0.008727803}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
-  - {fileID: 1119501240}
   - {fileID: 1140852059}
   m_Father: {fileID: 2023772986}
   m_RootOrder: 2

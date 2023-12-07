@@ -30,12 +30,15 @@ namespace LittleLooters.Gameplay
 
 		#region Private properties
 
+		private float _dampTime = 0.1f;
 		private const string IS_AIMING = "isAiming";
 		private const string RELOAD = "reload";
 		private const string IS_RELOADING = "isReloading";
 		private const string FIRE = "fire";
 		private const string IS_FIRING = "isFiring";
 		private const string DEAD = "dead";
+		private const string VELOCITY_X = "velocityX";
+		private const string VELOCITY_Z = "velocityZ";
 
 		#endregion
 
@@ -126,6 +129,15 @@ namespace LittleLooters.Gameplay
 			var rig = _rigBuilder.layers[0].rig;
 
 			StartCoroutine(RefreshRigWithDelay(rig, 0));
+		}
+
+		public void RefreshLocomotionDirection(Vector3 movementDirection)
+		{
+			var velocityZ = Vector3.Dot(movementDirection, transform.forward);
+			var velocityX = Vector3.Dot(movementDirection, transform.right);
+
+			_animator.SetFloat(VELOCITY_X, velocityX, _dampTime, Time.deltaTime);
+			_animator.SetFloat(VELOCITY_Z, velocityZ, _dampTime, Time.deltaTime);
 		}
 
 		#endregion
