@@ -1,18 +1,18 @@
-using System.Collections;
-using System.Collections.Generic;
+/*
+ * Date: December 14th, 2023
+ * Author: Peche
+ */
+
 using UnityEngine;
 
-public class CraftingConfigurationData : MonoBehaviour
+namespace LittleLooters.General
 {
-    // Start is called before the first frame update
-    void Start()
+    [CreateAssetMenu(fileName = "CraftingData", menuName = "ScriptableObjects/Gameplay/CraftingData", order = 1)]
+    public class CraftingConfigurationData : ScriptableObject
     {
-        
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
+        public int Id;
+        public ResourceData ResourceRequired;
+        public int AmountRequired;
+        public ResourceData ResourceGenerated;
     }
 }

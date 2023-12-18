@@ -15,6 +15,7 @@ namespace LittleLooters.Model
         public PlayerProgress_ObjectToRepairData[] repairProgress;  // TODO: replace it for PlayerProgressRepairData
         public PlayerProgress_ResourcesData resourcesData;
         public PlayerProgress_MeleeData meleeData;
+        public PlayerProgress_CraftingData craftingData;
 
         public void SetupRepairObjects(Gameplay.RepairObject[] repairObjects)
 		{
@@ -50,7 +51,7 @@ namespace LittleLooters.Model
             return (0, new PlayerProgress_ObjectToRepairData());
 		}
 
-        /*public void AddPartsToRepairObject(int objectId, int partId, int partAmount)
+		/*public void AddPartsToRepairObject(int objectId, int partId, int partAmount)
 		{
             UnityEngine.Debug.LogError($"Add part <color=cyan>{partId}</color> to object <color=yellow>{objectId}</color>");
 
@@ -71,7 +72,9 @@ namespace LittleLooters.Model
             repairProgress[index].expiration = UnityEngine.Time.time + repairDuration;
 		}*/
 
-        public void GrantResourceAmount(int id, int amount)
+		#region Resource methods
+
+		public void GrantResourceAmount(int id, int amount)
 		{
             this.resourcesData.Grant(id, amount);
 		}
@@ -83,9 +86,16 @@ namespace LittleLooters.Model
             return resourceData.amount;
 		}
 
-        #region Melee methods
+        public void ConsumeResourceAmount(int id, int amount)
+		{
+            this.resourcesData.ConsumeResource(id, amount);
+        }
 
-        public void SetMeleeData(ConfigurationMeleeLevelData levelData)
+		#endregion
+
+		#region Tool methods
+
+		public void SetMeleeData(ConfigurationMeleeLevelData levelData)
 		{
             meleeData.SetMeleeData(levelData);
 		}

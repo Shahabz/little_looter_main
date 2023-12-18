@@ -31,6 +31,12 @@ namespace LittleLooters.Gameplay.UI
 
 		#endregion
 
+		#region Private properties
+
+		private bool _animationInProgress = false;
+
+		#endregion
+
 		#region Unity events
 
 		private void Start()
@@ -68,7 +74,12 @@ namespace LittleLooters.Gameplay.UI
 		{
 			yield return new WaitForSeconds(_delayToRefresh);
 
-			_animBody.DOPunchScale(_animPunch, _animDuration, _animVibrato, _animElasticity).OnComplete(() => _animBody.transform.localScale = Vector3.one);
+			if (!_animationInProgress)
+			{
+				_animationInProgress = true;
+
+				_animBody.DOPunchScale(_animPunch, _animDuration, _animVibrato, _animElasticity).OnComplete(() => _animBody.transform.localScale = Vector3.one).OnComplete(() => _animationInProgress = false);
+			}
 
 			RefreshAmount(amount);
 		}

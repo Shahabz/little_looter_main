@@ -94,6 +94,10 @@ namespace LittleLooters.Gameplay
 			UI_GameplayEvents.OnFixSlot += FixSlot;
 			UI_GameplayEvents.OnStartRepairing += StartRepairing;
 			UI_GameplayEvents.OnSpeedUpRepairing += SpeedUpRepairing;
+
+			// Cheats
+			UI_GameplayEvents.OnGrantResourceByCheat += HandleGrantResourceByCheat;
+			UI_GameplayEvents.OnConsumeResourceByCheat += HandleConsumeResourceByCheat;
 		}
 
 		private void Start()
@@ -117,9 +121,14 @@ namespace LittleLooters.Gameplay
 			UI_GameplayEvents.OnSpeedUpToolUpgrade -= SpeedUpToolUpgrade;
 			UI_GameplayEvents.OnIncreaseToolDamage -= HandleIncreaseToolDamage;
 
+			// Tool
 			UI_GameplayEvents.OnFixSlot -= FixSlot;
 			UI_GameplayEvents.OnStartRepairing -= StartRepairing;
 			UI_GameplayEvents.OnSpeedUpRepairing -= SpeedUpRepairing;
+
+			// Cheats
+			UI_GameplayEvents.OnGrantResourceByCheat -= HandleGrantResourceByCheat;
+			UI_GameplayEvents.OnConsumeResourceByCheat -= HandleConsumeResourceByCheat;
 		}
 
 		#endregion
@@ -261,6 +270,16 @@ namespace LittleLooters.Gameplay
 		private void SpeedUpRepairing(int objectId)
 		{
 			_progressData.SpeedUpRepairing(objectId);
+		}
+
+		private void HandleGrantResourceByCheat(UI_GameplayEvents.UpdateResourceByCheatArgs args)
+		{
+			_progressData.GrantResourceAmount(args.resourceId, args.amount);
+		}
+
+		private void HandleConsumeResourceByCheat(UI_GameplayEvents.UpdateResourceByCheatArgs args)
+		{
+			_progressData.ConsumeResourceAmount(args.resourceId, args.amount);
 		}
 
 		#endregion

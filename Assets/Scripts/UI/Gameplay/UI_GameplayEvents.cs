@@ -79,5 +79,18 @@ namespace LittleLooters.Gameplay
 		public static Action OnStopMissionAssistance;
 
 		#endregion
+
+		#region Cheat events
+
+		public struct UpdateResourceByCheatArgs
+		{
+			public int resourceId;
+			public int amount;
+		}
+
+		public static Action<UpdateResourceByCheatArgs> OnGrantResourceByCheat;
+		public static Action<UpdateResourceByCheatArgs> OnConsumeResourceByCheat;
+
+		#endregion
 	}
 }
