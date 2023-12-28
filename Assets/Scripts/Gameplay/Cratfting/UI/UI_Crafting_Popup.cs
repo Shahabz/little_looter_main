@@ -4,6 +4,8 @@
  */
 
 using LittleLooters.General;
+using LittleLooters.Model;
+using System;
 using UnityEngine;
 
 namespace LittleLooters.Gameplay.UI
@@ -16,11 +18,14 @@ namespace LittleLooters.Gameplay.UI
 		#region Inspector
 
 		[SerializeField] private PlayerEntryPoint _entryPoint = default;
+		[SerializeField] private PlayerCraftingService _playerService = default;
         [SerializeField] private UI_Crafting_InformationPanel _infoPanel = default;
         [SerializeField] private UI_Crafting_InProgressPanel _inProgressPanel = default;
         [SerializeField] private UI_Crafting_ClaimPanel _claimPanel = default;
 
 		#endregion
+
+		private bool _isVisible = false;
 
 		#region Unity events
 
@@ -28,7 +33,12 @@ namespace LittleLooters.Gameplay.UI
 		{
             PlayerCraftingEvents.OnStartAreaInteraction += HandleStartAreaInteraction;
             PlayerCraftingEvents.OnStopAreaInteraction += HandleStopAreaInteraction;
-        }
+
+			PlayerProgressEvents.OnCraftingAreaProcessStarted += HandleOnCraftingAreaProcessStarted;
+			PlayerProgressEvents.OnCraftingAreaProcessCompleted += HandleOnCraftingAreaProcessCompleted;
+			PlayerProgressEvents.OnCraftingAreaProcessClaimed += HandleOnCraftingAreaProcessClaimed;
+			PlayerProgressEvents.OnCraftingAreaProcessSpeedUp += HandleOnCraftingAreaProcessSpeedUp;
+		}
 
 		private void Start()
 		{
@@ -39,7 +49,12 @@ namespace LittleLooters.Gameplay.UI
         {
             PlayerCraftingEvents.OnStartAreaInteraction -= HandleStartAreaInteraction;
             PlayerCraftingEvents.OnStopAreaInteraction -= HandleStopAreaInteraction;
-        }
+
+			PlayerProgressEvents.OnCraftingAreaProcessStarted -= HandleOnCraftingAreaProcessStarted;
+			PlayerProgressEvents.OnCraftingAreaProcessCompleted -= HandleOnCraftingAreaProcessCompleted;
+			PlayerProgressEvents.OnCraftingAreaProcessClaimed -= HandleOnCraftingAreaProcessClaimed;
+			PlayerProgressEvents.OnCraftingAreaProcessSpeedUp -= HandleOnCraftingAreaProcessSpeedUp;
+		}
 
 		#endregion
 
@@ -47,17 +62,37 @@ namespace LittleLooters.Gameplay.UI
 
 		private void HandleStartAreaInteraction(CraftingConfigurationData data)
 		{
+			_isVisible = true;
+
 			var craftingStatus = _entryPoint.ProgressData.craftingData.GetAreaStatus(data.Id);
 
-			if (craftingStatus == Model.CraftingStatus.NONE)
+			if (craftingStatus == CraftingStatus.NONE)
 			{
 				ShowCraftingInformation(data);
 				return;
 			}
 
-			// TODO: check status IN PROGRESS
+			// Check status IN PROGRESS
+			if (craftingStatus == CraftingStatus.IN_PROGRESS)
+			{
+				var areaProgressData = _entryPoint.ProgressData.craftingData.GetAreaProgressData(data.Id);
 
-			// TODO: check status COMPLETED
+				ShowCraftingProgress(areaProgressData);
+
+				return;
+			}
+
+			// Check status COMPLETED
+			if (craftingStatus == CraftingStatus.COMPLETED)
+			{
+				var areaProgressData = _entryPoint.ProgressData.craftingData.GetAreaProgressData(data.Id);
+
+				ShowCraftingCompleted(data, areaProgressData.amount);
+
+				return;
+			}
+
+			Debug.LogError("Crafting::StartInteraction -> error");
 		}
 
 		private void HideAllPanels()
@@ -69,6 +104,8 @@ namespace LittleLooters.Gameplay.UI
 
 		private void HandleStopAreaInteraction()
 		{
+			_isVisible = false;
+
 			HideAllPanels();
 		}
 
@@ -78,6 +115,56 @@ namespace LittleLooters.Gameplay.UI
 
 			_inProgressPanel.Hide();
 			_claimPanel.Hide();
+		}
+
+		private void ShowCraftingProgress(PlayerProgress_CraftingAreaData data)
+		{
+			var craftingConfigurationData = _playerService.GetAreaData(data.id);
+
+			var duration = data.amount * craftingConfigurationData.DurationByUnitInSecs;
+
+			_inProgressPanel.Show(craftingConfigurationData.Id, craftingConfigurationData.ResourceGenerated.Icon, data.expiration, duration);
+		}
+
+		private void ShowCraftingCompleted(CraftingConfigurationData data, int amount)
+		{
+			HideAllPanels();
+
+			if (!_isVisible) return;
+
+			_claimPanel.Show(data, amount);
+		}
+
+		#endregion
+
+		#region Player progress events Handlers
+
+		private void HandleOnCraftingAreaProcessStarted(PlayerProgress_CraftingAreaData data)
+		{
+			HideAllPanels();
+
+			ShowCraftingProgress(data);
+		}
+
+		private void HandleOnCraftingAreaProcessCompleted(PlayerProgress_CraftingAreaData data)
+		{
+			var configurationData = _playerService.GetAreaData(data.id);
+
+			ShowCraftingCompleted(configurationData, data.amount);
+		}
+
+		private void HandleOnCraftingAreaProcessClaimed(PlayerProgress_CraftingAreaData data)
+		{
+			HideAllPanels();
+
+			var configurationData = _playerService.GetAreaData(data.id);
+
+			ShowCraftingInformation(configurationData);
+		}
+
+		private void HandleOnCraftingAreaProcessSpeedUp(PlayerProgress_CraftingAreaData data)
+		{
+			_inProgressPanel.RefreshExpiration(data.expiration);
 		}
 
 		#endregion

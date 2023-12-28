@@ -12,6 +12,7 @@ namespace LittleLooters.Model
 	{
 		public int id;
 		public float expiration;
+		public int amount;
 		public CraftingStatus status;
 	}
 }

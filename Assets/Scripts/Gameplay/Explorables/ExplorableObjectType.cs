@@ -12,6 +12,7 @@ namespace LittleLooters.Gameplay
     {
         NONE,
         UPGRADE_TOOL,
-        REPAIR_CAR
+        REPAIR_CAR,
+        RESOURCE,
     }
 }

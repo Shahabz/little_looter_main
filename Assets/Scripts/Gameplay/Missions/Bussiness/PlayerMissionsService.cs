@@ -21,6 +21,8 @@ namespace LittleLooters.Gameplay
         private PlayerMissionTriggerDestruction _triggerDestruction = default;
         private PlayerMissionTriggerToolUpgrade _triggerToolUpgrade = default;
         private PlayerMissionTriggerExploration _triggerExploration = default;
+        private PlayerMissionTriggerCrafting _triggerCrafting = default;
+        private PlayerMissionTriggerDelivery _triggerDelivery = default;
 
         #endregion
 
@@ -31,6 +33,8 @@ namespace LittleLooters.Gameplay
             _triggerDestruction = new PlayerMissionTriggerDestruction();
             _triggerToolUpgrade = new PlayerMissionTriggerToolUpgrade();
             _triggerExploration = new PlayerMissionTriggerExploration();
+            _triggerCrafting = new PlayerMissionTriggerCrafting();
+            _triggerDelivery = new PlayerMissionTriggerDelivery();
 		}
 
 		private void OnDestroy()
@@ -38,17 +42,21 @@ namespace LittleLooters.Gameplay
             _triggerDestruction.Teardown();
             _triggerToolUpgrade.Teardown();
             _triggerExploration.Teardown();
+            _triggerCrafting.Teardown();
+            _triggerDelivery.Teardown();
         }
 
 		#endregion
 
 		#region Public methods
 
-        public void Init()
+        public void Init(PlayerEntryPoint playerEntryPoint, PlayerCraftingService playerCraftingService)
 		{
             _triggerDestruction.Initialize(MissionCompleted);
             _triggerToolUpgrade.Initialize(MissionCompleted);
             _triggerExploration.Initialize(MissionCompleted);
+            _triggerCrafting.Initialize(MissionCompleted, playerCraftingService, playerEntryPoint);
+            _triggerDelivery.Initialize(MissionCompleted, playerEntryPoint);
 
             _missionId = 0;
 
@@ -99,6 +107,8 @@ namespace LittleLooters.Gameplay
             _triggerDestruction.ResetStatus(data.Type, data);
             _triggerToolUpgrade.ResetStatus(data.Type, data);
             _triggerExploration.ResetStatus(data.Type, data);
+            _triggerCrafting.ResetStatus(data.Type, data);
+            _triggerDelivery.ResetStatus(data.Type, data);
 		}
 
 		#endregion

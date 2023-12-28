@@ -13,12 +13,13 @@ namespace LittleLooters.Gameplay.UI
 
         [SerializeField] private UI_CurrentMission_DestructionDetails _destructionPanel = default;
         [SerializeField] private UI_CurrentMission_UpgradeToolDetails _upgradeToolPanel = default;
+		[SerializeField] private UI_CurrentMission_DeliveryDetails _deliveryPanel = default;
 
 		#endregion
 
 		#region Public methods
 
-        public void Refresh(MissionConfigurationData mission)
+		public void Refresh(MissionConfigurationData mission)
 		{
 			if (mission.Type == MissionType.DESTRUCTION)
 			{
@@ -31,6 +32,14 @@ namespace LittleLooters.Gameplay.UI
 				ShowUpgradeToolPanel(mission);
 				return;
 			}
+
+			if (mission.Type == MissionType.DELIVERY)
+			{
+				ShowDeliveryPanel(mission);
+				return;
+			}
+
+			HidePanels();
 		}
 
 		#endregion
@@ -41,6 +50,7 @@ namespace LittleLooters.Gameplay.UI
 		{
 			_destructionPanel.gameObject.SetActive(false);
 			_upgradeToolPanel.gameObject.SetActive(false);
+			_deliveryPanel.gameObject.SetActive(false);
 		}
 
 		private void ShowDestructionPanel(MissionConfigurationData mission)
@@ -63,6 +73,17 @@ namespace LittleLooters.Gameplay.UI
 			var missionInfo = (MissionToolUpgradeData)mission;
 
 			_upgradeToolPanel.Setup(missionInfo.ToolLevel);
+		}
+
+		private void ShowDeliveryPanel(MissionConfigurationData mission)
+		{
+			HidePanels();
+
+			_deliveryPanel.gameObject.SetActive(true);
+
+			var missionInfo = (MissionDeliveryData)mission;
+
+			_deliveryPanel.Setup(missionInfo);
 		}
 
 		#endregion

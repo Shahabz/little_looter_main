@@ -22,6 +22,8 @@ namespace LittleLooters.Gameplay.UI
         [SerializeField] private Image _iconRequirement = default;
 		[SerializeField] private Color _colorEnough = default;
 		[SerializeField] private Color _colorNotEnough = default;
+		[SerializeField] private Button _btnUp = default;
+		[SerializeField] private Button _btnDown = default;
 		[Header("Result")]
         [SerializeField] private TMPro.TextMeshProUGUI _txtResult = default;
         [SerializeField] private Image _iconResult = default;
@@ -51,15 +53,15 @@ namespace LittleLooters.Gameplay.UI
 		private void OnEnable()
 		{
 			_btn.onClick.AddListener(Process);
-
-			_slider.onValueChanged.AddListener(OnSliderValueChanged);
+			_btnUp.onClick.AddListener(IncreaseResult);
+			_btnDown.onClick.AddListener(DecreaseResult);
 		}
 
 		private void OnDisable()
 		{
 			_btn.onClick.RemoveAllListeners();
-
-			_slider.onValueChanged.RemoveAllListeners();
+			_btnUp.onClick.RemoveAllListeners();
+			_btnDown.onClick.RemoveAllListeners();
 		}
 
 		#endregion
@@ -106,10 +108,16 @@ namespace LittleLooters.Gameplay.UI
 
 		private void Process()
 		{
+			// TODO: sfx
+
 			if (_canDebug) DebugProcess();
+
+			if (_amountSelected < 1) return;
+
+			UI_GameplayEvents.OnCraftingStarted?.Invoke(_areaId, _amountSelected);
 		}
 
-		private void OnSliderValueChanged(float value)
+		/*private void OnSliderValueChanged(float value)
 		{
 			//if (_canDebug) DebugSliderValueChange(value);
 
@@ -121,7 +129,7 @@ namespace LittleLooters.Gameplay.UI
 			_txtResult.text = $"{_amountSelected}";
 
 			RefreshCraftingStatus();
-		}
+		}*/
 
 		private void RefreshCraftingStatus()
 		{
@@ -155,6 +163,51 @@ namespace LittleLooters.Gameplay.UI
 			_slider.maxValue = maxAmount;
 			_slider.minValue = 0;
 			_slider.value = 1;
+		}
+
+		private void IncreaseResult()
+		{
+			_amountSelected++;
+
+			_currentAmountRequired = _amountSelected * _unitAmountRequired;
+
+			RefreshTexts();
+
+			RefreshButtonStatus();
+
+			_slider.value = _amountSelected;
+		}
+
+		private void DecreaseResult()
+		{
+			if (_amountSelected == 1) return;
+
+			_amountSelected--;
+
+			_currentAmountRequired = _amountSelected * _unitAmountRequired;
+
+			RefreshTexts();
+
+			RefreshButtonStatus();
+
+			_slider.value = _amountSelected;
+		}
+
+		private void RefreshButtonStatus()
+		{
+			var isEnough = _playerResourceAmount >= _currentAmountRequired;
+
+			_btnBackground.sprite = (isEnough) ? _spriteButtonEnabled : _spriteButtonNotEnabled;
+			_txtButton.color = (isEnough) ? _colorButtonTextEnabled : _colorButtonTextNotEnabled;
+		}
+
+		private void RefreshTexts()
+		{
+			_txtResult.text = $"{_amountSelected}";
+
+			_txtRequirement.text = $"{_currentAmountRequired}";
+
+			_txtRequirement.color = (_amountSelected > _playerResourceAmount / _unitAmountRequired) ? _colorNotEnough : _colorEnough;
 		}
 
 		#endregion

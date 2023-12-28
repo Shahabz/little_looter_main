@@ -13,7 +13,7 @@ namespace LittleLooters.Gameplay.UI
 {
     public class UI_ToolUpgradeSkipPanel : MonoBehaviour
     {
-		public enum SkipPanelOpeningReason { NONE, TOOL_UPGRADE, REPAIR }
+		public enum SkipPanelOpeningReason { NONE, TOOL_UPGRADE, REPAIR, CRAFTING }
 
 		#region Inspector
 
@@ -24,6 +24,7 @@ namespace LittleLooters.Gameplay.UI
 		[SerializeField] private Button _btnInstant = default;
 		[SerializeField] private Button _btnClose = default;
 		[SerializeField] private PlayerEntryPoint _playerEntryPoint = default;
+		[SerializeField] private PlayerCraftingService _playerCraftingService = default;
 
 		[Header("Progress")]
 		[SerializeField] private TextMeshProUGUI _txtTime = default;
@@ -52,11 +53,17 @@ namespace LittleLooters.Gameplay.UI
 
 		private void Awake()
 		{
+			// Tool events
 			UI_GameplayEvents.OnSkipToolUpgrade += SkipToolUpgrade;
 			PlayerProgressEvents.OnMeleeUpgradeCompleted += ToolUpgradeCompleted;
 
+			// Repair events
 			UI_GameplayEvents.OnSkipRepairing += HandleSkipRepair;
 			PlayerProgressEvents.OnCompleteRepairing += HandleRepairCompleted;
+
+			// Crafting events
+			UI_GameplayEvents.OnCraftingSkipped += HandleOnSkipCrafting;
+			PlayerProgressEvents.OnCraftingAreaProcessCompleted += HandleOnCraftingCompleted;
 
 			_btnWatchAd.onClick.AddListener(WatchAd);
 			_btnInstant.onClick.AddListener(InstantUpgrade);
@@ -72,6 +79,10 @@ namespace LittleLooters.Gameplay.UI
 
 			UI_GameplayEvents.OnSkipRepairing -= HandleSkipRepair;
 			PlayerProgressEvents.OnCompleteRepairing -= HandleRepairCompleted;
+
+			// Crafting events
+			UI_GameplayEvents.OnCraftingSkipped -= HandleOnSkipCrafting;
+			PlayerProgressEvents.OnCraftingAreaProcessCompleted -= HandleOnCraftingCompleted;
 
 			_btnWatchAd.onClick.RemoveAllListeners();
 			_btnInstant.onClick.RemoveAllListeners();
@@ -116,6 +127,10 @@ namespace LittleLooters.Gameplay.UI
 			{
 				SkipRepairByWatchingAd();
 			}
+			else if (_openingReason == SkipPanelOpeningReason.CRAFTING)
+			{
+				SkipCraftingByWatchingAd();
+			}
 
 			Hide();
 		}
@@ -134,6 +149,8 @@ namespace LittleLooters.Gameplay.UI
 			// TODO: play SFX
 
 			//_inProgress = false;
+
+			UI_GameplayEvents.OnCloseSkipTimePanel?.Invoke(_openingReason);
 
 			Hide();
 		}
@@ -235,6 +252,50 @@ namespace LittleLooters.Gameplay.UI
 		private void SkipRepairByWatchingAd()
 		{
 			UI_GameplayEvents.OnSpeedUpRepairing?.Invoke(_objectId);
+		}
+
+		#endregion
+
+		#region Crafting
+
+		private int _craftingAreaId = -1;
+
+		private void HandleOnSkipCrafting(int areaId)
+		{
+			_craftingAreaId = areaId;
+
+			var areaInProgress = _playerEntryPoint.ProgressData.craftingData.GetAreaProgressData(areaId);
+			var areaConfiguration = _playerCraftingService.GetAreaData(areaId);
+
+			_expiration = areaInProgress.expiration;
+			_duration =  areaInProgress.amount * areaConfiguration.DurationByUnitInSecs;
+
+			var now = Time.time;
+			_remainingTime = _expiration - now;
+
+			_openingReason = SkipPanelOpeningReason.CRAFTING;
+
+			_inProgress = true;
+
+			_txtTitle.text = "SKIP CRAFTING"; // TODO: localize
+
+			Show();
+		}
+
+		private void HandleOnCraftingCompleted(PlayerProgress_CraftingAreaData data)
+		{
+			if (_openingReason != SkipPanelOpeningReason.CRAFTING) return;
+
+			_openingReason = SkipPanelOpeningReason.NONE;
+
+			_inProgress = false;
+
+			Hide();
+		}
+
+		private void SkipCraftingByWatchingAd()
+		{
+			UI_GameplayEvents.OnCraftingSpeedUp?.Invoke(_craftingAreaId, 900);
 		}
 
 		#endregion

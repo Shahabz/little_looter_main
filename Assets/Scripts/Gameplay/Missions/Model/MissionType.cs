@@ -12,5 +12,7 @@ namespace LittleLooters.Gameplay
         DESTRUCTION,
         TOOL_UPGRADE,
         EXPLORATION,
+        CRAFTING,
+        DELIVERY,
     }
 }

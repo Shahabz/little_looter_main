@@ -51,6 +51,8 @@ namespace LittleLooters.Gameplay.Combat
 				_hp = Mathf.Clamp(_hp - damage, 0, _hp);
 			}
 
+			UI.UI_TextDamagePanel.OnAnimateDamage?.Invoke(transform.position, Mathf.FloorToInt(damage));
+
 			if (_hp > 0)
 			{
 				OnTakeDamage?.Invoke(damage);

@@ -4,6 +4,7 @@
  */
 
 using LittleLooters.Gameplay;
+using LittleLooters.General;
 using System;
 using System.Collections.Generic;
 
@@ -17,7 +18,7 @@ namespace LittleLooters.Model
         public PlayerProgress_MeleeData meleeData;
         public PlayerProgress_CraftingData craftingData;
 
-        public void SetupRepairObjects(Gameplay.RepairObject[] repairObjects)
+        public void InitRepairProgress(Gameplay.RepairObject[] repairObjects)
 		{
             var progress = new List<PlayerProgress_ObjectToRepairData>(repairObjects.Length);
 
@@ -150,6 +151,21 @@ namespace LittleLooters.Model
 
 		#region Repair methods
 
+        /// <summary>
+        /// Returns the amount of this slot that was already fixed
+        /// </summary>
+        /// <param name="objectId"></param>
+        /// <param name="resourceId"></param>
+        /// <returns></returns>
+        public int GetSlotRepairStatus(int objectId, int resourceId)
+		{
+            var (_, repairObject) = GetRepairObjectProgressData(objectId);
+
+            var progress = repairObject.GetPartProgress(resourceId);
+
+            return progress.amount;
+        }
+
         public void Fix(int objectId, int resourceId)
 		{
             var resourceAmount = GetResourceAmount(resourceId);
@@ -228,6 +244,53 @@ namespace LittleLooters.Model
             CompleteRepairing(objectId);
         }
 
-		#endregion
-	}
+        #endregion
+
+        #region Crafting methods
+
+        public void InitCrafting()
+        {
+            craftingData.Initialize();
+        }
+
+        public void CraftingStartProcess(CraftingConfigurationData data, int amountToProduce)
+		{
+            // TODO: check if the crafting area is in status: NONE, else skip it
+
+            // Consume resources required
+            var amountToConsume = amountToProduce * data.AmountRequired;
+            resourcesData.ConsumeResource(data.ResourceRequired.Id, amountToConsume);
+
+            // Persist area progress
+            craftingData.StartProcess(data.Id, data.DurationByUnitInSecs, amountToProduce, UnityEngine.Time.time);
+		}
+
+        public void CraftingCompleteProcess(int areaId)
+		{
+            craftingData.CompleteProcess(areaId);
+		}
+
+        public int CraftingClaimProcess(int areaId, int resourceId)
+		{
+            // Get produced resource amount 
+            var areaProgressData = craftingData.GetAreaProgressData(areaId);
+
+            var amountObtained = areaProgressData.amount;
+
+            // Grant produced amount
+            resourcesData.Grant(resourceId, areaProgressData.amount);
+
+            // Claim area process
+            craftingData.ClaimProcess(areaId);
+
+            return amountObtained;
+		}
+
+        public void CraftingSpeedUpProcess(int areaId, int seconds, float now)
+		{
+            craftingData.SpeedUpProcess(areaId, seconds, now);
+        }
+
+        #endregion
+    }
 }

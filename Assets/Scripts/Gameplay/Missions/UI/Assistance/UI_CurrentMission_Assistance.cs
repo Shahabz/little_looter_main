@@ -45,6 +45,8 @@ namespace LittleLooters.Gameplay.UI
 		private MissionDestructionAssistance _destructionAssistance = default;
 		private MissionUpgradeToolAssistance _upgradeToolAssistance = default;
 		private MissionExplorationAssistance _explorationAssistance = default;
+		private MissionCraftingAssistance _craftingAssistance = default;
+		private MissionDeliveryAssistance _deliveryAssistance = default;
 		private Transform _target = default;
 
 		#endregion
@@ -60,6 +62,8 @@ namespace LittleLooters.Gameplay.UI
 			_destructionAssistance = GetComponent<MissionDestructionAssistance>();
 			_upgradeToolAssistance = GetComponent<MissionUpgradeToolAssistance>();
 			_explorationAssistance = GetComponent<MissionExplorationAssistance>();
+			_craftingAssistance = GetComponent<MissionCraftingAssistance>();
+			_deliveryAssistance = GetComponent<MissionDeliveryAssistance>();
 
 			_tweenSequence = DOTween.Sequence()
 									.Append(_indicatorIcon.DOScale(Vector3.one * _animationScale, _animationDuration).SetDelay(_animationDelay))
@@ -158,6 +162,20 @@ namespace LittleLooters.Gameplay.UI
 				var missionInfo = (MissionExplorationData)currentMission;
 
 				return _explorationAssistance.Process(currentMission, missionInfo.explorableType);
+			}
+
+			if (currentMission.Type == MissionType.CRAFTING)
+			{
+				var missionInfo = (MissionCraftingData)currentMission;
+
+				return _craftingAssistance.Process(missionInfo.ResourceData.Id);
+			}
+
+			if (currentMission.Type == MissionType.DELIVERY)
+			{
+				var missionInfo = (MissionDeliveryData)currentMission;
+
+				return _deliveryAssistance.Process(missionInfo.RepairObjectData.Id);
 			}
 
 			return (target, offset, found);

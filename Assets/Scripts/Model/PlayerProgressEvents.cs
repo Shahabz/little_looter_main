@@ -79,5 +79,14 @@ namespace LittleLooters.Model
 		}
 
 		#endregion
+
+		#region Crafting
+
+		public static Action<PlayerProgress_CraftingAreaData> OnCraftingAreaProcessStarted;
+		public static Action<PlayerProgress_CraftingAreaData> OnCraftingAreaProcessCompleted;
+		public static Action<PlayerProgress_CraftingAreaData> OnCraftingAreaProcessClaimed;
+		public static Action<PlayerProgress_CraftingAreaData> OnCraftingAreaProcessSpeedUp;
+
+		#endregion
 	}
 }

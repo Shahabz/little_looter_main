@@ -14,6 +14,11 @@ namespace LittleLooters.Gameplay
 		/// </summary>
 		public static Action OnPlayerInitialization;
 
+		/// <summary>
+		/// Invoked when skip time panel is closed by player
+		/// </summary>
+		public static Action<UI.UI_ToolUpgradeSkipPanel.SkipPanelOpeningReason> OnCloseSkipTimePanel;
+
 		#region Weapon swapping events
 
 		/// <summary>
@@ -77,6 +82,30 @@ namespace LittleLooters.Gameplay
 		public static Action OnCancelMissionAssistance;
 		public static Action OnMissionAssistanceFinished;
 		public static Action OnStopMissionAssistance;
+
+		#endregion
+
+		#region Crafting events
+
+		/// <summary>
+		/// Invoked when player starts a crafting process. [int areaId, int amount]
+		/// </summary>
+		public static Action<int, int> OnCraftingStarted;
+
+		/// <summary>
+		/// Invoked when player claims a completed crafting process. [int areaId]
+		/// </summary>
+		public static Action<int> OnCraftingClaimed;
+
+		/// <summary>
+		/// Invoked when player tries to skip the crafting in progress. [int areaId]
+		/// </summary>
+		public static Action<int> OnCraftingSkipped;
+
+		/// <summary>
+		/// Invoked when player skips the crafting area progress.
+		/// </summary>
+		public static Action<int, int> OnCraftingSpeedUp;
 
 		#endregion
 

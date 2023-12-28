@@ -5,5 +5,5 @@
 
 namespace LittleLooters.Model
 {
-	public enum CraftingStatus { NONE, IN_PROGRESS, COMPLETED, CLAIMED }
+	public enum CraftingStatus { NONE, IN_PROGRESS, COMPLETED }
 }

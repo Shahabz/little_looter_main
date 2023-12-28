@@ -13,6 +13,7 @@ namespace LittleLooters.General
         public int Id;
         public ResourceData ResourceRequired;
         public int AmountRequired;
+        public int DurationByUnitInSecs;
         public ResourceData ResourceGenerated;
     }
 }

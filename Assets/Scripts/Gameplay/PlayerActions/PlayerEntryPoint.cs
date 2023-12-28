@@ -4,6 +4,7 @@
  */
 
 using LittleLooters.Gameplay.Combat;
+using LittleLooters.General;
 using LittleLooters.Model;
 using StarterAssets;
 using UnityEngine;
@@ -49,6 +50,7 @@ namespace LittleLooters.Gameplay
 		#region Public properties
 
 		public PlayerProgressData ProgressData => _progressData;
+		public PlayerHealth Health => _health;
 
 		#endregion
 
@@ -109,7 +111,9 @@ namespace LittleLooters.Gameplay
 			_health.OnTakeDamage += TakeDamage;
 			_health.OnDead += Dead;
 
-			_missionsService.Init();
+			var playerCraftingService = InitCrafting();
+
+			_missionsService.Init(this, playerCraftingService);
 
 			UI_GameplayEvents.OnPlayerInitialization?.Invoke();
 		}
@@ -137,7 +141,7 @@ namespace LittleLooters.Gameplay
 
 		public void SetupRepairObjects(RepairObject[] repairObjects)
 		{
-			_progressData.SetupRepairObjects(repairObjects);
+			_progressData.InitRepairProgress(repairObjects);
 		}
 
 		//public void AddPartsToRepairObject(int objectId, int partId, int partAmount)
@@ -148,6 +152,11 @@ namespace LittleLooters.Gameplay
 		public void GrantResourceByDestructionDamage(int resourceId, int amountReward)
 		{
 			_progressData.GrantResourceAmount(resourceId, amountReward);
+		}
+
+		public void GrantResourceByPickup(int resourceId, int amount)
+		{
+			_progressData.GrantResourceAmount(resourceId, amount);
 		}
 
 		public ConfigurationMeleeLevelData GetCurrentToolLevelData()
@@ -204,6 +213,34 @@ namespace LittleLooters.Gameplay
 			var toolLevelData = GetCurrentToolLevelData();
 
 			_progressData.CompleteIncreaseToolDamage(toolLevelData);
+		}
+
+		#endregion
+
+		#region Crafting
+
+		public void CraftingStartProcess(CraftingConfigurationData data, int amount)
+		{
+			_progressData.CraftingStartProcess(data, amount);
+		}
+
+		public void CraftingCompleteProcess(int areaId)
+		{
+			_progressData.CraftingCompleteProcess(areaId);
+		}
+
+		public int CraftingClaimProcess(int resourceId, int areaId)
+		{
+			var amountObtained = _progressData.CraftingClaimProcess(areaId, resourceId);
+
+			return amountObtained;
+		}
+
+		public void CraftingSpeedUpProcess(int areaId, int secondsToSkip)
+		{
+			var now = Time.time;
+
+			_progressData.CraftingSpeedUpProcess(areaId, secondsToSkip, now);
 		}
 
 		#endregion
@@ -280,6 +317,17 @@ namespace LittleLooters.Gameplay
 		private void HandleConsumeResourceByCheat(UI_GameplayEvents.UpdateResourceByCheatArgs args)
 		{
 			_progressData.ConsumeResourceAmount(args.resourceId, args.amount);
+		}
+
+		private PlayerCraftingService InitCrafting()
+		{
+			_progressData.InitCrafting();
+
+			// Crafting service
+			var craftingService = GetComponent<PlayerCraftingService>();
+			craftingService.Initialization(this);
+
+			return craftingService;
 		}
 
 		#endregion
