@@ -41,14 +41,14 @@ namespace LittleLooters.Gameplay
 
 		#region Public methods
 
-		public (Transform target, Vector3 targetOffset, bool found) Process(MissionConfigurationData mission, ExplorableObjectType explorableType)
+		public (Transform target, Vector3 targetOffset, bool found) Process(MissionConfigurationData mission, ExplorableObjectType explorableType, int objectId)
 		{
 			Vector3 offset = Vector3.zero;
 			offset.y = 2;
 
 			var (target, found) = GetNearestTarget(explorableType);
 
-			if (_canDebug) DebugProcess(mission, explorableType, found);
+			if (_canDebug) DebugProcess(mission, explorableType, objectId, found);
 
 			return (target, offset, found);
 		}
@@ -86,9 +86,9 @@ namespace LittleLooters.Gameplay
 
 		private bool _canDebug = false;
 
-		private void DebugProcess(MissionConfigurationData mission, ExplorableObjectType type, bool found)
+		private void DebugProcess(MissionConfigurationData mission, ExplorableObjectType type, int objectId, bool found)
 		{
-			Debug.LogError($"<color=magenta>EXPLORATION</color> -> Current mission <color=yellow>'{mission.Description}'</color>, type: <color=orange>{mission.Type}</color>, explorable Type: <color=cyan>{type}</color>, found: <color=yellow>{found}</color>");
+			Debug.LogError($"<color=magenta>EXPLORATION</color> -> Current mission <color=yellow>'{mission.Description}'</color>, type: <color=orange>{mission.Type}</color>, explorable Type: <color=cyan>{type}</color>, object ID: <color=magenta>'{objectId}'</color>, found: <color=yellow>{found}</color>");
 
 		}
 

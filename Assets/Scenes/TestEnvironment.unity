@@ -3218,14 +3218,15 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _missions:
+  - {fileID: 11400000, guid: cd6e10f79ecf87243bd6d84f1341e581, type: 2}
+  - {fileID: 11400000, guid: f28195e79cf42be41ab9d5f5cbe6070c, type: 2}
   - {fileID: 11400000, guid: 339e0aed95373634589e9b448815f157, type: 2}
-  - {fileID: 11400000, guid: 0dd8303a4723ac8448e7e4495298d423, type: 2}
-  - {fileID: 11400000, guid: 9c448b97ca8f4f04c9acebe33746184a, type: 2}
-  - {fileID: 11400000, guid: adaebe443ce49eb478868cb85e40cbaf, type: 2}
+  - {fileID: 11400000, guid: 1ef16d6ecdf239745b990d6a92d27305, type: 2}
   - {fileID: 11400000, guid: 7e26806d3c7873f43ab9d884c045b865, type: 2}
+  - {fileID: 11400000, guid: cd0d1e0601e7b264ba408f8bfae635ea, type: 2}
+  - {fileID: 11400000, guid: adaebe443ce49eb478868cb85e40cbaf, type: 2}
   - {fileID: 11400000, guid: 108e83a9b7ea4fb49a9b95db6f77316f, type: 2}
   - {fileID: 11400000, guid: bc57716828b58dd45b2ca3e39aca4d28, type: 2}
-  - {fileID: 11400000, guid: cd0d1e0601e7b264ba408f8bfae635ea, type: 2}
 --- !u!114 &132945891
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -15669,6 +15670,7 @@ GameObject:
   - component: {fileID: 855372865}
   - component: {fileID: 855372866}
   - component: {fileID: 855372867}
+  - component: {fileID: 855372868}
   m_Layer: 0
   m_Name: missionAssistance
   m_TagString: Untagged
@@ -15838,6 +15840,18 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 940e4b5a69380bc46a95c9e6ee6ca0cf, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &855372868
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 855372858}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0853b6f7b9545134580520504e5b5652, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!1 &857725808
@@ -36133,7 +36147,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ddecbbf244ae4434a9cd10de442ca7f9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _type: 2
+  _id: 0
+  _type: 4
 --- !u!135 &2021190275
 SphereCollider:
   m_ObjectHideFlags: 0
@@ -37103,6 +37118,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ddecbbf244ae4434a9cd10de442ca7f9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _id: 5
   _type: 3
 --- !u!114 &2081378307
 MonoBehaviour:
@@ -40461,6 +40477,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: UI_CurrentMissionPanel
       objectReference: {fileID: 0}
+    - target: {fileID: 2766403291911745770, guid: 6af5b2a96a08f2f47aaaa046e4166611, type: 3}
+      propertyPath: _playerEntryPoint
+      value: 
+      objectReference: {fileID: 132945884}
     - target: {fileID: 3191291072115286263, guid: 6af5b2a96a08f2f47aaaa046e4166611, type: 3}
       propertyPath: m_IsActive
       value: 0

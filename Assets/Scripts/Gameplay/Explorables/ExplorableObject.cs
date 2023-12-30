@@ -9,6 +9,7 @@ namespace LittleLooters.Gameplay
 {
     public class ExplorableObject : MonoBehaviour
     {
+		[SerializeField] private int _id = default;
 		[SerializeField] private ExplorableObjectType _type = ExplorableObjectType.NONE;
 
 		private const string _tag = "Player";
@@ -19,7 +20,7 @@ namespace LittleLooters.Gameplay
 		{
 			if (!other.tag.Equals(_tag)) return;
 
-			ExplorableObjectEvents.OnEnter?.Invoke(_type);
+			ExplorableObjectEvents.OnEnter?.Invoke(_type, _id);
 		}
 
 		private void OnTriggerExit(Collider other)

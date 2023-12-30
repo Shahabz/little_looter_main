@@ -88,9 +88,11 @@ namespace LittleLooters.Gameplay
 
 			if (resourceId != _resource.Id) return;
 
-			_amount = _entryPoint.ProgressData.GetResourceAmount(resourceId);
+			_amount += areaData.amount;
 
 			PlayerMissionsEvents.OnMissionProgress?.Invoke(_amount, _amountGoal);
+
+			UnityEngine.Debug.LogError($"<color=orange>PlayerMissionTriggerCrafting</color>::HandleCraftingAreaClaim -> amount: {_amount}, goal: {_amountGoal}");
 
 			if (_amount < _amountGoal) return;
 

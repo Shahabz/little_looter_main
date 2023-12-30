@@ -14,5 +14,6 @@ namespace LittleLooters.Gameplay
         EXPLORATION,
         CRAFTING,
         DELIVERY,
+        REPAIRING,
     }
 }

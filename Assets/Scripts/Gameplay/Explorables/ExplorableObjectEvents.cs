@@ -9,7 +9,7 @@ namespace LittleLooters.Gameplay
 {
     public class ExplorableObjectEvents
     {
-        public static Action<ExplorableObjectType> OnEnter;
+        public static Action<ExplorableObjectType, int> OnEnter;
         public static Action<ExplorableObjectType> OnExit;
     }
 }

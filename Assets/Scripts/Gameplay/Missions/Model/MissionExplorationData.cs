@@ -11,5 +11,7 @@ namespace LittleLooters.Gameplay
     public class MissionExplorationData : MissionConfigurationData
     {
         public ExplorableObjectType explorableType;
+
+        public virtual int Id { get; }
     }
 }

@@ -23,6 +23,7 @@ namespace LittleLooters.Gameplay
         private PlayerMissionTriggerExploration _triggerExploration = default;
         private PlayerMissionTriggerCrafting _triggerCrafting = default;
         private PlayerMissionTriggerDelivery _triggerDelivery = default;
+        private PlayerMissionTriggerRepairing _triggerRepairing = default;
 
         #endregion
 
@@ -35,6 +36,7 @@ namespace LittleLooters.Gameplay
             _triggerExploration = new PlayerMissionTriggerExploration();
             _triggerCrafting = new PlayerMissionTriggerCrafting();
             _triggerDelivery = new PlayerMissionTriggerDelivery();
+            _triggerRepairing = new PlayerMissionTriggerRepairing();
 		}
 
 		private void OnDestroy()
@@ -44,6 +46,7 @@ namespace LittleLooters.Gameplay
             _triggerExploration.Teardown();
             _triggerCrafting.Teardown();
             _triggerDelivery.Teardown();
+            _triggerRepairing.Teardown();
         }
 
 		#endregion
@@ -57,6 +60,7 @@ namespace LittleLooters.Gameplay
             _triggerExploration.Initialize(MissionCompleted);
             _triggerCrafting.Initialize(MissionCompleted, playerCraftingService, playerEntryPoint);
             _triggerDelivery.Initialize(MissionCompleted, playerEntryPoint);
+            _triggerRepairing.Initialize(MissionCompleted);
 
             _missionId = 0;
 
@@ -109,6 +113,7 @@ namespace LittleLooters.Gameplay
             _triggerExploration.ResetStatus(data.Type, data);
             _triggerCrafting.ResetStatus(data.Type, data);
             _triggerDelivery.ResetStatus(data.Type, data);
+            _triggerRepairing.ResetStatus(data.Type, data);
 		}
 
 		#endregion

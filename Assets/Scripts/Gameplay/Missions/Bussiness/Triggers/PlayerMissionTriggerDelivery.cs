@@ -80,6 +80,8 @@ namespace LittleLooters.Gameplay
 
 		private void HandleOnSlotFixDone(PlayerProgressEvents.RepairSlotArgs args)
 		{
+			if (!_inProgress) return;
+
 			var repairObjectId = args.objectId;
 
 			// Check if it is the repair object goal

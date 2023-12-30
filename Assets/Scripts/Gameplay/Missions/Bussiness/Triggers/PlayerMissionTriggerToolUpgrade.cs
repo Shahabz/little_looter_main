@@ -68,7 +68,7 @@ namespace LittleLooters.Gameplay
 			_callback?.Invoke();
 		}
 
-		private void ExplorableFound(ExplorableObjectType explorableType)
+		private void ExplorableFound(ExplorableObjectType explorableType, int objectId)
 		{
 			if (!_inProgress) return;
 

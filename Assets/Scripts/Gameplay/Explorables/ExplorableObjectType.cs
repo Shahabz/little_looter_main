@@ -14,5 +14,6 @@ namespace LittleLooters.Gameplay
         UPGRADE_TOOL,
         REPAIR_CAR,
         RESOURCE,
+        REPAIRABLE_OBJECT,
     }
 }
