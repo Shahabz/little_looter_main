@@ -43,6 +43,17 @@ namespace LittleLooters.Gameplay.UI
 
 		#endregion
 
+		#region Public methods
+
+		public void ApplyPreset()
+		{
+			_status = false;
+
+			Apply();
+		}
+
+		#endregion
+
 		#region Private methods
 
 		private void Apply()

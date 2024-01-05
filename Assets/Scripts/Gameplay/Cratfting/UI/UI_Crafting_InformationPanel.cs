@@ -214,7 +214,7 @@ namespace LittleLooters.Gameplay.UI
 
 		#region Debug
 
-		private bool _canDebug = true;
+		private bool _canDebug = false;
 
 		private void DebugProcess()
 		{

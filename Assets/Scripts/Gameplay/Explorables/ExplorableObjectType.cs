@@ -15,5 +15,6 @@ namespace LittleLooters.Gameplay
         REPAIR_CAR,
         RESOURCE,
         REPAIRABLE_OBJECT,
+        CRAFTING_AREA,
     }
 }

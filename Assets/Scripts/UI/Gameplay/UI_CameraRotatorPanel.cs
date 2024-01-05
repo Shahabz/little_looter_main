@@ -41,6 +41,15 @@ namespace LittleLooters.Gameplay.UI
 
 		#endregion
 
+		#region Public methods
+
+		public void ApplyPreset()
+		{
+			StartCoroutine(RotateByPreset());
+		}
+
+		#endregion
+
 		#region Private methods
 
 		private void Init()
@@ -106,6 +115,21 @@ namespace LittleLooters.Gameplay.UI
 			_isRotating = false;
 
 			// TODO: Communicate rotation completion if needed
+		}
+
+		private IEnumerator RotateByPreset()
+		{
+			yield return new WaitForEndOfFrame();
+
+			var size = (-1) * _rotationSize * 2;
+			var from = _cameraPivot.rotation;
+
+			var eulerTo = from.eulerAngles;
+			eulerTo.y += size;
+
+			var to = Quaternion.Euler(eulerTo);
+
+			_cameraPivot.rotation = to;
 		}
 
 		#endregion

@@ -86,7 +86,7 @@ namespace LittleLooters.Gameplay
 
 		private void HandleOnCraftingAreaProcessClaimed(PlayerProgress_CraftingAreaData data)
 		{
-			Debug.LogError($"Crafting <color=orange>claimed</color> -> id: {data.id}, my id: {_data.Id}");
+			if (_canDebug) DebugClaiming(data);
 
 			if (data.id != _data.Id) return;
 
@@ -119,6 +119,11 @@ namespace LittleLooters.Gameplay
 		private void DebugStopDetection()
 		{
 			Debug.LogError($"Area <color=yellow>{_data.Id}</color> stop <color=red>detection</color>");
+		}
+
+		private void DebugClaiming(PlayerProgress_CraftingAreaData data)
+		{
+			Debug.LogError($"Crafting <color=orange>claimed</color> -> id: {data.id}, my id: {_data.Id}");
 		}
 
 		#endregion

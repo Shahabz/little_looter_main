@@ -15,6 +15,7 @@ namespace LittleLooters.Gameplay.UI
         [SerializeField] private UI_CurrentMission_UpgradeToolDetails _upgradeToolPanel = default;
 		[SerializeField] private UI_CurrentMission_DeliveryDetails _deliveryPanel = default;
 		[SerializeField] private UI_CurrentMission_RepairingDetails _repairingPanel = default;
+		[SerializeField] private UI_CurrentMission_CraftingDetails _craftingPanel = default;
 
 		#endregion
 
@@ -46,6 +47,12 @@ namespace LittleLooters.Gameplay.UI
 				return;
 			}
 
+			if (mission.Type == MissionType.CRAFTING)
+			{
+				ShowCraftingPanel(mission);
+				return;
+			}
+
 			HidePanels();
 		}
 
@@ -59,6 +66,7 @@ namespace LittleLooters.Gameplay.UI
 			_upgradeToolPanel.gameObject.SetActive(false);
 			_deliveryPanel.gameObject.SetActive(false);
 			_repairingPanel.gameObject.SetActive(false);
+			_craftingPanel.gameObject.SetActive(false);
 		}
 
 		private void ShowDestructionPanel(MissionConfigurationData mission)
@@ -103,6 +111,17 @@ namespace LittleLooters.Gameplay.UI
 			var missionInfo = (MissionRepairingData)mission;
 
 			_repairingPanel.Setup(missionInfo.RepairObjectData);
+		}
+
+		private void ShowCraftingPanel(MissionConfigurationData mission)
+		{
+			HidePanels();
+
+			_craftingPanel.gameObject.SetActive(true);
+
+			var missionInfo = (MissionCraftingData)mission;
+
+			_craftingPanel.Setup(missionInfo.AreaData.Id);
 		}
 
 		#endregion

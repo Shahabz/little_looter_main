@@ -265,7 +265,7 @@ namespace LittleLooters.Gameplay.UI
 			_craftingAreaId = areaId;
 
 			var areaInProgress = _playerEntryPoint.ProgressData.craftingData.GetAreaProgressData(areaId);
-			var areaConfiguration = _playerCraftingService.GetAreaData(areaId);
+			var areaConfiguration = _playerCraftingService.GetConfigurationAreaData(areaId);
 
 			_expiration = areaInProgress.expiration;
 			_duration =  areaInProgress.amount * areaConfiguration.DurationByUnitInSecs;

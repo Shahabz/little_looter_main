@@ -119,7 +119,7 @@ namespace LittleLooters.Gameplay.UI
 
 		private void ShowCraftingProgress(PlayerProgress_CraftingAreaData data)
 		{
-			var craftingConfigurationData = _playerService.GetAreaData(data.id);
+			var craftingConfigurationData = _playerService.GetConfigurationAreaData(data.id);
 
 			var duration = data.amount * craftingConfigurationData.DurationByUnitInSecs;
 
@@ -148,7 +148,7 @@ namespace LittleLooters.Gameplay.UI
 
 		private void HandleOnCraftingAreaProcessCompleted(PlayerProgress_CraftingAreaData data)
 		{
-			var configurationData = _playerService.GetAreaData(data.id);
+			var configurationData = _playerService.GetConfigurationAreaData(data.id);
 
 			ShowCraftingCompleted(configurationData, data.amount);
 		}
@@ -157,7 +157,7 @@ namespace LittleLooters.Gameplay.UI
 		{
 			HideAllPanels();
 
-			var configurationData = _playerService.GetAreaData(data.id);
+			var configurationData = _playerService.GetConfigurationAreaData(data.id);
 
 			ShowCraftingInformation(configurationData);
 		}

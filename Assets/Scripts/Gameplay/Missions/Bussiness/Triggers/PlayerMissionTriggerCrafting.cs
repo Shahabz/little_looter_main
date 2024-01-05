@@ -21,6 +21,7 @@ namespace LittleLooters.Gameplay
 		private int _amount = 0;
 		private bool _inProgress = false;
 		private ResourceData _resource = default;
+		private int _areaId = -1;
 
 		#endregion
 
@@ -35,6 +36,7 @@ namespace LittleLooters.Gameplay
 			_entryPoint = entryPoint;
 
 			PlayerProgressEvents.OnCraftingAreaProcessClaimed += HandleCraftingAreaClaim;
+			ExplorableObjectEvents.OnEnter += HandleExplorableFound;
 		}
 
 		public void Teardown()
@@ -42,6 +44,7 @@ namespace LittleLooters.Gameplay
 			_callback = null;
 
 			PlayerProgressEvents.OnCraftingAreaProcessClaimed -= HandleCraftingAreaClaim;
+			ExplorableObjectEvents.OnEnter -= HandleExplorableFound;
 		}
 
 		public void ResetStatus(MissionType type, MissionConfigurationData mission)
@@ -55,15 +58,16 @@ namespace LittleLooters.Gameplay
 
 			var data = (MissionCraftingData)mission;
 
-			Start(data.Amount, data.ResourceData);
+			Start(data.Amount, data.ResourceData, data.AreaData.Id);
 		}
 
 		#endregion
 
 		#region Private methods
 
-		private void Start(int amount, ResourceData resourceData)
+		private void Start(int amount, ResourceData resourceData, int areaId)
 		{
+			_areaId = areaId;
 			_resource = resourceData;
 			_amountGoal = amount;
 			_amount = 0;
@@ -72,6 +76,7 @@ namespace LittleLooters.Gameplay
 
 		private void Stop()
 		{
+			_areaId = -1;
 			_resource = null;
 			_amountGoal = 0;
 			_amount = 0;
@@ -82,7 +87,7 @@ namespace LittleLooters.Gameplay
 		{
 			var areaId = areaData.id;
 
-			var configurationData = _craftingService.GetAreaData(areaId);
+			var configurationData = _craftingService.GetConfigurationAreaData(areaId);
 
 			var resourceId = configurationData.ResourceGenerated.Id;
 
@@ -92,14 +97,33 @@ namespace LittleLooters.Gameplay
 
 			PlayerMissionsEvents.OnMissionProgress?.Invoke(_amount, _amountGoal);
 
-			UnityEngine.Debug.LogError($"<color=orange>PlayerMissionTriggerCrafting</color>::HandleCraftingAreaClaim -> amount: {_amount}, goal: {_amountGoal}");
+			if (_canDebug) DebugClaiming();
 
 			if (_amount < _amountGoal) return;
 
 			_callback?.Invoke();
 		}
 
+		private void HandleExplorableFound(ExplorableObjectType type, int id)
+		{
+			if (type != ExplorableObjectType.CRAFTING_AREA) return;
+
+			if (_areaId != id) return;
+
+			UI_GameplayEvents.OnStopMissionAssistance?.Invoke();
+		}
+
 		#endregion
 
+		#region Debug
+
+		private bool _canDebug = false;
+
+		private void DebugClaiming()
+		{
+			UnityEngine.Debug.LogError($"<color=orange>PlayerMissionTriggerCrafting</color>::HandleCraftingAreaClaim -> amount: {_amount}, goal: {_amountGoal}");
+		}
+
+		#endregion
 	}
 }

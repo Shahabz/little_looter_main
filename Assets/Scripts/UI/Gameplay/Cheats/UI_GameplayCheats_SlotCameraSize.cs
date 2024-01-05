@@ -41,11 +41,22 @@ namespace LittleLooters.Gameplay.UI
             _btnApply.onClick.RemoveAllListeners();
         }
 
-        #endregion
+		#endregion
 
-        #region Private methods
+		#region Public methods
 
-        private void Apply()
+        public void ApplyPreset()
+		{
+            _currentOption = 1;
+
+            Apply();
+		}
+
+		#endregion
+
+		#region Private methods
+
+		private void Apply()
         {
             _currentOption = (_currentOption + 1) % _optionValues.Length;
 

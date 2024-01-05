@@ -44,6 +44,7 @@ GameObject:
   - component: {fileID: 4152621196534909879}
   - component: {fileID: 4152621196534909878}
   - component: {fileID: 4152621196534909873}
+  - component: {fileID: 3107169607795198740}
   m_Layer: 2
   m_Name: craftingArea_Nails
   m_TagString: Crafting
@@ -96,6 +97,20 @@ SphereCollider:
   serializedVersion: 2
   m_Radius: 2
   m_Center: {x: 0, y: 0.5, z: 0}
+--- !u!114 &3107169607795198740
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4152621196534909876}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ddecbbf244ae4434a9cd10de442ca7f9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _id: 0
+  _type: 5
 --- !u!1 &4152621197161088611
 GameObject:
   m_ObjectHideFlags: 0

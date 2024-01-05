@@ -78,7 +78,7 @@ namespace LittleLooters.Gameplay
 			_entryPoint.Health.OnDead += HandleOnDead;
 		}
 
-		public CraftingConfigurationData GetAreaData(int id)
+		public CraftingConfigurationData GetConfigurationAreaData(int id)
 		{
 			for (int i = 0; i < _areas.Length; i++)
 			{
@@ -111,7 +111,7 @@ namespace LittleLooters.Gameplay
 
 		private void HandleOnCraftingStarted(int areaId, int amount)
 		{
-			var data = GetAreaData(areaId);
+			var data = GetConfigurationAreaData(areaId);
 
 			_entryPoint.CraftingStartProcess(data, amount);
 		}
@@ -136,7 +136,7 @@ namespace LittleLooters.Gameplay
 
 		private void HandleOnCraftingClaimed(int areaId)
 		{
-			var configurationData = GetAreaData(areaId);
+			var configurationData = GetConfigurationAreaData(areaId);
 			var newResourceId = configurationData.ResourceGenerated.Id;
 
 			var amountObtained = _entryPoint.CraftingClaimProcess(newResourceId, areaId);
