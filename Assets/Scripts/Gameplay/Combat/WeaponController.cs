@@ -88,7 +88,7 @@ namespace LittleLooters.Gameplay.Combat
 		public void FireWeapon()
 		{
 			_aimingAssistance.Process(transform.forward);
-			_aimingAssistance.RotateToTarget();
+			_aimingAssistance.RotateToTarget(true);
 
 			_weapon.Fire();
 		}

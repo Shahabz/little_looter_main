@@ -577,7 +577,7 @@ namespace StarterAssets
 
                 if (!_aimingAssistance.TargetDetected) return;
 
-                _aimingAssistance.RotateToTarget();
+                _aimingAssistance.RotateToTarget(false);
             }
         }
 

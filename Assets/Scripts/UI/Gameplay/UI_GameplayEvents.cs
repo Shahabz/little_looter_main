@@ -19,6 +19,8 @@ namespace LittleLooters.Gameplay
 		/// </summary>
 		public static Action<UI.UI_ToolUpgradeSkipPanel.SkipPanelOpeningReason> OnCloseSkipTimePanel;
 
+		public static Action<float> OnCameraSizeChanged;
+
 		#region Weapon swapping events
 
 		/// <summary>

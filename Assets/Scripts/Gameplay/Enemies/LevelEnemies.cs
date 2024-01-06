@@ -9,7 +9,14 @@ namespace LittleLooters.Gameplay
 {
     public class LevelEnemies : MonoBehaviour
     {
-        [SerializeField] private EnemyController[] _entities = default;
+		#region Events
+
+		public static System.Action OnStartDetection;
+		public static System.Action OnStopDetection;
+
+		#endregion
+
+		[SerializeField] private EnemyController[] _entities = default;
 
 		public EnemyController[] Entities => _entities;
 
@@ -53,6 +60,8 @@ namespace LittleLooters.Gameplay
 			var previousDetection = _detectedId != -1;
 			var previousDetected = _detected;
 
+			if (!previousDetection) OnStartDetection?.Invoke();
+
 			_detected = target;
 			_detectedId = target.Id;
 			_detected.MarkAsDetected();
@@ -70,6 +79,8 @@ namespace LittleLooters.Gameplay
 
 			_detected = null;
 			_detectedId = -1;
+
+			OnStopDetection?.Invoke();
 		}
 
 		private void InitEntities()

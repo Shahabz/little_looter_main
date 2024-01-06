@@ -27,12 +27,14 @@ namespace LittleLooters.Gameplay.Combat
         private bool enabled = false;
         private bool _targetDetected = false;
         private Transform _target = default;
+        private float _rotationVelocity;
+        private float _rotationSpeed = 0.10f;
 
-		#endregion
+        #endregion
 
-		#region Public properties
+        #region Public properties
 
-		public bool TargetDetected => _targetDetected;
+        public bool TargetDetected => _targetDetected;
         public Transform Target => _target;
 
 		#endregion
@@ -87,7 +89,7 @@ namespace LittleLooters.Gameplay.Combat
             levelEnemies.StopDetection();
         }
 
-        public void RotateToTarget()
+        public void RotateToTarget(bool instant)
         {
             if (!_targetDetected) return;
 
@@ -95,7 +97,22 @@ namespace LittleLooters.Gameplay.Combat
 
             target.y = this.localTransform.position.y;
 
-            this.localTransform.LookAt(target);
+            // Instant rotation
+            if (instant)
+            {
+                this.localTransform.LookAt(target);
+                return;
+            }
+
+            // Smooth rotation
+            var targetDirection = (target - this.localTransform.position).normalized;
+
+            var targetRotation = Mathf.Atan2(targetDirection.x, targetDirection.z) * Mathf.Rad2Deg;
+
+            float rotation = Mathf.SmoothDampAngle(this.localTransform.eulerAngles.y, targetRotation, ref _rotationVelocity, _rotationSpeed);
+
+            // rotate to face target direction relative to camera position
+            this.localTransform.rotation = Quaternion.Euler(0.0f, rotation, 0.0f);
         }
 
         #endregion

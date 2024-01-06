@@ -65,6 +65,8 @@ namespace LittleLooters.Gameplay.UI
             _camera.m_Lens.OrthographicSize = cameraSize;
 
             RefreshSize();
+
+            UI_GameplayEvents.OnCameraSizeChanged?.Invoke(cameraSize);
         }
 
         private void RefreshSize()
