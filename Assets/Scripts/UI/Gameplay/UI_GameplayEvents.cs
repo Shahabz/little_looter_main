@@ -28,6 +28,11 @@ namespace LittleLooters.Gameplay
 		/// </summary>
 		public static Action<int> OnWeaponSelection;
 
+		/// <summary>
+		/// Invoked when weapon radius detection has changed
+		/// </summary>
+		public static Action<float> OnWeaponRadiusChanged;
+
 		#endregion
 
 		#region Repairing events

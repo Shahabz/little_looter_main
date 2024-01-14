@@ -12,6 +12,7 @@ namespace LittleLooters.Gameplay.UI
 	/// </summary>
 	public class UI_WeaponSelectionPanel : MonoBehaviour
 	{
+		[SerializeField] private GameObject _panel = default;
 		[SerializeField] private UI_WeaponSelectionSlot[] _slots = default;
 
 		private void Start()
@@ -24,14 +25,42 @@ namespace LittleLooters.Gameplay.UI
 			Teardown();
 		}
 
+		private void ShowPanel()
+		{
+			_panel.SetActive(true);
+		}
+
+		private void HidePanel()
+		{
+			_panel.SetActive(false);
+		}
+
 		private void Init()
 		{
+			LevelEnemies.OnStartDetection += HandleStartEnemiesDetection;
+			LevelEnemies.OnStopDetection += HandleStopEnemiesDetection;
+
 			InitSlots();
+
+			HidePanel();
 		}
 
 		private void Teardown()
 		{
+			LevelEnemies.OnStartDetection -= HandleStartEnemiesDetection;
+			LevelEnemies.OnStopDetection -= HandleStopEnemiesDetection;
+
 			TeardownSlots();
+		}
+
+		private void HandleStopEnemiesDetection()
+		{
+			HidePanel();
+		}
+
+		private void HandleStartEnemiesDetection()
+		{
+			ShowPanel();
 		}
 
 		private void InitSlots()

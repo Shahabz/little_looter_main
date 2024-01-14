@@ -533,7 +533,7 @@ namespace StarterAssets
 
                 return;
             }
-            if (!_weaponController.IsReloading && _autoaiming && _aimingAssistance.TargetDetected)
+            if (!_weaponController.IsReloading && _autoaiming && _aimingAssistance.TargetDetected && _aimingAssistance.TargetInsideRadius)
 			{
                 //_aimingAssistance.RotateToTarget();
 
@@ -541,7 +541,10 @@ namespace StarterAssets
             }
             else
 			{
-                _aimingAssistance?.StopProcessing();
+                if (!_aimingAssistance.TargetDetected && !_aimingAssistance.TargetInsideRadius)
+                {
+                    _aimingAssistance?.StopProcessing();
+                }
 			}
 
             if (_input.move != Vector2.zero)

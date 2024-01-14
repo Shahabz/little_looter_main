@@ -23,6 +23,7 @@ namespace LittleLooters.Gameplay
 		[SerializeField] private bool _enabled = false; 
 		private int _detectedId = -1;
 		private EnemyController _detected = default;
+		private bool _detectionStarted = false;
 
 		private void Start()
 		{
@@ -53,18 +54,33 @@ namespace LittleLooters.Gameplay
 			}
 		}
 
-		public void StartDetection(EnemyController target)
+		public void StartDetection(EnemyController target, bool isTargetInsideRadius)
 		{
-			if (_detectedId == target.Id) return;
+			if (isTargetInsideRadius && _detectedId == target.Id) return;
+
+			if (!isTargetInsideRadius)
+			{
+				ClearTargetDetection();
+			}
 
 			var previousDetection = _detectedId != -1;
 			var previousDetected = _detected;
 
-			if (!previousDetection) OnStartDetection?.Invoke();
+			if (!previousDetection)
+			{
+				_detectionStarted = true;
 
-			_detected = target;
-			_detectedId = target.Id;
-			_detected.MarkAsDetected();
+				OnStartDetection?.Invoke();
+			}
+
+			if (_canDebug) DebugStartDetection(isTargetInsideRadius);
+
+			if (isTargetInsideRadius)
+			{
+				_detected = target;
+				_detectedId = target.Id;
+				_detected.MarkAsDetected();
+			}
 
 			if (!previousDetection) return;
 
@@ -73,12 +89,13 @@ namespace LittleLooters.Gameplay
 
 		public void StopDetection()
 		{
-			if (_detectedId == -1) return;
+			if (!_detectionStarted) return;
 
-			_detected.MarkAsNonDetected();
+			if (_canDebug) DebugStopDetection();
 
-			_detected = null;
-			_detectedId = -1;
+			ClearTargetDetection();
+
+			_detectionStarted = false;
 
 			OnStopDetection?.Invoke();
 		}
@@ -102,5 +119,31 @@ namespace LittleLooters.Gameplay
 				entity.Teardown();
 			}
 		}
+
+		private void ClearTargetDetection()
+		{
+			if (_detectedId == -1) return;
+
+			_detected.MarkAsNonDetected();
+
+			_detected = null;
+			_detectedId = -1;
+		}
+
+		#region Debug
+
+		private bool _canDebug = false;
+
+		private void DebugStartDetection(bool isTargetInsideRadius)
+		{
+			Debug.LogError($"LevelEnemies::<color=green>StartDetection</color> -> is target inside radius: <color=yellow>{isTargetInsideRadius}</color>");
+		}
+
+		private void DebugStopDetection()
+		{
+			Debug.LogError($"LevelEnemies::<color=red>StopDetection</color>");
+		}
+
+		#endregion
 	}
 }

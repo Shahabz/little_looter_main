@@ -1416,6 +1416,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5f42d538f69c40244b55f0c0111cb44c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _panel: {fileID: 4589186263195020000}
   _slots:
   - {fileID: 4589186264710985762}
   - {fileID: 4589186265186285584}

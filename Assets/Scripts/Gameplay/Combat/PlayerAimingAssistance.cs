@@ -3,6 +3,7 @@
  * Author: Peche
  */
 
+using LittleLooters.Model;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -21,11 +22,13 @@ namespace LittleLooters.Gameplay.Combat
 
 		private Transform localTransform = default;
         private float angleThreshold = default;
-        private float radiusDetection = default;
+        private const float radiusDetection = 15f;
+        private float weaponRadiusDetection = default;
         private LevelEnemies levelEnemies = default;
         private EnemyController[] results = default;
         private bool enabled = false;
         private bool _targetDetected = false;
+        private bool _isTargetInsideRadius = false;
         private Transform _target = default;
         private float _rotationVelocity;
         private float _rotationSpeed = 0.10f;
@@ -35,6 +38,7 @@ namespace LittleLooters.Gameplay.Combat
         #region Public properties
 
         public bool TargetDetected => _targetDetected;
+        public bool TargetInsideRadius => _isTargetInsideRadius;
         public Transform Target => _target;
 
 		#endregion
@@ -45,13 +49,20 @@ namespace LittleLooters.Gameplay.Combat
 		{
             this.localTransform = transform;
             this.angleThreshold = angle;
-            this.radiusDetection = radius;
+            this.weaponRadiusDetection = radius;
             this.levelEnemies = levelEnemies;
 
             this.results = new EnemyController[0];
 
+            PlayerProgressEvents.OnWeaponChanged += HandlePlayerWeaponChanged;
+
             this.enabled = true;
 		}
+
+        public void Teardown()
+		{
+            PlayerProgressEvents.OnWeaponChanged -= HandlePlayerWeaponChanged;
+        }
 
         public bool Process(Vector3 forward)
 		{
@@ -66,11 +77,16 @@ namespace LittleLooters.Gameplay.Combat
                 return false;
             }
 
-            levelEnemies.StartDetection(response.target);
+            levelEnemies.StartDetection(response.target, response.targetInsideRadius);
 
             _targetDetected = true;
 
-            _target = response.target.transform;
+            _isTargetInsideRadius = response.targetInsideRadius;
+
+            if (_isTargetInsideRadius)
+            {
+                _target = response.target.transform;
+            }
 
             OnStartAiming?.Invoke();
 
@@ -82,6 +98,7 @@ namespace LittleLooters.Gameplay.Combat
             if (!this.enabled) return;
 
             _targetDetected = false;
+            _isTargetInsideRadius = false;
             _target = null;
 
             OnStopAiming?.Invoke();
@@ -91,6 +108,8 @@ namespace LittleLooters.Gameplay.Combat
 
         public void RotateToTarget(bool instant)
         {
+            if (!_isTargetInsideRadius) return;
+
             if (!_targetDetected) return;
 
             var target = _target.position;
@@ -119,7 +138,14 @@ namespace LittleLooters.Gameplay.Combat
 
         #region Private methods
 
-        private (bool inRange, EnemyController target) CalculateTargetInRange(Vector3 forward)
+        private void HandlePlayerWeaponChanged(AssaultWeaponData weaponData)
+		{
+            this.weaponRadiusDetection = weaponData.RadiusDetection;
+
+            UI_GameplayEvents.OnWeaponRadiusChanged?.Invoke(this.weaponRadiusDetection);
+		}
+
+        private (bool inRange, EnemyController target, bool targetInsideRadius) CalculateTargetInRange(Vector3 forward)
 		{
             var inRange = false;
             EnemyController targetEnemy = null;
@@ -129,11 +155,12 @@ namespace LittleLooters.Gameplay.Combat
             // Calculate possible targets inside a circle
             var targetsAround = GetTargetsAround();
 
-            if (!targetsAround) return (false, null);
+            if (!targetsAround) return (false, null, false);
 
             var minAngle = float.MaxValue;
 
             var playerPosition = this.localTransform.position;
+            var targetInsideRadius = false;
 
             // For each possible target check if there is at least one in the cone vision
             for (int i = 0; i < this.results.Length; i++)
@@ -158,12 +185,20 @@ namespace LittleLooters.Gameplay.Combat
 
                 if (distance >= minDistance) continue;
 
+                var magnitude = directionToTarget.magnitude;
+
+                // Check if target is inside player's weapon radius detection
+                if (magnitude > this.weaponRadiusDetection) continue;
+
                 nearestTarget = targetEnemy;
 
                 minDistance = distance;
+
+                targetInsideRadius = true;
 			}
 
-            return (inRange, nearestTarget);
+
+            return (inRange, nearestTarget, targetInsideRadius);
 		}
 
         private (bool found, float angle) GetAngle(Vector3 direction, Vector3 forward)
@@ -196,7 +231,7 @@ namespace LittleLooters.Gameplay.Combat
 
                 float dSqrToTarget = directionToTarget.magnitude;
 
-                var insideRange = dSqrToTarget <= this.radiusDetection;
+                var insideRange = dSqrToTarget <= radiusDetection;
 
                 if (!insideRange) continue;
 

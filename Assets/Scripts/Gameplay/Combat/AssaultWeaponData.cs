@@ -12,6 +12,8 @@ namespace LittleLooters.Gameplay
 	{
 		#region Inspector
 
+		public int Id;
+		public string DisplayName;
 		public GameObject Art;
 		public float FireRate;
 		public int MinDamage;
@@ -27,6 +29,7 @@ namespace LittleLooters.Gameplay
 		public GameObject Projectile = default;
 		public float LifeTime;
 		public float Force;
+		public float RadiusDetection;
 
 		#endregion
 	}

@@ -43,6 +43,7 @@ namespace LittleLooters.Gameplay
 		private VisualCharacterController _visualController = default;
 		private ThirdPersonController _controller = default;
 		private PlayerMissionsService _missionsService = default;
+		private PlayerAimingAssistance _aimingAssistance = default;
 		private const int TOOL_EXTRA_DAMAGE_DURATION_SECS = 10;
 
 		#endregion
@@ -64,17 +65,18 @@ namespace LittleLooters.Gameplay
 			// Health
 			_health = GetComponent<PlayerHealth>();
 
+			// Weapon controller
+			_weaponController = GetComponent<WeaponController>();
+
 			// Aiming assistance
-			var aimingAssistance = new PlayerAimingAssistance();
-			aimingAssistance.Init(transform, _aimingAssistanceAngle, _aimingAssistanceRadius, _levelEnemies);
+			_aimingAssistance = new PlayerAimingAssistance();
+			_aimingAssistance.Init(transform, _aimingAssistanceAngle, _weaponController.WeaponRadiusDetection, _levelEnemies);
+
+			_weaponController.Init(_aimingAssistance);
 
 			// Repairing service
 			var repairingService = GetComponent<PlayerRepairService>();
 			repairingService.SetupSpeed(_repairingSpeed);
-
-			// Weapon controller
-			_weaponController = GetComponent<WeaponController>();
-			_weaponController.Init(aimingAssistance);
 
 			// Visual controller
 			_visualController = GetComponent<VisualCharacterController>();
@@ -82,7 +84,7 @@ namespace LittleLooters.Gameplay
 
 			// Controller
 			_controller = GetComponent<ThirdPersonController>();
-			_controller.SetAimingAssistance(aimingAssistance);
+			_controller.SetAimingAssistance(_aimingAssistance);
 			_controller.SetupRepairingService(this, repairingService);
 
 			// Missions service
@@ -133,6 +135,8 @@ namespace LittleLooters.Gameplay
 			// Cheats
 			UI_GameplayEvents.OnGrantResourceByCheat -= HandleGrantResourceByCheat;
 			UI_GameplayEvents.OnConsumeResourceByCheat -= HandleConsumeResourceByCheat;
+
+			_aimingAssistance.Teardown();
 		}
 
 		#endregion

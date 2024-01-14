@@ -3,6 +3,7 @@
  * Author: Peche
  */
 
+using LittleLooters.Model;
 using StarterAssets;
 using UnityEngine;
 
@@ -46,6 +47,7 @@ namespace LittleLooters.Gameplay.Combat
 		public bool IsReloading => _weapon.IsReloading;
 		public int ClipSize => _weapon.ClipSize;
 		public int Ammo => _weapon.Ammo;
+		public float WeaponRadiusDetection => _weapon.GetRadiusDetection();
 
 		#endregion
 
@@ -187,6 +189,8 @@ namespace LittleLooters.Gameplay.Combat
 			_weapon1.SetActive(id == 1);
 
 			_weapon.RefreshData(weaponData);
+
+			PlayerProgressEvents.OnWeaponChanged?.Invoke(weaponData);
 		}
 
 		private void CompleteFiring()

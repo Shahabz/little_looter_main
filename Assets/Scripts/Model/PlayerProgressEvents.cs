@@ -3,6 +3,7 @@
  * Author: Peche
  */
 
+using LittleLooters.Gameplay;
 using System;
 
 namespace LittleLooters.Model
@@ -12,6 +13,8 @@ namespace LittleLooters.Model
 		public static int SKIP_TIME_SECS = 900;	// 15 mins
 
 		public static Action<int, int> OnResourceHasChanged;
+
+		public static Action<AssaultWeaponData> OnWeaponChanged;
 
 		#region Tool
 

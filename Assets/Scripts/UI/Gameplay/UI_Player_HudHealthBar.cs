@@ -41,6 +41,14 @@ namespace LittleLooters.Gameplay.UI
 			_playerHealth.OnInitialized += HandleOnPlayerHealthInitialization;
 			_playerHealth.OnTakeDamage += HandleOnPlayerTakeDamage;
 			_playerHealth.OnDead += HandleOnPlayerDead;
+
+			LevelEnemies.OnStartDetection += HandleStartEnemiesDetection;
+			LevelEnemies.OnStopDetection += HandleStopEnemiesDetection;
+		}
+
+		private void Start()
+		{
+			HidePanel();
 		}
 
 		private void OnDestroy()
@@ -48,11 +56,24 @@ namespace LittleLooters.Gameplay.UI
 			_playerHealth.OnInitialized -= HandleOnPlayerHealthInitialization;
 			_playerHealth.OnTakeDamage -= HandleOnPlayerTakeDamage;
 			_playerHealth.OnDead -= HandleOnPlayerDead;
+
+			LevelEnemies.OnStartDetection -= HandleStartEnemiesDetection;
+			LevelEnemies.OnStopDetection -= HandleStopEnemiesDetection;
 		}
 
 		#endregion
 
 		#region Private methods
+
+		private void ShowPanel()
+		{
+			_content.SetActive(true);
+		}
+
+		private void HidePanel()
+		{
+			_content.SetActive(false);
+		}
 
 		private void HandleOnPlayerHealthInitialization()
 		{
@@ -100,6 +121,16 @@ namespace LittleLooters.Gameplay.UI
 
 			// Health is in dangereous values
 			_fill.color = _colorLow;
+		}
+
+		private void HandleStopEnemiesDetection()
+		{
+			HidePanel();
+		}
+
+		private void HandleStartEnemiesDetection()
+		{
+			ShowPanel();
 		}
 
 		#endregion

@@ -149,6 +149,11 @@ namespace LittleLooters.Gameplay.Combat
 			}
         }
 
+        public float GetRadiusDetection()
+		{
+            return _data.RadiusDetection;
+		}
+
         #endregion
 
         #region Private methods
