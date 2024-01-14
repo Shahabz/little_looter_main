@@ -102,6 +102,9 @@ namespace LittleLooters.Gameplay
 			// Cheats
 			UI_GameplayEvents.OnGrantResourceByCheat += HandleGrantResourceByCheat;
 			UI_GameplayEvents.OnConsumeResourceByCheat += HandleConsumeResourceByCheat;
+
+			// Missions
+			PlayerMissionsEvents.OnMoveToMission += HandleMoveToMission;
 		}
 
 		private void Start()
@@ -135,6 +138,9 @@ namespace LittleLooters.Gameplay
 			// Cheats
 			UI_GameplayEvents.OnGrantResourceByCheat -= HandleGrantResourceByCheat;
 			UI_GameplayEvents.OnConsumeResourceByCheat -= HandleConsumeResourceByCheat;
+
+			// Missions
+			PlayerMissionsEvents.OnMoveToMission -= HandleMoveToMission;
 
 			_aimingAssistance.Teardown();
 		}
@@ -245,6 +251,22 @@ namespace LittleLooters.Gameplay
 			var now = Time.time;
 
 			_progressData.CraftingSpeedUpProcess(areaId, secondsToSkip, now);
+		}
+
+		#endregion
+
+		#region Missions
+
+		public MissionConfigurationData GetFirstMissionData()
+		{
+			var playerMissionsService = GetComponent<PlayerMissionsService>();
+
+			return playerMissionsService.GetFirstMissionData();
+		}
+
+		private void HandleMoveToMission(MissionConfigurationData missionData)
+		{
+			_progressData.UpdateCurrentMission(missionData.Id);
 		}
 
 		#endregion

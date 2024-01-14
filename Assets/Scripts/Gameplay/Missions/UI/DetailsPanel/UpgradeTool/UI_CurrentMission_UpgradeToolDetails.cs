@@ -107,7 +107,10 @@ namespace LittleLooters.Gameplay.UI
 
                 var completed = currentAmount >= requirement.amount;
 
-                slot.Setup(icon, requirement.amount, completed);
+                var remainingAmount = (completed) ? 0 : requirement.amount - currentAmount;
+
+                slot.Setup(icon, remainingAmount, completed);
+
                 slot.gameObject.SetActive(true);
 			}
 		}
@@ -127,9 +130,16 @@ namespace LittleLooters.Gameplay.UI
 
                 var completed = amount >= requirement.amount;
 
-                if (!completed) return;
+                var remainingAmount = (completed) ? 0 : requirement.amount - amount;
 
                 var slot = _slots[i];
+                
+                if (!completed)
+                {
+                    slot.RefreshAmount(remainingAmount);
+
+                    return;
+                }
 
                 slot.Completed();
 

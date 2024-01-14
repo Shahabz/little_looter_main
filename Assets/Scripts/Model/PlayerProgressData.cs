@@ -17,6 +17,7 @@ namespace LittleLooters.Model
         public PlayerProgress_ResourcesData resourcesData;
         public PlayerProgress_MeleeData meleeData;
         public PlayerProgress_CraftingData craftingData;
+        public PlayerProgress_MissionsData missionsData;
 
         public void InitRepairProgress(Gameplay.RepairObject[] repairObjects)
 		{
@@ -289,6 +290,15 @@ namespace LittleLooters.Model
         public void CraftingSpeedUpProcess(int areaId, int seconds, float now)
 		{
             craftingData.SpeedUpProcess(areaId, seconds, now);
+        }
+
+        #endregion
+
+        #region Missions
+
+        public void UpdateCurrentMission(int id)
+        {
+            missionsData.UpdateCurrentMission(id);
         }
 
         #endregion

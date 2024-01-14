@@ -44,7 +44,9 @@ namespace LittleLooters.Gameplay.UI
 
 			MarkAsRequired();
 
-			_txtRequired.text = $"{partData.amount}";
+			var remainingAmount = _amountGoal - currentAmount;
+
+			_txtRequired.text = $"{remainingAmount}";
 		}
 
 		public void Refresh(int amount)
@@ -60,6 +62,10 @@ namespace LittleLooters.Gameplay.UI
 			}
 
 			MarkAsRequired();
+
+			var remainingAmount = _amountGoal - amount;
+
+			_txtRequired.text = $"{remainingAmount}";
 		}
 
 		#region Private methods

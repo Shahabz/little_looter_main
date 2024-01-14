@@ -31,5 +31,10 @@ namespace LittleLooters.Gameplay.UI
 
             _locked.SetActive(false);
         }
+
+        public void RefreshAmount(int amount)
+		{
+            _txtAmount.text = $"{amount}";
+        }
     }
 }

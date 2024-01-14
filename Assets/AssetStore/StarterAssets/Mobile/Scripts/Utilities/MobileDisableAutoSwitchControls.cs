@@ -22,7 +22,7 @@ public class MobileDisableAutoSwitchControls : MonoBehaviour
 
     void Start()
     {
-        DisableAutoSwitchControls();
+        //DisableAutoSwitchControls();
     }
 
     void DisableAutoSwitchControls()

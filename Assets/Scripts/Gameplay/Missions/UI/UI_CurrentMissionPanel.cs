@@ -59,6 +59,8 @@ namespace LittleLooters.Gameplay.UI
 
 		private bool _wasCompleted = false;
 		private bool _assistanceInProgress = false;
+		private Canvas _canvas = default;
+		private int _canvasOrder = 0;
 
 		#endregion
 
@@ -73,6 +75,9 @@ namespace LittleLooters.Gameplay.UI
 			UI_GameplayEvents.OnMissionAssistanceFinished += MissionAssistanceFinished;
 			UI_GameplayEvents.OnStopMissionAssistance += MissionAssistanceFinished;
 
+			_canvas = GetComponent<Canvas>();
+			_canvasOrder = _canvas.sortingOrder;
+
 			_btnAssistance.onClick.AddListener(Assistance);
 		}
 
@@ -86,6 +91,20 @@ namespace LittleLooters.Gameplay.UI
 			UI_GameplayEvents.OnStopMissionAssistance -= MissionAssistanceFinished;
 
 			_btnAssistance.onClick.RemoveAllListeners();
+		}
+
+		#endregion
+
+		#region Public methods
+
+		public void SetOriginalCanvasOrder()
+		{
+			_canvas.sortingOrder = _canvasOrder;
+		}
+
+		public void SetFtueCanvasOrder(int order)
+		{
+			_canvas.sortingOrder = order;
 		}
 
 		#endregion

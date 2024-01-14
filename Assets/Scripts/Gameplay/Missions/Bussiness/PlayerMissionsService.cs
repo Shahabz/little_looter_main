@@ -78,9 +78,14 @@ namespace LittleLooters.Gameplay
             return _missions[id];
 		}
 
-		#endregion
+        public MissionConfigurationData GetFirstMissionData()
+		{
+            return _missions[0];
+        }
 
-		#region Private methods
+        #endregion
+
+        #region Private methods
 
         private void NextMission()
 		{

@@ -10,6 +10,18 @@ namespace LittleLooters.Model
     [Serializable]
     public struct PlayerProgress_MissionsData
     {
-        public int currentMissionId;
+        private int currentMissionId;
+
+        public int GetCurrentMissionId()
+		{
+            return currentMissionId;
+		}
+
+        public void UpdateCurrentMission(int id)
+		{
+            currentMissionId = id;
+
+            PlayerProgressEvents.OnMoveToNextMission?.Invoke();
+		}
     }
 }

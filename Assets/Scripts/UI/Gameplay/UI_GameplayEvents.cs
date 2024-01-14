@@ -15,6 +15,11 @@ namespace LittleLooters.Gameplay
 		public static Action OnPlayerInitialization;
 
 		/// <summary>
+		/// Invoked when player starts the game from Title screen
+		/// </summary>
+		public static Action OnStartGame;
+
+		/// <summary>
 		/// Invoked when skip time panel is closed by player
 		/// </summary>
 		public static Action<UI.UI_ToolUpgradeSkipPanel.SkipPanelOpeningReason> OnCloseSkipTimePanel;

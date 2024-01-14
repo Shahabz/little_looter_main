@@ -10,11 +10,19 @@ namespace LittleLooters.Model
 {
 	public class PlayerProgressEvents
 	{
-		public static int SKIP_TIME_SECS = 900;	// 15 mins
+		public static int SKIP_TIME_SECS = 900; // 15 mins
+
+		#region Resources
 
 		public static Action<int, int> OnResourceHasChanged;
 
+		#endregion
+
+		#region Weapons
+
 		public static Action<AssaultWeaponData> OnWeaponChanged;
+
+		#endregion
 
 		#region Tool
 
@@ -89,6 +97,15 @@ namespace LittleLooters.Model
 		public static Action<PlayerProgress_CraftingAreaData> OnCraftingAreaProcessCompleted;
 		public static Action<PlayerProgress_CraftingAreaData> OnCraftingAreaProcessClaimed;
 		public static Action<PlayerProgress_CraftingAreaData> OnCraftingAreaProcessSpeedUp;
+
+		#endregion
+
+		#region Missions
+
+		/// <summary>
+		/// Invoke when player's mission is moved to the next one
+		/// </summary>
+		public static Action OnMoveToNextMission;
 
 		#endregion
 	}
