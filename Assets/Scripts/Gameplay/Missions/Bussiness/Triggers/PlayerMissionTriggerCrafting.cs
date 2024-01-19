@@ -85,6 +85,8 @@ namespace LittleLooters.Gameplay
 
 		private void HandleCraftingAreaClaim(PlayerProgress_CraftingAreaData areaData)
 		{
+			if (!_inProgress) return;
+
 			var areaId = areaData.id;
 
 			var configurationData = _craftingService.GetConfigurationAreaData(areaId);
@@ -106,6 +108,8 @@ namespace LittleLooters.Gameplay
 
 		private void HandleExplorableFound(ExplorableObjectType type, int id)
 		{
+			if (!_inProgress) return;
+
 			if (type != ExplorableObjectType.CRAFTING_AREA) return;
 
 			if (_areaId != id) return;
