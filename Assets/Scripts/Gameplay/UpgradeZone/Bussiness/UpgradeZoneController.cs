@@ -4,6 +4,7 @@
  */
 
 using LittleLooters.Gameplay.UI;
+using LittleLooters.Global.ServiceLocator;
 using UnityEngine;
 
 namespace LittleLooters.Gameplay
@@ -12,7 +13,6 @@ namespace LittleLooters.Gameplay
     {
 		#region Inspector
 
-		[SerializeField] private PlayerEntryPoint _playerEntryPoint = default;
         [SerializeField] private GameObject _indicator = default;
 		[SerializeField] private UI_UpgradeZone_Panel _uiPanel = default;
 		[SerializeField] private UI_UpgradeZone_ClaimPanel _uiClaimPanel = default;
@@ -31,26 +31,24 @@ namespace LittleLooters.Gameplay
 
 		public void ShowIndicator()
 		{
+			var progressDataService = ServiceLocator.Current.Get<PlayerProgressDataService>();
+
 			_uiClaimPanel.Hide();
 			_uiPanel.Hide();
 			//_uiInProgressPanel.Hide();
 
 			_indicator.SetActive(true);
 
-			var meleeIsUpgrading = _playerEntryPoint.ProgressData.meleeData.isUpgrading;
+			var toolIsUpgrading = progressDataService.ProgressData.toolData.isUpgrading;
 
-			if (meleeIsUpgrading)
+			if (toolIsUpgrading)
 			{
-				// Show upgrade in progress panel
-				//var duration = _playerEntryPoint.GetMeleeNextLevelData().upgradeTime;
-				//var expiration = _playerEntryPoint.ProgressData.meleeData.upgradeExpiration;
-
-				_uiInProgressPanel.Show();	// duration, expiration);
+				_uiInProgressPanel.Show();
 
 				return;
 			}
 
-			var isMeleeClaimExpected = _playerEntryPoint.ProgressData.meleeData.toClaim;
+			var isMeleeClaimExpected = progressDataService.ProgressData.toolData.toClaim;
 
 			if (isMeleeClaimExpected)
 			{
@@ -60,10 +58,10 @@ namespace LittleLooters.Gameplay
 				return;
 			}
 
-			var currentLevelData = _playerEntryPoint.GetCurrentToolLevelData();
-			var nextLevelData = _playerEntryPoint.GetMeleeNextLevelData();
+			var currentLevelData = progressDataService.Tool_GetCurrentLevelData();
+			var nextLevelData = progressDataService.Tool_GetNextLevelData();
 
-			_uiPanel.Show(_playerEntryPoint.ProgressData.resourcesData, currentLevelData, nextLevelData);
+			_uiPanel.Show(progressDataService.ProgressData.resourcesData, currentLevelData, nextLevelData);
 		}
 
 		public void HideIndicator()

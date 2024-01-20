@@ -5,6 +5,7 @@
 
 using LittleLooters.Gameplay.Combat;
 using LittleLooters.Gameplay.UI;
+using LittleLooters.Global.ServiceLocator;
 using LittleLooters.Model;
 using StarterAssets;
 using System.Collections.Generic;
@@ -21,7 +22,6 @@ namespace LittleLooters.Gameplay
     {
 		#region Inspector
 
-		[SerializeField] PlayerEntryPoint _entryPoint = default;
 		[SerializeField] private RuntimeAnimatorController _assaultAnimatorController = default;
 		[SerializeField] private RuntimeAnimatorController _meleeAnimatorController = default;
 		[SerializeField] private float _attackRate = 1.0f;
@@ -154,48 +154,8 @@ namespace LittleLooters.Gameplay
 			return true;
 		}
 
-		private void DetectTarget(DestructibleResourceObject target)
-		{
-			/*
-			if (!CanProcess()) return;
-
-			if (target.IsDead) return;
-
-			target.Detected();
-
-			_targets.Add(target);
-
-			if (_isInProgress) return;
-
-			Invoke(nameof(StartProcessing), _delayToStartProcessing);
-			*/
-		}
-
-		private void UndetectTarget(DestructibleResourceObject target)
-		{
-			/*
-			if (!CanProcess()) return;
-
-			target.Undetected();
-
-			_targets.Remove(target);
-
-			if (_targets.Count > 0) return;
-
-			StopProcessing();
-			*/
-		}
-
 		private void ProcessCheck(float deltaTime)
 		{
-			//if (!CanProcess()) return;
-
-			//if (_controller.IsMoving())
-			//{
-			//	StopByPlayerMovement();
-			//	return;
-			//}
-
 			_nextAttackRemainingTime -= deltaTime;
 
 			if (_nextAttackRemainingTime > 0) return;
@@ -255,9 +215,11 @@ namespace LittleLooters.Gameplay
 
 		private void GrantRewardsByDamage(int resourceId, int amountReward)
 		{
-			_entryPoint.GrantResourceByDestructionDamage(resourceId, amountReward);
+			var progressDataService = ServiceLocator.Current.Get<PlayerProgressDataService>();
 
-			UI.UI_ResourcesAnimation.OnAnimate?.Invoke(resourceId, amountReward);
+			progressDataService.Resources_GrantByDestructionDamage(resourceId, amountReward);
+
+			UI_ResourcesAnimation.OnAnimate?.Invoke(resourceId, amountReward);
 		}
 
 		private DestructibleResourceObject GetNearestTarget()
@@ -371,7 +333,8 @@ namespace LittleLooters.Gameplay
 
 			_toolExtraDamageInProgress = false;
 
-			_entryPoint.CompleteToolExtraDamage();
+			var progressDataService = ServiceLocator.Current.Get<PlayerProgressDataService>();
+			progressDataService.Tool_CompleteExtraDamage();
 		}
 
 		#endregion
@@ -431,7 +394,9 @@ namespace LittleLooters.Gameplay
 
 			if (_lastNotEnabledObject == nearest.Id) return;
 
-			var currentToolLevel = _entryPoint.ProgressData.meleeData.level;
+			var progressDataService = ServiceLocator.Current.Get<PlayerProgressDataService>();
+
+			var currentToolLevel = progressDataService.ProgressData.toolData.level;
 
 			if (nearest.LevelRequired > currentToolLevel)
 			{
@@ -533,13 +498,16 @@ namespace LittleLooters.Gameplay
 
 			var destroyed = false;
 
+			var progressDataService = ServiceLocator.Current.Get<PlayerProgressDataService>();
+			var toolLevel = progressDataService.ProgressData.toolData.level;
+
 			for (int i = 0; i < _targets.Count; i++)
 			{
 				var target = _targets[i];
 
 				if (target.IsDead) continue;
 
-				if (target.LevelRequired > _entryPoint.ProgressData.meleeData.level)
+				if (target.LevelRequired > toolLevel)
 				{
 					destroyed = true;
 
@@ -555,7 +523,7 @@ namespace LittleLooters.Gameplay
 				}
 				else
 				{
-					target.TakeDamage(_entryPoint.ProgressData.meleeData.damage);
+					target.TakeDamage(progressDataService.ProgressData.toolData.damage);
 				}
 
 				if (!target.IsDead) continue;

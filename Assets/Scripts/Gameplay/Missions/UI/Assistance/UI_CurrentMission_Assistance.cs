@@ -5,6 +5,7 @@
 
 using UnityEngine;
 using DG.Tweening;
+using LittleLooters.Global.ServiceLocator;
 
 namespace LittleLooters.Gameplay.UI
 {
@@ -145,6 +146,8 @@ namespace LittleLooters.Gameplay.UI
 			Vector3 offset = Vector3.zero;
 			var found = false;
 
+			var progressDataService = ServiceLocator.Current.Get<PlayerProgressDataService>();
+
 			var currentMission = _playerEntryPoint.GetMissionInProgress();
 
 			if (currentMission.Type == MissionType.DESTRUCTION)
@@ -156,7 +159,7 @@ namespace LittleLooters.Gameplay.UI
 
 			if (currentMission.Type == MissionType.TOOL_UPGRADE)
 			{
-				return _upgradeToolAssistance.Process(currentMission, _playerEntryPoint.ProgressData);
+				return _upgradeToolAssistance.Process(currentMission, progressDataService.ProgressData);
 			}
 
 			if (currentMission.Type == MissionType.EXPLORATION)

@@ -3,6 +3,7 @@
  * Author: Peche
  */
 
+using LittleLooters.Global.ServiceLocator;
 using LittleLooters.Model;
 using UnityEngine;
 using UnityEngine.UI;
@@ -13,7 +14,6 @@ namespace LittleLooters.Gameplay.UI
     {
 		#region Inspector
 
-		[SerializeField] private PlayerEntryPoint _playerEntryPoint = default;
         [SerializeField] private TMPro.TextMeshProUGUI _txtLevel = default;
         [SerializeField] private Image _imgCheck = default;
 		[SerializeField] private Color _colorLevelNotReached = default;
@@ -30,12 +30,16 @@ namespace LittleLooters.Gameplay.UI
 
 		private void OnEnable()
 		{
+			UI_GameplayEvents.OnStartGame += HandleStartGame;
+
             PlayerProgressEvents.OnMeleeUpgradeClaimed += HandleToolUpgradeClaimed;
 		}
 
         private void OnDisable()
         {
-            PlayerProgressEvents.OnMeleeUpgradeClaimed -= HandleToolUpgradeClaimed;
+			UI_GameplayEvents.OnStartGame -= HandleStartGame;
+
+			PlayerProgressEvents.OnMeleeUpgradeClaimed -= HandleToolUpgradeClaimed;
         }
 
 		#endregion
@@ -55,6 +59,11 @@ namespace LittleLooters.Gameplay.UI
 
 		#region Private methods
 
+		private void HandleStartGame()
+		{
+			CheckToolLevel();
+		}
+
 		private void HandleToolUpgradeClaimed(PlayerProgressEvents.MeleeUpgradeClaimedArgs args)
         {
             CheckToolLevel();
@@ -62,7 +71,9 @@ namespace LittleLooters.Gameplay.UI
 
         private void CheckToolLevel()
 		{
-            var currentToolLevel = _playerEntryPoint.ProgressData.meleeData.level;
+			var progressDataService = ServiceLocator.Current.Get<PlayerProgressDataService>();
+
+			var currentToolLevel = progressDataService.ProgressData.toolData.level;
 
 			var goalReached = currentToolLevel >= _toolLevelRequirement;
 

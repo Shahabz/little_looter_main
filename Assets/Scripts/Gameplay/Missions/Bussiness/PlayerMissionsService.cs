@@ -3,18 +3,13 @@
  * Author: Peche
  */
 
+using LittleLooters.Global.ServiceLocator;
 using UnityEngine;
 
 namespace LittleLooters.Gameplay
 {
     public class PlayerMissionsService : MonoBehaviour
     {
-		#region Inspector
-
-		[SerializeField] private MissionConfigurationData[] _missions = default;
-
-		#endregion
-
 		#region Private properties
 
 		private int _missionId = -1;
@@ -53,34 +48,40 @@ namespace LittleLooters.Gameplay
 
 		#region Public methods
 
-        public void Init(PlayerEntryPoint playerEntryPoint, PlayerCraftingService playerCraftingService)
+        public void Init(PlayerCraftingService playerCraftingService)
 		{
             _triggerDestruction.Initialize(MissionCompleted);
             _triggerToolUpgrade.Initialize(MissionCompleted);
             _triggerExploration.Initialize(MissionCompleted);
-            _triggerCrafting.Initialize(MissionCompleted, playerCraftingService, playerEntryPoint);
-            _triggerDelivery.Initialize(MissionCompleted, playerEntryPoint);
+            _triggerCrafting.Initialize(MissionCompleted, playerCraftingService);
+            _triggerDelivery.Initialize(MissionCompleted);
             _triggerRepairing.Initialize(MissionCompleted);
 
             _missionId = 0;
 
-            var mission = _missions[_missionId];
+            var gameConfiguration = ServiceLocator.Current.Get<GameConfigurationService>();
+
+            var mission = gameConfiguration.Missions[_missionId];
 
             StartTrigger(mission);
 
-            PlayerMissionsEvents.OnInitialization?.Invoke(_missions[_missionId]);
+            PlayerMissionsEvents.OnInitialization?.Invoke(gameConfiguration.Missions[_missionId]);
         }
 
         public MissionConfigurationData GetCurrentMission()
 		{
-            var id = (_missionId >= _missions.Length) ? _missions.Length - 1 : _missionId;
+            var gameConfiguration = ServiceLocator.Current.Get<GameConfigurationService>();
 
-            return _missions[id];
+            var id = (_missionId >= gameConfiguration.Missions.Length) ? gameConfiguration.Missions.Length - 1 : _missionId;
+
+            return gameConfiguration.Missions[id];
 		}
 
         public MissionConfigurationData GetFirstMissionData()
 		{
-            return _missions[0];
+            var gameConfiguration = ServiceLocator.Current.Get<GameConfigurationService>();
+
+            return gameConfiguration.Missions[0];
         }
 
         #endregion
@@ -89,19 +90,21 @@ namespace LittleLooters.Gameplay
 
         private void NextMission()
 		{
-            if (_missionId >= _missions.Length)
+            var gameConfiguration = ServiceLocator.Current.Get<GameConfigurationService>();
+
+            if (_missionId >= gameConfiguration.Missions.Length)
 			{
                 // TODO: reached last mission
 
                 return;
 			}
 
-            var mission = _missions[_missionId];
+            var mission = gameConfiguration.Missions[_missionId];
 
             // Check triggers based on mission
             StartTrigger(mission);
 
-            PlayerMissionsEvents.OnMoveToMission?.Invoke(_missions[_missionId]);
+            PlayerMissionsEvents.OnMoveToMission?.Invoke(gameConfiguration.Missions[_missionId]);
         }
 
         private void MissionCompleted()

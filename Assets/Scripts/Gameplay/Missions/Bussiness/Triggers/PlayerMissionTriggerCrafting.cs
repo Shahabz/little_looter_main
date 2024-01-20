@@ -16,7 +16,6 @@ namespace LittleLooters.Gameplay
 		private const MissionType _missionType = MissionType.CRAFTING;
 		private Action _callback = null;
 		private PlayerCraftingService _craftingService = default;
-		private PlayerEntryPoint _entryPoint = default;
 		private int _amountGoal = 0;
 		private int _amount = 0;
 		private bool _inProgress = false;
@@ -27,13 +26,11 @@ namespace LittleLooters.Gameplay
 
 		#region Public methods
 
-		public void Initialize(Action callback, PlayerCraftingService service, PlayerEntryPoint entryPoint)
+		public void Initialize(Action callback, PlayerCraftingService service)
 		{
 			_callback = callback;
 
 			_craftingService = service;
-
-			_entryPoint = entryPoint;
 
 			PlayerProgressEvents.OnCraftingAreaProcessClaimed += HandleCraftingAreaClaim;
 			ExplorableObjectEvents.OnEnter += HandleExplorableFound;

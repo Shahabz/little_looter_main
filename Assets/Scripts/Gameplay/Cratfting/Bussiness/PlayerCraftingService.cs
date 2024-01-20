@@ -4,6 +4,7 @@
  */
 
 using LittleLooters.General;
+using LittleLooters.Global.ServiceLocator;
 using UnityEngine;
 
 namespace LittleLooters.Gameplay
@@ -18,13 +19,17 @@ namespace LittleLooters.Gameplay
 
 		#region Private properties
 
-		private PlayerEntryPoint _entryPoint = default;
 		private bool _isDead = false;
 		private const string _tag = "Crafting";
 
 		#endregion
 
 		#region Unity events
+
+		private void Start()
+		{
+			UI_GameplayEvents.OnStartGame += HandleStartGame;
+		}
 
 		private void OnTriggerEnter(Collider other)
 		{
@@ -46,14 +51,11 @@ namespace LittleLooters.Gameplay
 
 		private void OnDestroy()
 		{
+			UI_GameplayEvents.OnStartGame -= HandleStartGame;
 			UI_GameplayEvents.OnCraftingStarted -= HandleOnCraftingStarted;
 			UI_GameplayEvents.OnCraftingClaimed -= HandleOnCraftingClaimed;
 			UI_GameplayEvents.OnCraftingSpeedUp -= HandleOnCraftingSpeedUp;
-
-			if (_entryPoint != null)
-			{
-				_entryPoint.Health.OnDead -= HandleOnDead;
-			}
+			UI_GameplayEvents.OnPlayerHasDie -= HandlePlayerDead;
 		}
 
 		private void Update()
@@ -66,17 +68,6 @@ namespace LittleLooters.Gameplay
 		#endregion
 
 		#region Public methods
-
-		public void Initialization(PlayerEntryPoint entryPoint)
-		{
-			UI_GameplayEvents.OnCraftingStarted += HandleOnCraftingStarted;
-			UI_GameplayEvents.OnCraftingClaimed += HandleOnCraftingClaimed;
-			UI_GameplayEvents.OnCraftingSpeedUp += HandleOnCraftingSpeedUp;
-
-			_entryPoint = entryPoint;
-
-			_entryPoint.Health.OnDead += HandleOnDead;
-		}
 
 		public CraftingConfigurationData GetConfigurationAreaData(int id)
 		{
@@ -94,6 +85,22 @@ namespace LittleLooters.Gameplay
 
 		#region Private methods
 
+		private void HandleStartGame()
+		{
+			Initialization();
+		}
+
+		private void Initialization()
+		{
+			UI_GameplayEvents.OnCraftingStarted += HandleOnCraftingStarted;
+			UI_GameplayEvents.OnCraftingClaimed += HandleOnCraftingClaimed;
+			UI_GameplayEvents.OnCraftingSpeedUp += HandleOnCraftingSpeedUp;
+			UI_GameplayEvents.OnPlayerHasDie += HandlePlayerDead;
+
+			var progressDataService = ServiceLocator.Current.Get<PlayerProgressDataService>();
+			progressDataService.CraftingInitialization();
+		}
+
 		private void StartInteraction(CraftingArea area)
 		{
 			area.StartInteraction();
@@ -104,7 +111,7 @@ namespace LittleLooters.Gameplay
 			area.StopInteraction();
 		}
 
-		private void HandleOnDead()
+		private void HandlePlayerDead()
 		{
 			_isDead = true;
 		}
@@ -112,14 +119,17 @@ namespace LittleLooters.Gameplay
 		private void HandleOnCraftingStarted(int areaId, int amount)
 		{
 			var data = GetConfigurationAreaData(areaId);
-
-			_entryPoint.CraftingStartProcess(data, amount);
+			
+			var progressDataService = ServiceLocator.Current.Get<PlayerProgressDataService>();
+			progressDataService.CraftingStartProcess(data, amount);
 		}
 
 		private void CheckCraftingProgress()
 		{
 			var now = Time.time;
-			var craftingAreas = _entryPoint.ProgressData.craftingData.areas;
+
+			var progressDataService = ServiceLocator.Current.Get<PlayerProgressDataService>();
+			var craftingAreas = progressDataService.CraftingGetAreas();
 
 			// Check if some crafting in progress was completed
 			for (int i = 0; i < craftingAreas.Length; i++)
@@ -130,7 +140,7 @@ namespace LittleLooters.Gameplay
 
 				if (area.expiration > now) continue;
 
-				_entryPoint.CraftingCompleteProcess(area.id);
+				progressDataService.CraftingCompleteProcess(area.id);
 			}
 		}
 
@@ -139,14 +149,17 @@ namespace LittleLooters.Gameplay
 			var configurationData = GetConfigurationAreaData(areaId);
 			var newResourceId = configurationData.ResourceGenerated.Id;
 
-			var amountObtained = _entryPoint.CraftingClaimProcess(newResourceId, areaId);
+			var progressDataService = ServiceLocator.Current.Get<PlayerProgressDataService>();
+			var amountObtained = progressDataService.CraftingClaimProcess(newResourceId, areaId);
 
 			UI.UI_ResourcesAnimation.OnAnimate?.Invoke(newResourceId, amountObtained);
 		}
 
 		private void HandleOnCraftingSpeedUp(int areaId, int seconds)
 		{
-			_entryPoint.CraftingSpeedUpProcess(areaId, seconds);
+			var progressDataService = ServiceLocator.Current.Get<PlayerProgressDataService>();
+
+			progressDataService.CraftingSpeedUpProcess(areaId, seconds);
 		}
 
 		#endregion

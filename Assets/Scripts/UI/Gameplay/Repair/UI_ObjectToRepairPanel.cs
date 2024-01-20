@@ -4,6 +4,7 @@
  */
 
 using DG.Tweening;
+using LittleLooters.Global.ServiceLocator;
 using LittleLooters.Model;
 using UnityEngine;
 using UnityEngine.UI;
@@ -15,7 +16,6 @@ namespace LittleLooters.Gameplay.UI
 		#region Inspector
 
 		[SerializeField] private GameObject _content = default;
-		[SerializeField] private PlayerEntryPoint _playerEntry = default;
 
 		[Header("Slots panel")]
 		[SerializeField] private GameObject _slotsPanel = default;
@@ -214,14 +214,16 @@ namespace LittleLooters.Gameplay.UI
 
 		private void RefreshSlots()
 		{
+			var progressDataService = ServiceLocator.Current.Get<PlayerProgressDataService>();
+
 			for (int i = 0; i < _slots.Length; i++)
 			{
 				var slot = _slots[i];
 
 				if (!slot.gameObject.activeSelf) continue;
 
-				var playerResourceAmount = _playerEntry.ProgressData.GetResourceAmount(slot.ResourceId);
-				var (_, objectData) = _playerEntry.ProgressData.GetRepairObjectProgressData(slot.ObjectId);
+				var playerResourceAmount = progressDataService.ProgressData.GetResourceAmount(slot.ResourceId);
+				var (_, objectData) = progressDataService.ProgressData.GetRepairObjectProgressData(slot.ObjectId);
 				var objectPartProgressData = objectData.GetPartProgress(slot.ResourceId);
 
 				slot.Refresh(playerResourceAmount, objectPartProgressData.amount, objectPartProgressData.total);

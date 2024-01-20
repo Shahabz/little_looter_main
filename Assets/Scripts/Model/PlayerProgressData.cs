@@ -15,7 +15,7 @@ namespace LittleLooters.Model
     {
         public PlayerProgress_ObjectToRepairData[] repairProgress;  // TODO: replace it for PlayerProgressRepairData
         public PlayerProgress_ResourcesData resourcesData;
-        public PlayerProgress_MeleeData meleeData;
+        public PlayerProgress_MeleeData toolData;
         public PlayerProgress_CraftingData craftingData;
         public PlayerProgress_MissionsData missionsData;
 
@@ -76,7 +76,12 @@ namespace LittleLooters.Model
 
 		#region Resource methods
 
-		public void GrantResourceAmount(int id, int amount)
+        public void InitializeResources(ResourceData[] resources)
+		{
+            this.resourcesData.Initialize(resources);
+		}
+
+        public void GrantResourceAmount(int id, int amount)
 		{
             this.resourcesData.Grant(id, amount);
 		}
@@ -99,7 +104,7 @@ namespace LittleLooters.Model
 
 		public void SetMeleeData(ConfigurationMeleeLevelData levelData)
 		{
-            meleeData.SetMeleeData(levelData);
+            toolData.SetMeleeData(levelData);
 		}
 
         public void StartMeleeUpgrade(float duration, float expiration, MeleeUpgradeRequirementData[] requirements, int nextLevelDamage)
@@ -116,36 +121,36 @@ namespace LittleLooters.Model
 			}
 
             // Start melee upgrading
-            meleeData.StartUpgrade(duration, expiration, nextLevelDamage);
+            toolData.StartUpgrade(duration, expiration, nextLevelDamage);
 		}
 
         public void CompleteMeleeUpgrade()
 		{
-            meleeData.CompleteUpgrade();
+            toolData.CompleteUpgrade();
 		}
 
         public void ClaimMeleeUpgrade(int newDamage)
 		{
-            meleeData.ClaimUpgrade(newDamage);
+            toolData.ClaimUpgrade(newDamage);
 		}
 
         public void SpeedUpToolUpgrade()
 		{
-            meleeData.CompleteUpgrade();
+            toolData.CompleteUpgrade();
         }
 
         public void IncreaseToolDamage(float now, int durationInSecs)
 		{
             var expiration = now + durationInSecs;
 
-            meleeData.StartIncreaseDamage(expiration, durationInSecs);
+            toolData.StartIncreaseDamage(expiration, durationInSecs);
 		}
 
         public void CompleteIncreaseToolDamage(ConfigurationMeleeLevelData toolLevelData)
 		{
             var realDamage = toolLevelData.damage;
 
-            meleeData.CompleteIncreaseDamage(realDamage);
+            toolData.CompleteIncreaseDamage(realDamage);
 		}
 
 		#endregion

@@ -15,6 +15,11 @@ namespace LittleLooters.Gameplay
 		public static Action OnPlayerInitialization;
 
 		/// <summary>
+		/// Triggered when player was initialized;
+		/// </summary>
+		public static Action OnPlayerHasDie;
+
+		/// <summary>
 		/// Invoked when player starts the game from Title screen
 		/// </summary>
 		public static Action OnStartGame;

@@ -4,6 +4,7 @@
  */
 
 using DG.Tweening;
+using LittleLooters.Global.ServiceLocator;
 using LittleLooters.Model;
 using TMPro;
 using UnityEngine;
@@ -23,7 +24,6 @@ namespace LittleLooters.Gameplay.UI
 		[SerializeField] private Button _btnWatchAd = default;
 		[SerializeField] private Button _btnInstant = default;
 		[SerializeField] private Button _btnClose = default;
-		[SerializeField] private PlayerEntryPoint _playerEntryPoint = default;
 		[SerializeField] private PlayerCraftingService _playerCraftingService = default;
 
 		[Header("Progress")]
@@ -185,8 +185,13 @@ namespace LittleLooters.Gameplay.UI
 
 		private void SkipToolUpgrade()
 		{
-			_expiration = _playerEntryPoint.ProgressData.meleeData.upgradeExpiration;
-			_duration = _playerEntryPoint.GetMeleeNextLevelData().upgradeTime;
+			var progressDataService = ServiceLocator.Current.Get<PlayerProgressDataService>();
+
+			_expiration = progressDataService.ProgressData.toolData.upgradeExpiration;
+
+			var nextLevelData = progressDataService.Tool_GetNextLevelData();
+
+			_duration = nextLevelData.upgradeTime;
 
 			var now = Time.time;
 			_remainingTime = _expiration - now;
@@ -264,7 +269,10 @@ namespace LittleLooters.Gameplay.UI
 		{
 			_craftingAreaId = areaId;
 
-			var areaInProgress = _playerEntryPoint.ProgressData.craftingData.GetAreaProgressData(areaId);
+			var progressDataService = ServiceLocator.Current.Get<PlayerProgressDataService>();
+
+			var areaInProgress = progressDataService.ProgressData.craftingData.GetAreaProgressData(areaId);
+
 			var areaConfiguration = _playerCraftingService.GetConfigurationAreaData(areaId);
 
 			_expiration = areaInProgress.expiration;

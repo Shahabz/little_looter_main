@@ -1,5 +1,6 @@
 
 using LittleLooters.Gameplay.Combat;
+using LittleLooters.Global.ServiceLocator;
 using UnityEngine;
 
 namespace LittleLooters.Gameplay
@@ -32,7 +33,9 @@ namespace LittleLooters.Gameplay
 
 			if (pickup.Type == PickableType.RESOURCE)
 			{
-				_playerEntryPoint.GrantResourceByPickup(pickup.Id, pickup.Amount);
+				var progressDataService = ServiceLocator.Current.Get<PlayerProgressDataService>();
+				progressDataService.Resources_GrantByPickup(pickup.Id, pickup.Amount);
+
 				return;
 			}
 		}

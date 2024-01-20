@@ -61,6 +61,8 @@ namespace LittleLooters.Gameplay.Combat
 			}
 
 			OnDead?.Invoke();
+
+			UI_GameplayEvents.OnPlayerHasDie?.Invoke();
 		}
 
 		#endregion

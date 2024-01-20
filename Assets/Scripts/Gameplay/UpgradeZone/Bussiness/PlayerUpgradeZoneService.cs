@@ -3,18 +3,13 @@
  * Author: Peche
  */
 
+using LittleLooters.Global.ServiceLocator;
 using UnityEngine;
 
 namespace LittleLooters.Gameplay
 {
     public class PlayerUpgradeZoneService : MonoBehaviour
     {
-		#region Inspector
-
-		[SerializeField] private PlayerEntryPoint _playerEntryPoint = default;
-
-		#endregion
-
 		#region Private properties
 
 		private const string _tag = "UpgradeZone";
@@ -43,11 +38,13 @@ namespace LittleLooters.Gameplay
 
 		private void Update()
 		{
-			if (!_playerEntryPoint.ProgressData.meleeData.isUpgrading) return;
+			var progressDataService = ServiceLocator.Current.Get<PlayerProgressDataService>();
 
-			if (Time.time < _playerEntryPoint.ProgressData.meleeData.upgradeExpiration) return;
+			if (!progressDataService.ProgressData.toolData.isUpgrading) return;
 
-			_playerEntryPoint.CompleteMeleeUpgrade();
+			if (Time.time < progressDataService.ProgressData.toolData.upgradeExpiration) return;
+
+			progressDataService.Tool_CompleteUpgrade();
 		}
 
 		#endregion

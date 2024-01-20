@@ -4,6 +4,7 @@
  */
 
 using LittleLooters.General;
+using LittleLooters.Global.ServiceLocator;
 using LittleLooters.Model;
 using System;
 
@@ -20,17 +21,14 @@ namespace LittleLooters.Gameplay
 		private bool _inProgress = false;
 		private ResourceData _resourceData = default;
 		private RepairObjectData _repairObjectData = default;
-		private PlayerEntryPoint _entryPoint = default;
 
 		#endregion
 
 		#region Public methods
 
-		public void Initialize(Action callback, PlayerEntryPoint entryPoint)
+		public void Initialize(Action callback)
 		{
 			_callback = callback;
-
-			_entryPoint = entryPoint;
 
 			PlayerProgressEvents.OnSlotFixDone += HandleOnSlotFixDone;
 		}
@@ -65,7 +63,10 @@ namespace LittleLooters.Gameplay
 			_repairObjectData = data.RepairObjectData;
 			_resourceData = data.ResourceData;
 			_amountGoal = data.Amount;
-			_amount = _entryPoint.ProgressData.GetSlotRepairStatus(_repairObjectData.Id, _resourceData.Id);
+
+			var progressDataService = ServiceLocator.Current.Get<PlayerProgressDataService>();
+			_amount = progressDataService.ProgressData.GetSlotRepairStatus(_repairObjectData.Id, _resourceData.Id);
+
 			_inProgress = true;
 		}
 

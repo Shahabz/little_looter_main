@@ -3,9 +3,9 @@
  * Author: Peche
  */
 
+using LittleLooters.Global.ServiceLocator;
 using LittleLooters.Model;
 using UnityEngine;
-using UnityEngine.UI;
 
 namespace LittleLooters.Gameplay.UI
 {
@@ -13,7 +13,6 @@ namespace LittleLooters.Gameplay.UI
     {
         #region Inspector
 
-        [SerializeField] private PlayerEntryPoint _playerEntryPoint = default;
         [SerializeField] private UI_CurrentMission_DeliverySlot _slot = default;
 
         #endregion
@@ -50,7 +49,9 @@ namespace LittleLooters.Gameplay.UI
 
             _slot.Setup(data.ResourceData.Icon, _amountGoal);
 
-            var currentAmount = _playerEntryPoint.ProgressData.GetResourceAmount(data.ResourceData.Id);
+            var progressDataService = ServiceLocator.Current.Get<PlayerProgressDataService>();
+
+            var currentAmount = progressDataService.ProgressData.GetResourceAmount(data.ResourceData.Id);
 
             RefreshSlotStatus(currentAmount);
         }

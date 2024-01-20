@@ -4,6 +4,7 @@
  */
 
 using LittleLooters.General;
+using LittleLooters.Global.ServiceLocator;
 using LittleLooters.Model;
 using System;
 using UnityEngine;
@@ -64,7 +65,10 @@ namespace LittleLooters.Gameplay.UI
 		{
 			_isVisible = true;
 
-			var craftingStatus = _entryPoint.ProgressData.craftingData.GetAreaStatus(data.Id);
+			//var craftingStatus = _entryPoint.ProgressData.craftingData.GetAreaStatus(data.Id);
+
+			var progressDataService = ServiceLocator.Current.Get<PlayerProgressDataService>();
+			var craftingStatus = progressDataService.ProgressData.craftingData.GetAreaStatus(data.Id);
 
 			if (craftingStatus == CraftingStatus.NONE)
 			{
@@ -75,7 +79,8 @@ namespace LittleLooters.Gameplay.UI
 			// Check status IN PROGRESS
 			if (craftingStatus == CraftingStatus.IN_PROGRESS)
 			{
-				var areaProgressData = _entryPoint.ProgressData.craftingData.GetAreaProgressData(data.Id);
+				//var areaProgressData = _entryPoint.ProgressData.craftingData.GetAreaProgressData(data.Id);
+				var areaProgressData = progressDataService.ProgressData.craftingData.GetAreaProgressData(data.Id);
 
 				ShowCraftingProgress(areaProgressData);
 
@@ -85,7 +90,8 @@ namespace LittleLooters.Gameplay.UI
 			// Check status COMPLETED
 			if (craftingStatus == CraftingStatus.COMPLETED)
 			{
-				var areaProgressData = _entryPoint.ProgressData.craftingData.GetAreaProgressData(data.Id);
+				//var areaProgressData = _entryPoint.ProgressData.craftingData.GetAreaProgressData(data.Id);
+				var areaProgressData = progressDataService.ProgressData.craftingData.GetAreaProgressData(data.Id);
 
 				ShowCraftingCompleted(data, areaProgressData.amount);
 
@@ -111,7 +117,10 @@ namespace LittleLooters.Gameplay.UI
 
 		private void ShowCraftingInformation(CraftingConfigurationData data)
 		{
-			_infoPanel.Show(data, _entryPoint.ProgressData);
+			var progressDataService = ServiceLocator.Current.Get<PlayerProgressDataService>();
+
+			//_infoPanel.Show(data, _entryPoint.ProgressData);
+			_infoPanel.Show(data, progressDataService.ProgressData);
 
 			_inProgressPanel.Hide();
 			_claimPanel.Hide();

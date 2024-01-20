@@ -3,7 +3,7 @@
  * Author: Peche
  */
 
-using DG.Tweening;
+using LittleLooters.Global.ServiceLocator;
 using UnityEngine;
 
 namespace LittleLooters.Gameplay.UI
@@ -43,8 +43,10 @@ namespace LittleLooters.Gameplay.UI
 
 		private void HandlePlayerInitialization()
 		{
+			var progressDataService = ServiceLocator.Current.Get<PlayerProgressDataService>();
+
 			// Check current player's mission
-			var currentMissionId = _playerEntryPoint.ProgressData.missionsData.GetCurrentMissionId();
+			var currentMissionId = progressDataService.ProgressData.missionsData.GetCurrentMissionId();
 
 			var firstMission = _playerEntryPoint.GetFirstMissionData();
 

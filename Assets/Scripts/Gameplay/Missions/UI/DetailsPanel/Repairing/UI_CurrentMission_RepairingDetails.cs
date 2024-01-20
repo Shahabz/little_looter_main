@@ -3,6 +3,7 @@
  * Author: Peche
  */
 
+using LittleLooters.Global.ServiceLocator;
 using LittleLooters.Model;
 using UnityEngine;
 using UnityEngine.UI;
@@ -13,7 +14,6 @@ namespace LittleLooters.Gameplay.UI
     {
         #region Inspector
 
-        [SerializeField] private PlayerEntryPoint _playerEntryPoint = default;
         [SerializeField] private UI_CurrentMission_RepairingSlot[] _slots = default;
         [SerializeField] private GameObject _progressBar = default;
         [SerializeField] private Image _progressBarFill = default;
@@ -122,15 +122,17 @@ namespace LittleLooters.Gameplay.UI
 		{
             var partsToRepair = data.Parts;
 
-			for (int i = 0; i < _slots.Length; i++)
+            var progressDataService = ServiceLocator.Current.Get<PlayerProgressDataService>();
+
+            for (int i = 0; i < _slots.Length; i++)
 			{
                 if (i >= partsToRepair.Length) break;
 
                 var slot = _slots[i];
 
                 var part = partsToRepair[i];
-                var fixedAmount = _playerEntryPoint.ProgressData.GetSlotRepairStatus(_id, part.resourceData.Id);
-                var currentAmount = _playerEntryPoint.ProgressData.GetResourceAmount(_id);
+                var fixedAmount = progressDataService.ProgressData.GetSlotRepairStatus(_id, part.resourceData.Id);
+                var currentAmount = progressDataService.ProgressData.GetResourceAmount(_id);
 
                 slot.Setup(part, fixedAmount, currentAmount);
 
@@ -149,13 +151,15 @@ namespace LittleLooters.Gameplay.UI
 
         private void HandleResourceHasChanged(int id, int amount)
         {
+            var progressDataService = ServiceLocator.Current.Get<PlayerProgressDataService>();
+
             for (int i = 0; i < _slots.Length; i++)
             {
                 var slot = _slots[i];
 
                 if (slot.Id != id) continue;
 
-                var currentAmount = _playerEntryPoint.ProgressData.GetResourceAmount(id);
+                var currentAmount = progressDataService.ProgressData.GetResourceAmount(id);
 
                 slot.Refresh(currentAmount);
             }

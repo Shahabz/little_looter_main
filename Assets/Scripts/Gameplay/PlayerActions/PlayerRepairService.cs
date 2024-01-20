@@ -3,6 +3,7 @@
  * Author: Peche
  */
 
+using LittleLooters.Global.ServiceLocator;
 using LittleLooters.Model;
 using System;
 using UnityEngine;
@@ -26,7 +27,6 @@ namespace LittleLooters.Gameplay
 
 		#region Private properties
 
-		private PlayerEntryPoint _entryPoint = default;
 		private float _speedRepairing = default;
 		private const string _tag = "Repair";
 		private RepairObject _target = default;
@@ -85,14 +85,15 @@ namespace LittleLooters.Gameplay
 
 		#region Public methods
 
-		public void Init(PlayerEntryPoint entryPoint, Action onStart, Action onStop, Action onComplete)
+		public void Init(Action onStart, Action onStop, Action onComplete)
 		{
-			_entryPoint = entryPoint;
 			_onStart = onStart;
 			_onStop = onStop;
 			_onComplete = onComplete;
 
-			_entryPoint.SetupRepairObjects(_repairObjects);
+			var progressDataService = ServiceLocator.Current.Get<PlayerProgressDataService>();
+
+			progressDataService.Repair_Setup(_repairObjects);
 		}
 
 		public void Teardown()
@@ -170,7 +171,8 @@ namespace LittleLooters.Gameplay
 		{
 			if (_canDebug) DebugRepairingCompletion();
 
-			_entryPoint.CompleteRepairing(_objectId);
+			var progressDataService = ServiceLocator.Current.Get<PlayerProgressDataService>();
+			progressDataService.Repair_CompleteProcess(_objectId);
 
 			_isRepairing = false;
 			_objectId = -1;

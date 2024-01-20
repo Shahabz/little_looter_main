@@ -22,6 +22,24 @@ namespace LittleLooters.Model
 
 		#region Public methods
 
+        public void Initialize(ResourceData[] data)
+		{
+            var allResources = new PlayerResourceData[data.Length];
+
+			for (int i = 0; i < allResources.Length; i++)
+			{
+                var resourceData = data[i];
+                var resource = allResources[i];
+
+                resource.amount = 0;
+                resource.info = resourceData;
+
+                allResources[i] = resource;
+			}
+
+            resources = allResources;
+		}
+
 		public void Grant(int id, int amount)
 		{
             var index = GetIndexById(id);

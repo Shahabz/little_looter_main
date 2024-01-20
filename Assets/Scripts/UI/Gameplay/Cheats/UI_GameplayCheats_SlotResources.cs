@@ -3,6 +3,7 @@
  * Author: Peche
  */
 
+using LittleLooters.Global.ServiceLocator;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -53,7 +54,10 @@ namespace LittleLooters.Gameplay.UI
 
 		private void ShowPanel()
 		{
-			_panel.Show(_playerEntryPoint.ProgressData);
+			var progressDataService = ServiceLocator.Current.Get<PlayerProgressDataService>();
+
+			_panel.Show(progressDataService.ProgressData);
+
 			_txtTitle.text = "HIDE";
 		}
 

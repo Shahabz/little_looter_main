@@ -3,6 +3,7 @@
  * Author: Peche
  */
 
+using LittleLooters.Global.ServiceLocator;
 using LittleLooters.Model;
 using UnityEngine;
 using UnityEngine.UI;
@@ -13,7 +14,6 @@ namespace LittleLooters.Gameplay.UI
     {
 		#region Inspector
 
-		[SerializeField] private PlayerEntryPoint _playerEntryPoint = default;
         [SerializeField] private UI_CurrentMission_SlotUpgradeTool[] _slots = default;
         [SerializeField] private GameObject _progressBar = default;
         [SerializeField] private Image _progressBarFill = default;
@@ -93,7 +93,9 @@ namespace LittleLooters.Gameplay.UI
 
         private void RefreshSlots()
 		{
-            var nextLevelData = _playerEntryPoint.GetMeleeNextLevelData();
+            var progressDataService = ServiceLocator.Current.Get<PlayerProgressDataService>();
+
+            var nextLevelData = progressDataService.Tool_GetNextLevelData();
 
             var slotsAmount = nextLevelData.requirements.Length;
 
@@ -103,7 +105,7 @@ namespace LittleLooters.Gameplay.UI
 
                 var requirement = nextLevelData.requirements[i];
                 var icon = requirement.resource.Icon;
-                var currentAmount = _playerEntryPoint.ProgressData.GetResourceAmount(requirement.resource.Id);
+                var currentAmount = progressDataService.ProgressData.GetResourceAmount(requirement.resource.Id);
 
                 var completed = currentAmount >= requirement.amount;
 
@@ -117,7 +119,9 @@ namespace LittleLooters.Gameplay.UI
 
         private void ResourceHasChanged(int id, int amount)
         {
-            var nextLevelData = _playerEntryPoint.GetMeleeNextLevelData();
+            var progressDataService = ServiceLocator.Current.Get<PlayerProgressDataService>();
+
+            var nextLevelData = progressDataService.Tool_GetNextLevelData();
 
             var slotsAmount = nextLevelData.requirements.Length;
 
