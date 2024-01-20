@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 using UnityEngine.UI;
+using UnityEngine.InputSystem;
 
 public class UICanvasManager : MonoBehaviour {
 	public static UICanvasManager GlobalAccess;
@@ -24,16 +25,16 @@ public class UICanvasManager : MonoBehaviour {
 		// Mouse Click - Check if mouse over button to prevent spawning particle effects while hovering or using UI buttons.
 		if (!MouseOverButton) {
 			// Left Button Click
-			if (Input.GetMouseButtonUp (0)) {
+			if (Mouse.current.leftButton.wasPressedThisFrame){	//if (Input.GetMouseButtonUp (0)) {
 				// Spawn Currently Selected Particle System
 				SpawnCurrentParticleEffect();
 			}
 		}
 
-		if (Input.GetKeyUp (KeyCode.A)) {
+		if (Keyboard.current.aKey.wasPressedThisFrame){	//if (Input.GetKeyUp (KeyCode.A)) {
 			SelectPreviousPE ();
 		}
-		if (Input.GetKeyUp (KeyCode.D)) {
+		if (Keyboard.current.dKey.wasPressedThisFrame){	//if (Input.GetKeyUp (KeyCode.D)) {
 			SelectNextPE ();
 		}
 	}
@@ -70,7 +71,9 @@ public class UICanvasManager : MonoBehaviour {
 	private RaycastHit rayHit;
 	private void SpawnCurrentParticleEffect() {
 		// Spawn Particle Effect
-		Ray mouseRay = Camera.main.ScreenPointToRay(Input.mousePosition);
+		//Ray mouseRay = Camera.main.ScreenPointToRay(Input.mousePosition);
+		Ray mouseRay = Camera.main.ScreenPointToRay(Mouse.current.position.ReadValue());
+
 		if (Physics.Raycast (mouseRay, out rayHit)) {
 			ParticleEffectsLibrary.GlobalAccess.SpawnParticleEffect (rayHit.point);
 		}

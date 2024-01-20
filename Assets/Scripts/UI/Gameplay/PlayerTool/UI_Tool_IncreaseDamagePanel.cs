@@ -13,14 +13,19 @@ namespace LittleLooters.Gameplay.UI
     public class UI_Tool_IncreaseDamagePanel : MonoBehaviour
     {
 		[SerializeField] private GameObject _content = default;
-        [SerializeField] private Button _btn = default;
+		[SerializeField] private Button _btn = default;
 		[SerializeField] private float _delay = default;
 		[SerializeField] private float _hidenDuration = default;
+		[SerializeField] private GameObject _regularPanel = default;
+		[SerializeField] private GameObject _freePanel = default;
+		[SerializeField] private GameObject _adPanel = default;
 
 		[Header("Progress")]
+		[SerializeField] private GameObject _inProgressPanel = default;
 		[SerializeField] private GameObject _progressPanel = default;
 		[SerializeField] private TextMeshProUGUI _txtTime = default;
 		[SerializeField] private GameObject _progressPanelVfx = default;
+		[SerializeField] private Image _progressFill = default;
 
 		private bool _inProgress = true;
 		private float _expiration = default;
@@ -69,6 +74,9 @@ namespace LittleLooters.Gameplay.UI
 			// Show progress panel
 			_progressPanel.SetActive(true);
 			_progressPanelVfx.SetActive(true);
+
+			_regularPanel.SetActive(false);
+			_inProgressPanel.SetActive(true);
 		}
 
 		private void HandleToolExtraDamageCompleted()
@@ -80,6 +88,9 @@ namespace LittleLooters.Gameplay.UI
 			// Hide progress panel
 			_progressPanel.SetActive(false);
 			_progressPanelVfx.SetActive(false);
+
+			_regularPanel.SetActive(true);
+			_inProgressPanel.SetActive(false);
 		}
 
 		private void RefreshProgress()
@@ -90,6 +101,10 @@ namespace LittleLooters.Gameplay.UI
 			var timeText = UI_Utils.GetFormatTime(remainingTime);
 
 			_txtTime.text = timeText;
+
+			var progress = (_expiration - now) / _duration;
+
+			_progressFill.fillAmount = progress;
 		}
 	}
 }

@@ -18,8 +18,8 @@ namespace LittleLooters.Gameplay
 	/// When any object is detected, then it is informed and the player's melee destruction action starts.
 	/// When there is no other target detected or all targets were destroyed, then player's melee destruction action stops.
 	/// </summary>
-    public class PlayerDestructionService : MonoBehaviour
-    {
+	public class PlayerDestructionService : MonoBehaviour
+	{
 		#region Inspector
 
 		[SerializeField] private RuntimeAnimatorController _assaultAnimatorController = default;
@@ -28,6 +28,7 @@ namespace LittleLooters.Gameplay
 		[SerializeField] private float _radiusDetection = default;
 		[SerializeField] private LayerMask _layer = default;
 		[SerializeField] private float _angleFieldOfView = default;
+		[SerializeField] private GameObject _extraDamageVx = default;
 
 		#endregion
 
@@ -35,8 +36,8 @@ namespace LittleLooters.Gameplay
 
 		private bool _isPlayerAiming = false;
 		private bool _isPlayerRolling = false;
-		private int _damage = -1;	// This value comes from player's melee weapon data
-		private int _level = -1;	// This value comes from player's melee weapon data
+		private int _damage = -1;   // This value comes from player's melee weapon data
+		private int _level = -1;    // This value comes from player's melee weapon data
 		private float _delayToStartProcessing = 0.5f;
 		private const string _tag = "Destructible";
 		private ThirdPersonController _controller = default;
@@ -62,6 +63,7 @@ namespace LittleLooters.Gameplay
 			PlayerAimingAssistance.OnStopAiming += StopAiming;
 
 			PlayerProgressEvents.OnToolDamageIncreaseStarted += HandleStartToolDamageIncrease;
+			PlayerProgressEvents.OnToolDamageIncreaseCompleted += HandleStopToolDamageIncrease;
 
 			_hits = new Collider[100];
 
@@ -74,11 +76,13 @@ namespace LittleLooters.Gameplay
 
 			_visualController = GetComponent<VisualCharacterController>();
 
+			HideExtraDamageVfx();
+
+			DestructibleResourceEvents.OnGrantRewardsByDamage += GrantRewardsByDamage;
+
 			if (!TryGetComponent<PlayerHealth>(out var health)) return;
 
 			health.OnDead += PlayerDeath;
-
-			DestructibleResourceEvents.OnGrantRewardsByDamage += GrantRewardsByDamage;
 		}
 
 		private void OnDestroy()
@@ -87,7 +91,8 @@ namespace LittleLooters.Gameplay
 			PlayerAimingAssistance.OnStopAiming -= StopAiming;
 
 			PlayerProgressEvents.OnToolDamageIncreaseStarted -= HandleStartToolDamageIncrease;
-			
+			PlayerProgressEvents.OnToolDamageIncreaseCompleted -= HandleStopToolDamageIncrease;
+
 			DestructibleResourceEvents.OnGrantRewardsByDamage -= GrantRewardsByDamage;
 
 			if (_controller != null)
@@ -306,7 +311,7 @@ namespace LittleLooters.Gameplay
 
 		#endregion
 
-		#region Tool damage increase
+		#region Tool extra damage
 
 		private float _toolExtraDamageExpiration = 0;
 		private bool _toolExtraDamageInProgress = false;
@@ -316,6 +321,13 @@ namespace LittleLooters.Gameplay
 			_toolExtraDamageExpiration = args.expiration;
 
 			_toolExtraDamageInProgress = true;
+
+			ShowExtraDamageVfx();
+		}
+
+		private void HandleStopToolDamageIncrease()
+		{
+			HideExtraDamageVfx();
 		}
 
 		private void CheckToolExtraDamageProgress()
@@ -335,6 +347,16 @@ namespace LittleLooters.Gameplay
 
 			var progressDataService = ServiceLocator.Current.Get<PlayerProgressDataService>();
 			progressDataService.Tool_CompleteExtraDamage();
+		}
+
+		private void ShowExtraDamageVfx()
+		{
+			_extraDamageVx.SetActive(true);
+		}
+
+		private void HideExtraDamageVfx()
+		{
+			_extraDamageVx.SetActive(false);
 		}
 
 		#endregion
