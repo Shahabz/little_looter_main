@@ -187,7 +187,7 @@ namespace LittleLooters.Gameplay
 			_animator.SetBool(IS_FIRING, false);
 		}
 
-		private void TakeDamage(float damage)
+		private void TakeDamage(int damage)
 		{
 			_damageVfx.Play();
 		}

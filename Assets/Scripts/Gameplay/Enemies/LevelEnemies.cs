@@ -27,11 +27,13 @@ namespace LittleLooters.Gameplay
 
 		private void Start()
 		{
-			InitEntities();
+			UI_GameplayEvents.OnStartGame += HandleStartGame;
 		}
 
 		private void OnDestroy()
 		{
+			UI_GameplayEvents.OnStartGame -= HandleStartGame;
+
 			TeardownEntities();
 		}
 
@@ -40,6 +42,11 @@ namespace LittleLooters.Gameplay
 			if (!_enabled) return;
 
 			RefreshEntities();
+		}
+
+		private void HandleStartGame()
+		{
+			InitEntities();
 		}
 
 		private void RefreshEntities()

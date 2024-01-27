@@ -13,15 +13,15 @@ namespace LittleLooters.Gameplay.Combat
 		#region Events
 
 		public event Action OnInitialized;
-		public event Action<float> OnTakeDamage;
+		public event Action<int> OnTakeDamage;
 		public event Action OnDead;
 
 		#endregion
 
 		#region Inspector
 
-		[SerializeField] private float _hp = default;
-		[SerializeField] private float _maxHp = default;
+		[SerializeField] private int _hp = default;
+		[SerializeField] private int _maxHp = default;
 
 		#endregion
 
@@ -30,10 +30,10 @@ namespace LittleLooters.Gameplay.Combat
 		#region ITakeDamage implementation
 
 		public bool IsDead => _hp <= 0;
-		public float Health => _hp;
-		public float MaxHealth => _maxHp;
+		public int Health => _hp;
+		public int MaxHealth => _maxHp;
 
-		public void Init(float initialHp, float maxHp)
+		public void Init(int initialHp, int maxHp)
 		{
 			_hp = initialHp;
 
@@ -42,7 +42,7 @@ namespace LittleLooters.Gameplay.Combat
 			OnInitialized?.Invoke();
 		}
 
-		public void TakeDamage(float damage)
+		public void TakeDamage(int damage)
 		{
 			if (IsDead) return;
 
@@ -75,7 +75,7 @@ namespace LittleLooters.Gameplay.Combat
 		[ContextMenu("Apply Damage")]
 		public void ApplyDamageForTesting()
 		{
-			var damage = UnityEngine.Random.Range(5f, 10f);
+			var damage = Mathf.FloorToInt(UnityEngine.Random.Range(5f, 10f));
 
 			TakeDamage(damage);
 		}

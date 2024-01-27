@@ -48,7 +48,7 @@ namespace LittleLooters.Gameplay.UI
 			Refresh();
 		}
 
-		private void PlayerTakeDamage(float damage)
+		private void PlayerTakeDamage(int damage)
 		{
 			Refresh();
 		}

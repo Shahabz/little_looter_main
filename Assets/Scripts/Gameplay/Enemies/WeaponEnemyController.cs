@@ -14,6 +14,7 @@ namespace LittleLooters.Gameplay
 		#region Private properties
 
 		private EnemyBehaviorData _data = default;
+		private EnemyLevelConfiguration _levelConfiguration = default;
 		private bool _initialized = false;
 		private Action _meleeAttackCompleted = default;
 		private Action _meleeAttackStarted = default;
@@ -24,9 +25,11 @@ namespace LittleLooters.Gameplay
 
 		#region Public methods
 
-		public void Init(EnemyBehaviorData data, Transform target, Action callbackCompleted, Action callbackStarted)
+		public void Init(EnemyBehaviorData data, EnemyLevelConfiguration levelConfig, Transform target, Action callbackCompleted, Action callbackStarted)
 		{
 			_data = data;
+
+			_levelConfiguration = levelConfig;
 
 			_target = target;
 			_targetHealth = _target.GetComponent<PlayerHealth>();
@@ -51,7 +54,7 @@ namespace LittleLooters.Gameplay
 
 			if (!playerInsideAttackArea) return;
 
-			var damage = UnityEngine.Random.Range(_data.MinDamage, _data.MaxDamage);
+			var damage = UnityEngine.Random.Range(_levelConfiguration.minDamage, _levelConfiguration.maxDamage);
 
 			_targetHealth.TakeDamage(damage);
 		}

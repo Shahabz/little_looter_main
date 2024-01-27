@@ -27,8 +27,8 @@ namespace LittleLooters.Gameplay
 		[SerializeField] private int _id = default;
 		[SerializeField] private DestructibleObjectData _data = default;
 		[SerializeField] private GameObject _art = default;
-		[SerializeField] private float _hp = default;
-		[SerializeField] private float _maxHp = default;
+		[SerializeField] private int _hp = default;
+		[SerializeField] private int _maxHp = default;
 		[SerializeField] private Collider _collider = default;
 
 		[Header("UI")]
@@ -70,21 +70,21 @@ namespace LittleLooters.Gameplay
 		#region ITakeDamage implementation
 
 		public event Action OnInitialized;
-		public event Action<float> OnTakeDamage;
+		public event Action<int> OnTakeDamage;
 		public event Action OnDead;
 
 		public bool IsDead => _hp <= 0;
-		public float Health => _hp;
-		public float MaxHealth => _maxHp;
+		public int Health => _hp;
+		public int MaxHealth => _maxHp;
 
-		public void Init(float initialHp, float maxHp)
+		public void Init(int initialHp, int maxHp)
 		{
 			_hp = initialHp;
 
 			_maxHp = maxHp;
 		}
 
-		public void TakeDamage(float damage)
+		public void TakeDamage(int damage)
 		{
 			_hp = Mathf.Clamp(_hp - damage, 0, _hp);
 
@@ -205,14 +205,14 @@ namespace LittleLooters.Gameplay
 
 		private void RefreshHealthBar()
 		{
-			_uiProgressBarFill.value = (_hp / _maxHp);
+			_uiProgressBarFill.value = ((float)_hp / (float)_maxHp);
 		}
 
 		private void ProcessDamageReward()
 		{
 			if (_rewards.Count <= 0) return;
 
-			var damageProgress = 1 - (_hp / _maxHp);
+			var damageProgress = 1 - ((float)_hp / (float)_maxHp);
 
 			// Grant rewards
 			for (int i = 0; i < _rewards.Count; i++)

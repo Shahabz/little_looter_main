@@ -12,7 +12,7 @@ namespace LittleLooters.Gameplay.Combat
 		#region Events
 
 		event Action OnInitialized;
-		event Action<float> OnTakeDamage;
+		event Action<int> OnTakeDamage;
         event Action OnDead;
 
 		#endregion
@@ -20,16 +20,16 @@ namespace LittleLooters.Gameplay.Combat
 		#region Public properties
 
 		public bool IsDead { get; }
-        public float Health { get; }
-        public float MaxHealth { get; }
+        public int Health { get; }
+        public int MaxHealth { get; }
 
 		#endregion
 
 		#region Public methods
 
-		void Init(float initialHp, float maxHp);
+		void Init(int initialHp, int maxHp);
 
-        void TakeDamage(float damage);
+        void TakeDamage(int damage);
 
 		#endregion
 	}

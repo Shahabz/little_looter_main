@@ -22,19 +22,20 @@ namespace LittleLooters.Gameplay
 	{
 		#region Inspector
 
+		[SerializeField] private EnemyConfiguration _config = default;
 		[SerializeField] private EnemyBehaviorData _data = default;
+		[SerializeField] private int _level = 1;
 		[SerializeField] private EnemyState _state = EnemyState.NONE;
 		[SerializeField] private VisualEnemyController _visualController = default;
 		[SerializeField] private WeaponEnemyController _weaponController = default;
 		[SerializeField] private Transform _target = default;
 		[SerializeField] private FieldOfViewHelper _fovHelper = default;
-		[SerializeField] private float _hp = default;
-		[SerializeField] private float _maxHp = default;
 		[SerializeField] private Collider _collider = default;
 		[SerializeField] private GameObject _mainCamera = default;
 		[SerializeField] private GameObject _detection = default;
 		[SerializeField] private float _rotationSmoothTime = 0.12f;
-		[SerializeField] private bool _canDebug = false;
+		[SerializeField] private UI_EnemyHud _hud = default;
+		[SerializeField] private bool _canShowTextDamage = false;
 
 		#endregion
 
@@ -42,6 +43,8 @@ namespace LittleLooters.Gameplay
 
 		private int _id = -1;
 		private bool _enabled = false;
+		private int _hp = default;
+		private int _maxHp = default;
 		private EnemyFieldOfViewService _fovService = default;
 		private NavMeshAgent _agent = default;
 		private float _nextAttackTime = 0;
@@ -50,6 +53,7 @@ namespace LittleLooters.Gameplay
 		private const float DELAY_CALCULATION = 0.12f;
 		private ITakeDamage _targetHealth = default;
 		private bool _isPerformingAnAttack = false;
+		private bool _hudExist = false;
 
 		#endregion
 
@@ -59,11 +63,30 @@ namespace LittleLooters.Gameplay
 
 		#endregion
 
+		#region Unity events
+
+		private void OnBecameVisible()
+		{
+			ShowHUD();
+		}
+
+		private void OnBecameInvisible()
+		{
+			HideHUD();
+		}
+
+		#endregion
+
 		#region Public methods
 
 		public void Initialization(int id)
 		{
 			_id = id;
+
+			var levelConfiguration = _config.GetLevelConfiguration(_level);
+
+			_hp = levelConfiguration.hp;
+			_maxHp = _hp;
 
 			_agent = GetComponent<NavMeshAgent>();
 
@@ -87,9 +110,13 @@ namespace LittleLooters.Gameplay
 				_targetHealth.OnDead += TargetDead;
 			}
 
-			_weaponController.Init(_data, _target, MeleeAttackCompleted, MeleeAttackStarted);
+			InitHUD();
+
+			_weaponController.Init(_data, levelConfiguration, _target, MeleeAttackCompleted, MeleeAttackStarted);
 
 			MarkAsNonDetected();
+
+			if (_canDebug) DebugInitialization(levelConfiguration);
 
 			_enabled = true;
 		}
@@ -311,31 +338,73 @@ namespace LittleLooters.Gameplay
 			_isPerformingAnAttack = false;
 		}
 
+		private void InitHUD()
+		{
+			_hudExist = _hud != null;
+
+			if (!_hudExist) return;
+
+			_hud.Init(_level, _hp, _maxHp);
+		}
+
+		private void RefreshHudByDamage()
+		{
+			if (!_hudExist) return;
+
+			_hud.RefreshHealth((float)_hp / (float)_maxHp);
+		}
+
+		private void RefreshHudByDeath()
+		{
+			if (!_hudExist) return;
+
+			_hud.HandleDead();
+		}
+
+		private void ShowHUD()
+		{
+			if (!_hudExist) return;
+
+			_hud.Show();
+		}
+
+		private void HideHUD()
+		{
+			if (!_hudExist) return;
+
+			_hud.Hide();
+		}
+
 		#endregion
 
 		#region Health system
 
 		public event Action OnInitialized;
-		public event Action<float> OnTakeDamage;
+		public event Action<int> OnTakeDamage;
 		public event Action OnDead;
 
 		public bool IsDead => _hp <= 0;
-		public float Health => _hp;
-		public float MaxHealth => _maxHp;
+		public int Health => _hp;
+		public int MaxHealth => _maxHp;
+		public int Level => _level;
 
-		public void Init(float initialHp, float maxHp)
+		public void Init(int initialHp, int maxHp)
 		{
-			_hp = initialHp;
-
-			_maxHp = maxHp;
+			//_hp = initialHp;
+			//_maxHp = maxHp;
 		}
 
-		public void TakeDamage(float damage)
+		public void TakeDamage(int damage)
 		{
-			UI.UI_TextDamagePanel.OnAnimateDamage?.Invoke(transform.position, Mathf.FloorToInt(damage));
+			if (_canShowTextDamage)
+			{
+				UI.UI_TextDamagePanel.OnAnimateDamage?.Invoke(transform.position, Mathf.FloorToInt(damage));
+			}
 
 			_hp = Mathf.Clamp(_hp - damage, 0, _hp);
 
+			RefreshHudByDamage();
+			
 			if (_hp > 0)
 			{
 				_visualController.TakeDamage();
@@ -355,6 +424,19 @@ namespace LittleLooters.Gameplay
 			StopMovement();
 
 			RefreshDeathState();
+
+			RefreshHudByDeath();
+		}
+
+		#endregion
+
+		#region Debug
+
+		private bool _canDebug = false;
+
+		private void DebugInitialization(EnemyLevelConfiguration levelConfiguration)
+		{
+			Debug.LogError($"Enemy::Initialization -> id: <color=yellow>{_config.id}</color>, level: <color=cyan>{_level}</color>, damage: [<color=magenta>{levelConfiguration.minDamage}-{levelConfiguration.maxDamage}</color>], name: {gameObject.name}");
 		}
 
 		#endregion

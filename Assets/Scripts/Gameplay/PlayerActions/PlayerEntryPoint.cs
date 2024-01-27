@@ -19,8 +19,8 @@ namespace LittleLooters.Gameplay
 		[SerializeField] private LevelEnemies _levelEnemies = default;
 
 		[Header("Config")]
-		[SerializeField] private float _initialHp = default;
-		[SerializeField] private float _maxHp = default;
+		[SerializeField] private int _initialHp = default;
+		[SerializeField] private int _maxHp = default;
 		[SerializeField] private bool _godMode = default;
 
 		[Header("Aiming assistance")]
@@ -127,7 +127,7 @@ namespace LittleLooters.Gameplay
 
 		#region Private methods
 
-		private void TakeDamage(float damage)
+		private void TakeDamage(int damage)
 		{
 			_controller.TakeDamage(damage);
 		}

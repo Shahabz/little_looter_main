@@ -12,26 +12,26 @@ namespace LittleLooters.Gameplay
 	public class Destructible : MonoBehaviour, ITakeDamage
 	{
 		[SerializeField] private GameObject _art = default;
-		[SerializeField] private float _hp = default;
-		[SerializeField] private float _maxHp = default;
+		[SerializeField] private int _hp = default;
+		[SerializeField] private int _maxHp = default;
 		[SerializeField] private Collider _collider = default;
 
 		public event Action OnInitialized;
-		public event Action<float> OnTakeDamage;
+		public event Action<int> OnTakeDamage;
 		public event Action OnDead;
 
 		public bool IsDead => _hp <= 0;
-		public float Health => _hp;
-		public float MaxHealth => _maxHp;
+		public int Health => _hp;
+		public int MaxHealth => _maxHp;
 
-		public void Init(float initialHp, float maxHp)
+		public void Init(int initialHp, int maxHp)
 		{
 			_hp = initialHp;
 
 			_maxHp = maxHp;
 		}
 
-		public void TakeDamage(float damage)
+		public void TakeDamage(int damage)
 		{
 			_hp = Mathf.Clamp(_hp - damage, 0, _hp);
 
