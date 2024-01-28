@@ -76,16 +76,16 @@ namespace StarterAssets
 
 		public void OnAttack(InputValue value)
 		{
-			if (!value.isPressed) return;
+			//if (!value.isPressed) return;
 
-			AttackInput();
+			AttackInput(value.isPressed);
 		}
 
 		public void OnReload(InputValue value)
 		{
 			if (!value.isPressed) return;
 
-			ReloadInput();
+			ReloadInput(value.isPressed);
 		}
 
 		public void OnRoll(InputValue value)
@@ -130,14 +130,14 @@ namespace StarterAssets
 			sprint = newSprintState;
 		}
 
-		public void AttackInput()
+		public void AttackInput(bool inputActive)
 		{
-			attack = true;
+			attack = inputActive;
 		}
 
-		public void ReloadInput()
+		public void ReloadInput(bool inputActive)
 		{
-			reload = true;
+			reload = inputActive;
 		}
 
 		public void CancelSprint()

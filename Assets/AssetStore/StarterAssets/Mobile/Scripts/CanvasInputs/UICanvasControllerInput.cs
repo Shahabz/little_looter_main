@@ -12,6 +12,8 @@ namespace StarterAssets
         [SerializeField] private bool _isAim = false;
         [SerializeField] private UIVirtualButton _btnSprint = default;
         [SerializeField] private UIVirtualButton _btnRepair = default;
+        [SerializeField] private UIVirtualButton _btnFire = default;
+        [SerializeField] private UIVirtualButton _btnReload = default;
         [SerializeField] private float _deadZoneThreshold = 0.5f;
         [SerializeField] private PlayerRepairService _playerRepairService = default;
 
@@ -19,6 +21,7 @@ namespace StarterAssets
 
         #region Private properties
 
+        private bool _gameStarted = false;
         private readonly Vector2 _vectorUp = Vector2.up;
         private bool _sprintState = false;
         private bool _repairState = false;
@@ -29,6 +32,8 @@ namespace StarterAssets
 
         private void Start()
 		{
+            UI_GameplayEvents.OnStartGame += HandleStartGame;
+
             starterAssetsInputs.OnCancelSprint += CancelSprint;
 
             if (_btnRepair == null) return;
@@ -39,6 +44,8 @@ namespace StarterAssets
 
         private void OnDestroy()
         {
+            UI_GameplayEvents.OnStartGame -= HandleStartGame;
+
             starterAssetsInputs.OnCancelSprint -= CancelSprint;
 
             if (_btnRepair == null) return;
@@ -93,12 +100,14 @@ namespace StarterAssets
 
         public void VirtualFireInput()
         {
-            starterAssetsInputs.AttackInput();
+            if (!_gameStarted) return;
+
+            starterAssetsInputs.AttackInput(_btnFire.StatusOn);
         }
 
         public void VirtualReloadInput()
         {
-            starterAssetsInputs.ReloadInput();
+            starterAssetsInputs.ReloadInput(_btnReload.StatusOn);
         }
 
         public void VirtualRepairInput()
@@ -116,6 +125,11 @@ namespace StarterAssets
         #endregion
 
         #region Private methods
+
+        private void HandleStartGame()
+		{
+            _gameStarted = true;
+		}
 
         private void CancelSprint()
 		{

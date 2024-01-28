@@ -3,6 +3,7 @@
  * Author: Peche
  */
 
+using LittleLooters.Gameplay.Combat;
 using UnityEngine;
 
 namespace LittleLooters.Gameplay.UI
@@ -12,6 +13,7 @@ namespace LittleLooters.Gameplay.UI
 	/// </summary>
 	public class UI_WeaponSelectionPanel : MonoBehaviour
 	{
+		[SerializeField] private WeaponController _weaponController = default;
 		[SerializeField] private GameObject _panel = default;
 		[SerializeField] private UI_WeaponSelectionSlot[] _slots = default;
 
@@ -69,7 +71,7 @@ namespace LittleLooters.Gameplay.UI
 			{
 				var slot = _slots[i];
 
-				slot.Init(i, i == 0, SlotSelection);
+				slot.Init(i, i == 0, SlotSelection, _weaponController);
 			}
 		}
 
@@ -79,7 +81,7 @@ namespace LittleLooters.Gameplay.UI
 			{
 				var slot = _slots[i];
 
-				slot.Teardown();
+				slot.Teardown(_weaponController);
 			}
 		}
 

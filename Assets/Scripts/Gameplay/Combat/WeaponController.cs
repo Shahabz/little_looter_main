@@ -38,6 +38,7 @@ namespace LittleLooters.Gameplay.Combat
 		#region Private properties
 
 		private bool _isFiring = default;
+		private bool _gameHasStarted = false;
 		private PlayerAimingAssistance _aimingAssistance = default;
 
 		#endregion
@@ -64,11 +65,13 @@ namespace LittleLooters.Gameplay.Combat
 			_weapon.Init();
 
 			UI_GameplayEvents.OnWeaponSelection += SwapWeapon;
+			UI_GameplayEvents.OnStartGame += HandleStartGame;
 		}
 
 		public void Teardown()
 		{
 			UI_GameplayEvents.OnWeaponSelection -= SwapWeapon;
+			UI_GameplayEvents.OnStartGame -= HandleStartGame;
 
 			_weapon.OnStopReloading -= ProcessStopReloading;
 			_weapon.OnRefreshAmmo -= RefreshAmmo;
@@ -77,6 +80,8 @@ namespace LittleLooters.Gameplay.Combat
 
 		public void CheckInput(StarterAssetsInputs input)
 		{
+			if (!_gameHasStarted) return;
+
 			var reloading = CheckReloading(input);
 
 			if (reloading) return;
@@ -104,6 +109,11 @@ namespace LittleLooters.Gameplay.Combat
 
 		#region Private methods
 
+		private void HandleStartGame()
+		{
+			_gameHasStarted = true;
+		}
+
 		private bool CheckReloading(StarterAssetsInputs input)
 		{
 			if (!_weapon.HasAmmo) return false;
@@ -125,12 +135,7 @@ namespace LittleLooters.Gameplay.Combat
 		{
 			var isClipEmpty = _weapon.IsClipEmpty;
 
-			var nonFiring = _weapon.IsReloading || _weapon.WaitingFireRate || !input.attack || isClipEmpty;
-
-			if (!_weapon.IsAutoFire)
-			{
-				input.attack = false;
-			}
+			var nonFiring = _weapon.IsReloading || !input.attack || isClipEmpty;
 
 			if (nonFiring)
 			{
@@ -145,10 +150,16 @@ namespace LittleLooters.Gameplay.Combat
 				return;
 			}
 
-			ProcessFiring();
+			// Check waiting fire rate
+			if (_weapon.WaitingFireRate) return;
+
+			// Check if it is trying to fire more than once with pressing button when weapon is not autofire
+			if (_isFiring && !_weapon.IsAutoFire) return;
+
+			ProcessFiring(input.attack);
 		}
 
-		private void ProcessFiring()
+		private void ProcessFiring(bool inputAttackActive)
 		{
 			// Check if previously was firing
 			if (!_isFiring)
