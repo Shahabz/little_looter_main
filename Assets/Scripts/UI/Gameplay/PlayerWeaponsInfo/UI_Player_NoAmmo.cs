@@ -17,14 +17,14 @@ namespace LittleLooters.Gameplay.UI
 
 		private void Awake()
 		{
-			_weaponController.OnRefreshAmmo += RefreshAmmo;
+			//_weaponController.OnRefreshAmmo += RefreshAmmo;
 			_weaponController.OnStartReloading += StartReloading;
 			_weaponController.OnStopReloading += StopReloading;
 		}
 
 		private void OnDestroy()
 		{
-			_weaponController.OnRefreshAmmo -= RefreshAmmo;
+			//_weaponController.OnRefreshAmmo -= RefreshAmmo;
 			_weaponController.OnStartReloading -= StartReloading;
 			_weaponController.OnStopReloading -= StopReloading;
 		}

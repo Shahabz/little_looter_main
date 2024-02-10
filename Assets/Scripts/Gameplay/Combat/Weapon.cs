@@ -60,6 +60,7 @@ namespace LittleLooters.Gameplay.Combat
 
         #region Public properties
 
+        public string Id => _data.Id;
         public bool IsReloading => _isReloading;
         public bool IsAutoFire => _data.IsAutoFire;
         public bool IsClipEmpty => _currentClipSize == 0;
@@ -169,13 +170,11 @@ namespace LittleLooters.Gameplay.Combat
 
         private void FillClip()
 		{
-            var diff = _data.ClipSize - _currentClipSize;
-
-            var clip = (_currentAmmo > _data.ClipSize) ? _data.ClipSize : _currentAmmo;
+            var clip = _data.ClipSize;
 
             _currentClipSize = clip;
 
-            _currentAmmo = Mathf.Clamp(_currentAmmo - diff, 0, _ammo);
+            _currentAmmo = clip;
 
             OnRefreshAmmo?.Invoke(_currentClipSize, _currentAmmo);
 		}

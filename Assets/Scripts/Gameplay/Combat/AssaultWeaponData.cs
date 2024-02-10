@@ -12,7 +12,7 @@ namespace LittleLooters.Gameplay
 	{
 		#region Inspector
 
-		public int Id;
+		public string Id;
 		public string DisplayName;
 		public GameObject Art;
 		public float FireRate;

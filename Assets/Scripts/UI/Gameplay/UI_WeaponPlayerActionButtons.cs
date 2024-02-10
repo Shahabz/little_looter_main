@@ -41,14 +41,14 @@ namespace LittleLooters.Gameplay.UI
 
         private void HideButtons()
         {
-            _fireButton.SetActive(false);
-            _reloadButton.SetActive(false);
+            //_fireButton.SetActive(false);
+            //_reloadButton.SetActive(false);
         }
 
         private void ShowButtons()
         {
-            _fireButton.SetActive(true);
-            _reloadButton.SetActive(true);
+            //_fireButton.SetActive(true);
+            //_reloadButton.SetActive(true);
         }
 
         private void HandleStopEnemiesDetection()

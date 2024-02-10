@@ -20,7 +20,39 @@ namespace LittleLooters.Model
 
 		#region Weapons
 
+		public struct WeaponAmmoChangeArgs
+		{
+			public string id;
+			public int ammo;
+		}
+
+		public struct WeaponStartReloadingArgs
+		{
+			public string id;
+			public float expiration;
+			public float duration;
+		}
+
+		public struct WeaponStopReloadingArgs
+		{
+			public string id;
+		}
+
+		public struct WeaponSelectionArgs
+		{
+			public string id;
+			public bool isSelected;
+		}
+
 		public static Action<AssaultWeaponData> OnWeaponChanged;
+
+		public static Action<WeaponAmmoChangeArgs> OnWeaponAmmoChanged;
+
+		public static Action<WeaponStartReloadingArgs> OnWeaponStartReloading;
+
+		public static Action<WeaponStopReloadingArgs> OnWeaponStopReloading;
+
+		public static Action<WeaponSelectionArgs> OnWeaponSelectionChanged;
 
 		#endregion
 

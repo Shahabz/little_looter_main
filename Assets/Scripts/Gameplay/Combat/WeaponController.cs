@@ -24,6 +24,8 @@ namespace LittleLooters.Gameplay.Combat
 
 		#region Inspector
 
+		[SerializeField] private PlayerWeaponInfo[] _weapons = default;
+
 		[SerializeField] private Weapon _weapon = default;
 
 		[Header("Inventory weapons")]
@@ -33,10 +35,14 @@ namespace LittleLooters.Gameplay.Combat
 		[SerializeField] private GameObject _weapon1 = default;
 		[SerializeField] private AssaultWeaponData _weaponData1 = default;
 
+		[Header("Configuration")]
+		[SerializeField] AssaultWeaponData[] _allAssaultWeapons = default;
+
 		#endregion
 
 		#region Private properties
 
+		private PlayerWeaponInfo _currentWeapon = default;
 		private bool _isFiring = default;
 		private bool _gameHasStarted = false;
 		private PlayerAimingAssistance _aimingAssistance = default;
@@ -45,10 +51,22 @@ namespace LittleLooters.Gameplay.Combat
 
 		#region Public properties
 
-		public bool IsReloading => _weapon.IsReloading;
+		public bool IsReloading => _currentWeapon.isReloading;	//_weapon.IsReloading;
 		public int ClipSize => _weapon.ClipSize;
-		public int Ammo => _weapon.Ammo;
+		public int Ammo => _currentWeapon.ammo;	//_weapon.Ammo;
 		public float WeaponRadiusDetection => _weapon.GetRadiusDetection();
+		public string CurrentWeaponId => _currentWeapon.id;
+
+		#endregion
+
+		#region Unity events
+
+		private void Update()
+		{
+			if (!_gameHasStarted) return;
+
+			ProcessWeaponsReloading(Time.time);
+		}
 
 		#endregion
 
@@ -64,13 +82,17 @@ namespace LittleLooters.Gameplay.Combat
 
 			_weapon.Init();
 
+			InitWeapons();
+
 			UI_GameplayEvents.OnWeaponSelection += SwapWeapon;
+			UI_GameplayEvents.OnWeaponStartReloading += HandleWeaponStartReloadingFromSlot;
 			UI_GameplayEvents.OnStartGame += HandleStartGame;
 		}
 
 		public void Teardown()
 		{
 			UI_GameplayEvents.OnWeaponSelection -= SwapWeapon;
+			UI_GameplayEvents.OnWeaponStartReloading -= HandleWeaponStartReloadingFromSlot;
 			UI_GameplayEvents.OnStartGame -= HandleStartGame;
 
 			_weapon.OnStopReloading -= ProcessStopReloading;
@@ -105,6 +127,13 @@ namespace LittleLooters.Gameplay.Combat
 			_weapon.AddAmmo(ammo);
 		}
 
+		public PlayerWeaponInfo GetWeaponInfo(int index)
+		{
+			index = Mathf.Clamp(index, 0, _weapons.Length - 1);
+
+			return _weapons[index];
+		}
+
 		#endregion
 
 		#region Private methods
@@ -116,13 +145,13 @@ namespace LittleLooters.Gameplay.Combat
 
 		private bool CheckReloading(StarterAssetsInputs input)
 		{
-			if (!_weapon.HasAmmo) return false;
+			if (_currentWeapon.ammo == 0) return false;
 
 			// Check if input start reloading action
 			if (!input.reload) return false;
 
 			// Check if it is already reloading
-			if (_weapon.IsReloading) return false;
+			if (_currentWeapon.isReloading) return false;
 
 			input.reload = false;
 
@@ -133,9 +162,9 @@ namespace LittleLooters.Gameplay.Combat
 
 		private void CheckAttack(StarterAssetsInputs input)
 		{
-			var isClipEmpty = _weapon.IsClipEmpty;
+			var isClipEmpty = _currentWeapon.ammo == 0;
 
-			var nonFiring = _weapon.IsReloading || !input.attack || isClipEmpty;
+			var nonFiring = _currentWeapon.isReloading || !input.attack || isClipEmpty;
 
 			if (nonFiring)
 			{
@@ -172,7 +201,7 @@ namespace LittleLooters.Gameplay.Combat
 			// NOTE: this method should be invoked from firing animation
 			FireWeapon();
 
-			_weapon.ConsumeAmmo();
+			ConsumeAmmo();
 		}
 
 		private void ProcessStartReloading()
@@ -180,6 +209,18 @@ namespace LittleLooters.Gameplay.Combat
 			_weapon.StartReloading();
 
 			OnStartReloading?.Invoke(_weapon.ReloadingTime);
+
+			for (int i = 0; i < _weapons.Length; i++)
+			{
+				var weapon = _weapons[i];
+
+				if (weapon.isSelected)
+				{
+					var expiration = Time.time + _weapon.ReloadingTime;
+					weapon.StartReloading(expiration, _weapon.ReloadingTime);
+					break;
+				}
+			}
 		}
 
 		private void ProcessStopReloading()
@@ -192,12 +233,16 @@ namespace LittleLooters.Gameplay.Combat
 			OnRefreshAmmo?.Invoke(clipSize, ammo);
 		}
 
-		private void SwapWeapon(int id)
+		private void SwapWeapon(string id)
 		{
-			var weaponData = (id == 0) ? _weaponData0 : _weaponData1;
+			RefreshSelectedWeapon(id);
 
-			_weapon0.SetActive(id == 0);
-			_weapon1.SetActive(id == 1);
+			var weaponIndex = GetWeaponIndex(id);
+
+			var weaponData = (weaponIndex == 0) ? _weaponData0 : _weaponData1;
+
+			_weapon0.SetActive(weaponIndex == 0);
+			_weapon1.SetActive(weaponIndex == 1);
 
 			_weapon.RefreshData(weaponData);
 
@@ -207,6 +252,146 @@ namespace LittleLooters.Gameplay.Combat
 		private void CompleteFiring()
 		{
 			OnCompleteFiring?.Invoke();
+		}
+
+		private void ConsumeAmmo()
+		{
+			_weapon.ConsumeAmmo();
+
+			var hasAmmo = true;
+
+			for (int i = 0; i < _weapons.Length; i++)
+			{
+				var weapon = _weapons[i];
+
+				if (!weapon.id.Equals(_weapon.Id)) continue;
+
+				weapon.ConsumeAmmo();
+
+				hasAmmo = weapon.ammo > 0;
+
+				break;
+			}
+
+			if (hasAmmo) return;
+
+			ProcessStartReloading();
+		}
+
+		private void RefreshSelectedWeapon(string id)
+		{
+			for (int i = 0; i < _weapons.Length; i++)
+			{
+				var weapon = _weapons[i];
+
+				weapon.RefreshSelection(weapon.id.Equals(id));
+
+				if (!weapon.id.Equals(id)) continue;
+
+				_currentWeapon = weapon;
+			}
+		}
+
+		private void InitWeapons()
+		{
+			for (int i = 0; i < _weapons.Length; i++)
+			{
+				var weapon = _weapons[i];
+
+				if (weapon.isLocked)
+				{
+					weapon.Init(0, false);
+					continue;
+				}
+
+				var initialAmmo = GetInitialAmmo(weapon.id);
+
+				weapon.Init(initialAmmo, i == 0);
+			}
+
+			_currentWeapon = _weapons[0];
+		}
+
+		private int GetInitialAmmo(string id)
+		{
+			var ammo = 0;
+
+			for (int i = 0; i < _allAssaultWeapons.Length; i++)
+			{
+				var weaponData = _allAssaultWeapons[i];
+
+				if (weaponData.Id.Equals(id))
+				{
+					ammo = weaponData.ClipSize;
+
+					break;
+				}
+			}
+
+			return ammo;
+		}
+
+		private int GetWeaponIndex(string id)
+		{
+			for (int i = 0; i < _weapons.Length; i++)
+			{
+				var weapon = _weapons[i];
+
+				if (weapon.id.Equals(id)) return i;
+			}
+
+			return 0;
+		}
+
+		private void ProcessWeaponsReloading(float time)
+		{
+			var invokeEvent = false;
+
+			for (int i = 0; i < _weapons.Length; i++)
+			{
+				var weapon = _weapons[i];
+
+				if (!weapon.isReloading) continue;
+
+				if (weapon.reloadingExpiration > time) continue;
+
+				var index = GetWeaponIndex(weapon.id);
+
+				var ammo = _allAssaultWeapons[index].ClipSize;
+
+				weapon.StopReloading(ammo);
+
+				invokeEvent = true;
+			}
+
+			if (!invokeEvent) return;
+
+			OnStopReloading?.Invoke();
+		}
+
+		private void HandleWeaponStartReloadingFromSlot(string weaponId)
+		{
+			if (weaponId.Equals(_currentWeapon.id))
+			{
+				ProcessStartReloading();
+				return;
+			}
+
+			for (int i = 0; i < _weapons.Length; i++)
+			{
+				var weapon = _weapons[i];
+
+				if (!weapon.id.Equals(weaponId)) continue;
+
+				var index = GetWeaponIndex(weaponId);
+				var weaponData = _allAssaultWeapons[index];
+				var duration = weaponData.ReloadingTime;
+				var expiration = Time.time + duration;
+
+				weapon.StartReloading(expiration, duration);
+
+				break;
+			}
 		}
 
 		#endregion

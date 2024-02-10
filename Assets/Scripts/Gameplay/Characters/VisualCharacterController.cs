@@ -4,6 +4,7 @@
  */
 
 using LittleLooters.Gameplay.Combat;
+using LittleLooters.Model;
 using StarterAssets;
 using System.Collections;
 using UnityEngine;
@@ -30,6 +31,7 @@ namespace LittleLooters.Gameplay
 
 		#region Private properties
 
+		private string _weaponId = default;
 		private float _dampTime = 0.1f;
 		private const string IS_AIMING = "isAiming";
 		private const string RELOAD = "reload";
@@ -54,8 +56,13 @@ namespace LittleLooters.Gameplay
 		public void Init(WeaponController weaponController)
 		{
 			// Reloading events
-			weaponController.OnStartReloading += StartReloading;
-			weaponController.OnStopReloading += StopReloading;
+			//weaponController.OnStartReloading += StartReloading;
+			//weaponController.OnStopReloading += StopReloading;
+			PlayerProgressEvents.OnWeaponStartReloading += HandleWeaponStartReloading;
+			PlayerProgressEvents.OnWeaponStopReloading += HandleWeaponStopReloading;
+			PlayerProgressEvents.OnWeaponSelectionChanged += HandleWeaponSelectionChanged;
+
+			_weaponId = weaponController.CurrentWeaponId;
 
 			// Firing events
 			weaponController.OnStartFiring += StartFiring;
@@ -68,8 +75,11 @@ namespace LittleLooters.Gameplay
 		public void Teardown(WeaponController weaponController)
 		{
 			// Reloading events
-			weaponController.OnStartReloading -= StartReloading;
-			weaponController.OnStopReloading -= StopReloading;
+			//weaponController.OnStartReloading -= StartReloading;
+			//weaponController.OnStopReloading -= StopReloading;
+			PlayerProgressEvents.OnWeaponStartReloading -= HandleWeaponStartReloading;
+			PlayerProgressEvents.OnWeaponStopReloading -= HandleWeaponStopReloading;
+			PlayerProgressEvents.OnWeaponSelectionChanged -= HandleWeaponSelectionChanged;
 
 			// Firing events
 			weaponController.OnStartFiring += StartFiring;
@@ -197,6 +207,27 @@ namespace LittleLooters.Gameplay
 			yield return new WaitForEndOfFrame();
 
 			rig.weight = weight;
+		}
+
+		private void HandleWeaponStartReloading(PlayerProgressEvents.WeaponStartReloadingArgs args)
+		{
+			if (!_weaponId.Equals(args.id)) return;
+
+			StartReloading(args.duration);
+		}
+
+		private void HandleWeaponStopReloading(PlayerProgressEvents.WeaponStopReloadingArgs args)
+		{
+			StopReloading();
+		}
+
+		private void HandleWeaponSelectionChanged(PlayerProgressEvents.WeaponSelectionArgs args)
+		{
+			if (!args.isSelected) return;
+
+			_weaponId = args.id;
+
+			StopReloading();
 		}
 
 		#endregion

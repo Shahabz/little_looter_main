@@ -31,17 +31,22 @@ namespace LittleLooters.Gameplay
 
 		public static Action<float> OnCameraSizeChanged;
 
-		#region Weapon swapping events
+		#region Weapon events
 
 		/// <summary>
 		/// Triggered when UI slot weapon is selected and player should swap its current equipped weapon
 		/// </summary>
-		public static Action<int> OnWeaponSelection;
+		public static Action<string> OnWeaponSelection;
 
 		/// <summary>
 		/// Invoked when weapon radius detection has changed
 		/// </summary>
 		public static Action<float> OnWeaponRadiusChanged;
+
+		/// <summary>
+		/// Invoked from weapon slots
+		/// </summary>
+		public static Action<string> OnWeaponStartReloading;
 
 		#endregion
 

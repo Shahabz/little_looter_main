@@ -89,19 +89,23 @@ namespace LittleLooters.Gameplay.UI
 
 		private void StartReloading(float reloadingTime)
 		{
+			/*
 			_reloading.SetActive(true);
 
 			_remainingReloadTime = 0;
 			_totalReloadingTime = reloadingTime;
 
 			InvokeRepeating(nameof(RefreshProgress), 0f, _stepTime);
+			*/
 		}
 
 		private void StopReloading()
 		{
+			/*
 			_reloading.SetActive(false);
 
 			CancelInvoke(nameof(RefreshProgress));
+			*/
 		}
 
 		private void RefreshProgress()

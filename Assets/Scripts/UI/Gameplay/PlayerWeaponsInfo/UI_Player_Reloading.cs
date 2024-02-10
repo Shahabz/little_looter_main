@@ -4,6 +4,7 @@
  */
 
 using LittleLooters.Gameplay.Combat;
+using LittleLooters.Model;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -17,6 +18,7 @@ namespace LittleLooters.Gameplay.UI
 
 		#region Private properties
 
+		private string _weaponId = default;
 		private float _remainingReloadTime = 0;
 		private float _totalReloadingTime = 0;
 		private float _stepTime = 0.10f;
@@ -27,19 +29,36 @@ namespace LittleLooters.Gameplay.UI
 
 		private void Awake()
 		{
-			_weaponController.OnStartReloading += StartReloading;
-			_weaponController.OnStopReloading += StopReloading;
+			//_weaponController.OnStartReloading += StartReloading;
+			//_weaponController.OnStopReloading += StopReloading;
+
+			UI_GameplayEvents.OnStartGame += HandleStartGame;
+
+			PlayerProgressEvents.OnWeaponSelectionChanged += HandleWeaponSelection;
+			PlayerProgressEvents.OnWeaponStartReloading += HandleWeaponStartReloading;
+			PlayerProgressEvents.OnWeaponStopReloading += HandleWeaponStopReloading;
 		}
 
 		private void OnDestroy()
 		{
-			_weaponController.OnStartReloading -= StartReloading;
-			_weaponController.OnStopReloading -= StopReloading;
+			//_weaponController.OnStartReloading -= StartReloading;
+			//_weaponController.OnStopReloading -= StopReloading;
+
+			UI_GameplayEvents.OnStartGame -= HandleStartGame;
+
+			PlayerProgressEvents.OnWeaponSelectionChanged -= HandleWeaponSelection;
+			PlayerProgressEvents.OnWeaponStartReloading -= HandleWeaponStartReloading;
+			PlayerProgressEvents.OnWeaponStopReloading -= HandleWeaponStopReloading;
 		}
 
 		#endregion
 
 		#region Private methods
+		
+		private void HandleStartGame()
+		{
+			_weaponId = _weaponController.CurrentWeaponId;
+		}
 
 		private void StartReloading(float reloadingTime)
 		{
@@ -75,6 +94,27 @@ namespace LittleLooters.Gameplay.UI
 			var progress = _remainingReloadTime / _totalReloadingTime;
 
 			_progressBarFill.fillAmount = progress;
+		}
+
+		private void HandleWeaponSelection(PlayerProgressEvents.WeaponSelectionArgs args)
+		{
+			if (!args.isSelected) return;
+
+			_weaponId = args.id;
+
+			StopReloading();
+		}
+
+		private void HandleWeaponStartReloading(PlayerProgressEvents.WeaponStartReloadingArgs args)
+		{
+			if (!_weaponId.Equals(args.id)) return;
+
+			StartReloading(args.duration);
+		}
+
+		private void HandleWeaponStopReloading(PlayerProgressEvents.WeaponStopReloadingArgs args)
+		{
+			StopReloading();
 		}
 
 		#endregion

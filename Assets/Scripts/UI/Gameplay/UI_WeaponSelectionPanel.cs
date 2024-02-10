@@ -29,12 +29,12 @@ namespace LittleLooters.Gameplay.UI
 
 		private void ShowPanel()
 		{
-			_panel.SetActive(true);
+			//_panel.SetActive(true);
 		}
 
 		private void HidePanel()
 		{
-			_panel.SetActive(false);
+			//_panel.SetActive(false);
 		}
 
 		private void Init()
@@ -71,7 +71,9 @@ namespace LittleLooters.Gameplay.UI
 			{
 				var slot = _slots[i];
 
-				slot.Init(i, i == 0, SlotSelection, _weaponController);
+				var weaponInfo = _weaponController.GetWeaponInfo(i);
+
+				slot.Init(weaponInfo, i == 0, SlotSelection);
 			}
 		}
 
@@ -81,17 +83,17 @@ namespace LittleLooters.Gameplay.UI
 			{
 				var slot = _slots[i];
 
-				slot.Teardown(_weaponController);
+				slot.Teardown();
 			}
 		}
 
-		private void SlotSelection(int id)
+		private void SlotSelection(string id)
 		{
 			for (int i = 0; i < _slots.Length; i++)
 			{
 				var slot = _slots[i];
 
-				if (slot.Id == id)
+				if (slot.Id.Equals(id))
 				{
 					slot.MarkAsSelected();
 					continue;
