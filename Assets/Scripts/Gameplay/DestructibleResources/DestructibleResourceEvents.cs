@@ -28,6 +28,7 @@ namespace LittleLooters.Gameplay
     {
         NONE,
         SMALL_BOX,
-        GRILL
+        GRILL,
+        DOOR,
     }
 }

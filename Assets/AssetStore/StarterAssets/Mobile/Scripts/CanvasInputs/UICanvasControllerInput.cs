@@ -1,4 +1,5 @@
 using LittleLooters.Gameplay;
+using System;
 using UnityEngine;
 
 namespace StarterAssets
@@ -16,6 +17,7 @@ namespace StarterAssets
         [SerializeField] private UIVirtualButton _btnReload = default;
         [SerializeField] private float _deadZoneThreshold = 0.5f;
         [SerializeField] private PlayerRepairService _playerRepairService = default;
+        [SerializeField] private VariableJoystick _joystick = default;
 
         #endregion
 
@@ -36,6 +38,12 @@ namespace StarterAssets
 
             starterAssetsInputs.OnCancelSprint += CancelSprint;
 
+            if (_joystick != null)
+            {
+                _joystick.OnChange += HandleJoystickChange;
+                _joystick.OnStop += HandleJoystickStop;
+            }
+
             if (_btnRepair == null) return;
 
             _playerRepairService.OnDetectTarget += DetectRepairTarget;
@@ -47,6 +55,12 @@ namespace StarterAssets
             UI_GameplayEvents.OnStartGame -= HandleStartGame;
 
             starterAssetsInputs.OnCancelSprint -= CancelSprint;
+
+            if (_joystick != null)
+            {
+                _joystick.OnChange -= HandleJoystickChange;
+                _joystick.OnStop -= HandleJoystickStop;
+            }
 
             if (_btnRepair == null) return;
 
@@ -156,6 +170,20 @@ namespace StarterAssets
             _repairState = false;
 
             starterAssetsInputs.repair = false;
+        }
+
+        private void HandleJoystickChange(Vector2 direction)
+        {
+            if (!_gameStarted) return;
+
+            starterAssetsInputs.MoveInput(direction);
+        }
+
+        private void HandleJoystickStop()
+		{
+            if (!_gameStarted) return;
+
+            starterAssetsInputs.MoveInput(Vector2.zero);
         }
 
         #endregion
