@@ -9,10 +9,16 @@ namespace LittleLooters.Gameplay
 {
 	public class PlayerMissionTriggerToolUpgrade
 	{
+		#region Private properties
+
 		private const MissionType _missionType = MissionType.TOOL_UPGRADE;
 		private int _levelGoal = -1;
 		private bool _inProgress = false;
 		private System.Action _callback = null;
+
+		#endregion
+
+		#region Public methods
 
 		public void Initialize(System.Action callback)
 		{
@@ -43,7 +49,13 @@ namespace LittleLooters.Gameplay
 			var data = (MissionToolUpgradeData) mission;
 
 			Start(data.ToolLevel);
+
+			CheckAlreadyCompleted(data);
 		}
+
+		#endregion
+
+		#region Private methods
 
 		private void Start(int level)
 		{
@@ -63,6 +75,11 @@ namespace LittleLooters.Gameplay
 
 			if (args.level != _levelGoal) return;
 
+			MarkAsCompleted();
+		}
+
+		private void MarkAsCompleted()
+		{
 			PlayerMissionsEvents.OnMissionProgress?.Invoke(1, 1);
 
 			_callback?.Invoke();
@@ -76,5 +93,33 @@ namespace LittleLooters.Gameplay
 
 			UI_GameplayEvents.OnStopMissionAssistance?.Invoke();
 		}
+
+		private async void CheckAlreadyCompleted(MissionToolUpgradeData data)
+		{
+			// Get delay time
+			var gameConfigurationService = Global.ServiceLocator.ServiceLocator.Current.Get<Global.ServiceLocator.GameConfigurationService>();
+
+			var delay = gameConfigurationService.TimeToCheckCompletedMission;
+
+			// Wait delay
+			await System.Threading.Tasks.Task.Delay(UnityEngine.Mathf.CeilToInt(1000 * delay));
+			
+			// Get level goal
+			var level = data.ToolLevel;
+
+			// Get current tool level
+			var playerProgressDataService = Global.ServiceLocator.ServiceLocator.Current.Get<Global.ServiceLocator.PlayerProgressDataService>();
+
+			var progressData = playerProgressDataService.ProgressData;
+
+			// Compare current tool level with goal level
+			var currentToolLevel = progressData.toolData.level;
+
+			if (currentToolLevel < level) return;
+
+			MarkAsCompleted();
+		}
+
+		#endregion
 	}
 }

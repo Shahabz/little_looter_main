@@ -197,12 +197,16 @@ namespace LittleLooters.Gameplay.UI
 		{
 			_indicatorOffScreen.SetActive(true);
 
+			PlayerMissionsEvents.OnMissionAssistanceOffStarted?.Invoke(_target);
+
 			InvokeRepeating(nameof(RefreshIndicatorOffScreen), 0, 0.1f);
 		}
 
 		private void StopIndicatorOffScreen()
 		{
 			_indicatorOffScreen.SetActive(false);
+
+			PlayerMissionsEvents.OnMissionAssistanceOffStopped?.Invoke();
 
 			CancelInvoke(nameof(RefreshIndicatorOffScreen));
 		}

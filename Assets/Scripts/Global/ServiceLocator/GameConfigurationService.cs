@@ -19,10 +19,12 @@ namespace LittleLooters.Global.ServiceLocator
         [SerializeField] private ConfigurationMeleeLevelData[] _toolLevels = default;
 
         [Header("Missions configuration")]
+        [SerializeField] private float _timeToCheckCompletedMission = default;
         [SerializeField] private MissionConfigurationData[] _missions = default;
 
         public ResourceData[] Resources => _resources;
         public MissionConfigurationData[] Missions => _missions;
+        public float TimeToCheckCompletedMission => _timeToCheckCompletedMission;
         public ConfigurationMeleeLevelData[] ToolLevels => _toolLevels;
         public int ToolExtraDamageDuration => _toolExtraDamageDuration;
     }

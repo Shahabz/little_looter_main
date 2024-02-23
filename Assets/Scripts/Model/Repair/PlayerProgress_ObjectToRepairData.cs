@@ -125,5 +125,37 @@ namespace LittleLooters.Model
 		{
             expiration = UnityEngine.Mathf.Clamp(expiration - PlayerProgressEvents.SKIP_TIME_SECS, 0, expiration);
 		}
+
+        public bool ResourceWasDelivered(int resourceId)
+		{
+            for (int i = 0; i < progress.Length; i++)
+            {
+                var part = progress[i];
+
+                if (part.id != resourceId) continue;
+
+                if (part.amount <= 0) continue;
+
+                return true;
+            }
+
+            return false;
+        }
+
+        public bool ResourceWasTotallyDelivered(int resourceId)
+        {
+            for (int i = 0; i < progress.Length; i++)
+            {
+                var part = progress[i];
+
+                if (part.id != resourceId) continue;
+
+                if (part.amount < part.total) continue;
+
+                return true;
+            }
+
+            return false;
+        }
     }
 }

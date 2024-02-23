@@ -14,5 +14,9 @@ namespace LittleLooters.Gameplay
         public static Action<MissionConfigurationData> OnMoveToMission;
 
         public static Action<int, int> OnMissionProgress;
+
+        public static Action<UnityEngine.Transform> OnMissionAssistanceOffStarted;
+
+        public static Action OnMissionAssistanceOffStopped;
     }
 }

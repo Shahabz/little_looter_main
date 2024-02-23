@@ -4,6 +4,7 @@
  */
 
 using LittleLooters.General;
+using LittleLooters.Global.ServiceLocator;
 using LittleLooters.Model;
 using System;
 
@@ -52,6 +53,8 @@ namespace LittleLooters.Gameplay
 			var missionInfo = (MissionRepairingData)mission;
 			
 			Start(missionInfo);
+
+			CheckAlreadyCompleted(missionInfo);
 		}
 
 		#endregion
@@ -76,6 +79,11 @@ namespace LittleLooters.Gameplay
 
 			if (_repairObjectId != repairObjectId) return;
 
+			MarkAsCompleted();
+		}
+
+		private void MarkAsCompleted()
+		{
 			PlayerMissionsEvents.OnMissionProgress?.Invoke(1, 1);
 
 			_callback?.Invoke();
@@ -90,6 +98,29 @@ namespace LittleLooters.Gameplay
 			if (_repairObjectId != objectId) return;
 
 			UI_GameplayEvents.OnStopMissionAssistance?.Invoke();
+		}
+
+		private async void CheckAlreadyCompleted(MissionRepairingData data)
+		{
+			// Get delay time
+			var gameConfigurationService = ServiceLocator.Current.Get<GameConfigurationService>();
+
+			var delay = gameConfigurationService.TimeToCheckCompletedMission;
+
+			// Wait delay
+			await System.Threading.Tasks.Task.Delay(UnityEngine.Mathf.CeilToInt(1000 * delay));
+
+			// Get player progress data
+			var playerProgressDataService = ServiceLocator.Current.Get<PlayerProgressDataService>();
+
+			var progressData = playerProgressDataService.ProgressData;
+
+			// Check object was already repaired
+			var wasRepaired = progressData.RepairableObjectWasFixed(data.RepairObjectData.Id);
+
+			if (!wasRepaired) return;
+
+			MarkAsCompleted();
 		}
 
 		#endregion

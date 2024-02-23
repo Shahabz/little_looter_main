@@ -95,6 +95,7 @@ namespace LittleLooters.Gameplay
             if (_missionId >= gameConfiguration.Missions.Length)
 			{
                 // TODO: reached last mission
+                Debug.LogError("Last mission was completed!");
 
                 return;
 			}

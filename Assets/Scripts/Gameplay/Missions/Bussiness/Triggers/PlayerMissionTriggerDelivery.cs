@@ -52,6 +52,8 @@ namespace LittleLooters.Gameplay
 			var data = (MissionDeliveryData)mission;
 
 			Start(data);
+
+			CheckAlreadyCompleted(data);
 		}
 
 		#endregion
@@ -99,7 +101,37 @@ namespace LittleLooters.Gameplay
 
 			if (_amount < _amountGoal) return;
 
+			MarkAsCompleted();
+		}
+
+		private void MarkAsCompleted()
+		{
+			UI_GameplayEvents.OnStopMissionAssistance?.Invoke();
+
 			_callback?.Invoke();
+		}
+
+		private async void CheckAlreadyCompleted(MissionDeliveryData data)
+		{
+			// Get delay time
+			var gameConfigurationService = ServiceLocator.Current.Get<GameConfigurationService>();
+
+			var delay = gameConfigurationService.TimeToCheckCompletedMission;
+
+			// Wait delay
+			await System.Threading.Tasks.Task.Delay(UnityEngine.Mathf.CeilToInt(1000 * delay));
+
+			// Get player progress data
+			var playerProgressDataService = ServiceLocator.Current.Get<PlayerProgressDataService>();
+
+			var progressData = playerProgressDataService.ProgressData;
+
+			// Check if resource was already delivered
+			var wasTotallyDelivered = progressData.ResourceWasTotallyDelivered(data.ResourceData.Id);
+
+			if (!wasTotallyDelivered) return;
+			
+			MarkAsCompleted();
 		}
 
 		#endregion

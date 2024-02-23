@@ -250,6 +250,49 @@ namespace LittleLooters.Model
             CompleteRepairing(objectId);
         }
 
+        public bool ResourceWasDelivered(int resourceId)
+		{
+            var wasDelivered = false;
+
+			for (int i = 0; i < repairProgress.Length; i++)
+			{
+                var repairableObject = repairProgress[i];
+
+                if (repairableObject.ResourceWasDelivered(resourceId))
+				{
+                    wasDelivered = true;
+                    break;
+				}
+			}
+
+            return wasDelivered;
+		}
+
+        public bool ResourceWasTotallyDelivered(int resourceId)
+        {
+            var wasDelivered = false;
+
+            for (int i = 0; i < repairProgress.Length; i++)
+            {
+                var repairableObject = repairProgress[i];
+
+                if (repairableObject.ResourceWasTotallyDelivered(resourceId))
+                {
+                    wasDelivered = true;
+                    break;
+                }
+            }
+
+            return wasDelivered;
+        }
+
+        public bool RepairableObjectWasFixed(int objectId)
+		{
+            var (_, repairObject) = GetRepairObjectProgressData(objectId);
+
+            return repairObject.wasRepaired;
+        }
+
         #endregion
 
         #region Crafting methods
