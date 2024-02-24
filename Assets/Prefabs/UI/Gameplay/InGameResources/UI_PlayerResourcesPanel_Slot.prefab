@@ -165,7 +165,7 @@ MonoBehaviour:
   _data: {fileID: 0}
   _txtValue: {fileID: 757722334996917165}
   _icon: {fileID: 757722333337622744}
-  _delayToRefresh: 1.2
+  _delayToRefresh: 0.5
   _animBody: {fileID: 757722333337622727}
   _animPunch: {x: 0.6, y: 0.6, z: 0.6}
   _animDuration: 0.5

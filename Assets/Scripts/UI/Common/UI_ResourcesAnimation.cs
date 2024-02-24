@@ -18,6 +18,7 @@ namespace LittleLooters.Gameplay.UI
 	public class UI_ResourcesAnimation : MonoBehaviour
     {
 		public static System.Action<int, int> OnAnimate;
+		public static System.Action<int> OnAnimationCompleted;
 
 		[System.Serializable]
 		public struct TargetHUD
@@ -115,11 +116,11 @@ namespace LittleLooters.Gameplay.UI
 
 				//resource.transform.DOScale(Vector3.one, _delayBeforeAnimation / 2).SetEase(Ease.InBounce);
 
-				StartCoroutine(AnimateResource(resource, position));
+				StartCoroutine(AnimateResource(id, resource, position));
 			}
 		}
 
-        private IEnumerator AnimateResource(Image resource, Vector3 position)
+        private IEnumerator AnimateResource(int resourceId, Image resource, Vector3 position)
 		{
 			yield return new WaitForSeconds(_delayBeforeAnimation);
 
@@ -133,6 +134,7 @@ namespace LittleLooters.Gameplay.UI
 					() => {
 						resource.gameObject.SetActive(false);
 						_readyImages.Enqueue(resource);
+						OnAnimationCompleted?.Invoke(resourceId);
 					});
 		}
 
