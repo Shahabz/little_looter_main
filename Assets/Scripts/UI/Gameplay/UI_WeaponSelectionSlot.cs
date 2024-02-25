@@ -26,6 +26,10 @@ namespace LittleLooters.Gameplay.UI
 		[SerializeField] private Image _reloadProgressBar = default;
 		[SerializeField] private TMPro.TextMeshProUGUI _txtReloadingTime = default;
 
+		[Header("Interaction bar")]
+		[SerializeField] private GameObject _interactionBarPanel = default;
+		[SerializeField] private Image _interactionBarFill = default;
+
 		#endregion
 
 		#region Private properties
@@ -43,6 +47,19 @@ namespace LittleLooters.Gameplay.UI
 
 		#endregion
 
+		#region Unity events
+
+		private void Update()
+		{
+			if (!_isRefreshingInteractionProgress && !_isRefreshingInteractionDelay) return;
+
+			RefreshInteractionProgress();
+		}
+
+		#endregion
+
+		#region Public methods
+
 		public void Init(PlayerWeaponInfo weaponInfo, bool isSelected, Action<string> callback)
 		{
 			_id = weaponInfo.id;
@@ -54,6 +71,8 @@ namespace LittleLooters.Gameplay.UI
 			SubscribeEvents();
 
 			_txtAmmo.text = $"{weaponInfo.ammo}";
+
+			HideInteractionProgressBar();
 
 			if (isSelected)
 			{
@@ -95,6 +114,10 @@ namespace LittleLooters.Gameplay.UI
 			position.y = 0;
 			transform.localPosition = position;
 		}
+
+		#endregion
+
+		#region Private methods
 
 		private void Select()
 		{
@@ -181,42 +204,100 @@ namespace LittleLooters.Gameplay.UI
 			_txtReloadingTime.text = UI_Utils.GetFormatTime(0);
 		}
 
+		#endregion
+
 		#region IPointer implementation
 
-		private float _timePressed = 0;
-		private bool _isPressed = false;
-		private float _timeToStartReloading = 2;
-		private float _stepTime = 0.5f;
+		private float _interactionProgressTime = 0;
+		private float _interactionProgressRemainingTime = 0;
+		private float _interactionProgressTotalTime = 1.5f;	// Interaction progress bar time duration
+		private float _interactionProgressDelay = 0.5f;		// Time before showing interaction progress bar
+		private bool _isRefreshingInteractionProgress = false;
+		private bool _isRefreshingInteractionDelay = false;
 
 		public void OnPointerDown(PointerEventData eventData)
 		{
-			_isPressed = true;
-			_timePressed = 0;
+			if (_isReloading) return;
 
-			InvokeRepeating(nameof(CheckStartReloadingByPressing), 0, _stepTime);
+			_isRefreshingInteractionDelay = true;
+			_interactionProgressRemainingTime = _interactionProgressDelay;
+			_isRefreshingInteractionProgress = false;
+			_interactionProgressTime = 0;
 		}
 
 		public void OnPointerUp(PointerEventData eventData)
 		{
-			_isPressed = false;
-			_timePressed = 0;
+			_isRefreshingInteractionDelay = false;
+			_interactionProgressRemainingTime = 0;
+			_isRefreshingInteractionProgress = false;
+			_interactionProgressTime = 0;
 
-			CancelInvoke(nameof(CheckStartReloadingByPressing));
+			if (_isReloading) return;
+
+			HideInteractionProgressBar();
 		}
 
-		private void CheckStartReloadingByPressing()
+		private void RefreshInteractionProgress()
 		{
-			if (!_isPressed) return;
+			if (_isRefreshingInteractionDelay)
+			{
+				_interactionProgressRemainingTime -= Time.deltaTime;
 
-			_timePressed += _stepTime;
+				if (_interactionProgressRemainingTime > 0) return;
 
-			if (_timePressed < _timeToStartReloading) return;
+				_isRefreshingInteractionDelay = false;
 
+				_isRefreshingInteractionProgress = true;
+
+				_interactionProgressTime = _interactionProgressTotalTime;
+
+				ShowInteractionProgressBar();
+
+				return;
+			}
+
+			if (_isRefreshingInteractionProgress)
+			{
+				_interactionProgressTime -= Time.deltaTime;
+
+				RefreshProgressBar();
+
+				if (_interactionProgressTime > 0) return;
+
+				_isRefreshingInteractionProgress = false;
+
+				HideInteractionProgressBar();
+
+				StartReloading();
+
+				return;
+			}
+		}
+
+		private void ShowInteractionProgressBar()
+		{
+			RefreshProgressBar();
+
+			_interactionBarPanel.SetActive(true);
+		}
+
+		private void HideInteractionProgressBar()
+		{
+			_interactionBarPanel.SetActive(false);
+		}
+
+		private void RefreshProgressBar()
+		{
+			var progress = 1 - _interactionProgressTime / _interactionProgressTotalTime;
+
+			_interactionBarFill.fillAmount = progress;
+		}
+
+		private void StartReloading()
+		{
 			_isReloading = true;
 
 			UI_GameplayEvents.OnWeaponStartReloading?.Invoke(_id);
-
-			CancelInvoke(nameof(CheckStartReloadingByPressing));
 		}
 
 		#endregion

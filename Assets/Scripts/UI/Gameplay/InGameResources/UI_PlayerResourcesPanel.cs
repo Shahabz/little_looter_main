@@ -4,6 +4,7 @@
  */
 
 using LittleLooters.Global.ServiceLocator;
+using LittleLooters.Model;
 using System;
 using UnityEngine;
 
@@ -16,11 +17,30 @@ namespace LittleLooters.Gameplay.UI
 		private void Awake()
 		{
 			UI_ResourcesAnimation.OnAnimationCompleted += HandleResourceAnimationCompleted;
+			UI_GameplayEvents.OnConsumeResourcesByToolUpgrade += HandleConsumeResourcesByToolUpgrade;
+			PlayerProgressEvents.OnSlotFixDone += HandleSlotFixed;
 		}
 
 		private void OnDestroy()
 		{
 			UI_ResourcesAnimation.OnAnimationCompleted -= HandleResourceAnimationCompleted;
+			UI_GameplayEvents.OnConsumeResourcesByToolUpgrade -= HandleConsumeResourcesByToolUpgrade;
+			PlayerProgressEvents.OnSlotFixDone -= HandleSlotFixed;
+		}
+
+		private void HandleSlotFixed(PlayerProgressEvents.RepairSlotArgs args)
+		{
+			RefreshSlot(args.resourceId);
+		}
+
+		private void HandleConsumeResourcesByToolUpgrade(MeleeUpgradeRequirementData[] requirements)
+		{
+			for (int i = 0; i < requirements.Length; i++)
+			{
+				var requirement = requirements[i];
+
+				RefreshSlot(requirement.resource.Id);
+			}
 		}
 
 		private void HandleResourceAnimationCompleted(int resourceId)

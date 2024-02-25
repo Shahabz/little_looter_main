@@ -120,6 +120,8 @@ namespace LittleLooters.Model
                 resourcesData.ConsumeResource(resourceId, resourceAmount);
 			}
 
+            UI_GameplayEvents.OnConsumeResourcesByToolUpgrade?.Invoke(requirements);
+
             // Start melee upgrading
             toolData.StartUpgrade(duration, expiration, nextLevelDamage);
 		}
