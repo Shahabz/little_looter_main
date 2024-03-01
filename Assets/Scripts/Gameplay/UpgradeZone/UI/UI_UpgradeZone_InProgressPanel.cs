@@ -102,6 +102,7 @@ namespace LittleLooters.Gameplay.UI
 
 		private void UpgradeStarted(PlayerProgressEvents.MeleeUpgradeStartedArgs args)
 		{
+			/*
 			_inProgress = true;
 
 			_duration = args.duration;
@@ -111,6 +112,7 @@ namespace LittleLooters.Gameplay.UI
 			RefreshDamage(args.currentDamage, args.nextLevelDamage);
 
 			Show();
+			*/
 		}
 
 		private void UpgradeCompleted()

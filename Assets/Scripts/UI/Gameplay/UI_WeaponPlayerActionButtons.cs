@@ -12,16 +12,18 @@ namespace LittleLooters.Gameplay.UI
         #region Inspector
 
         [SerializeField] private GameObject _fireButton = default;
-        [SerializeField] private GameObject _reloadButton = default;
+        [SerializeField] private GameObject _rollingButton = default;
 
         #endregion
+
+        private bool _firstTime = true;
 
         #region Unity events
 
         private void Awake()
         {
             LevelEnemies.OnStartDetection += HandleStartEnemiesDetection;
-            LevelEnemies.OnStopDetection += HandleStopEnemiesDetection;
+            //LevelEnemies.OnStopDetection += HandleStopEnemiesDetection;
         }
 
         private void Start()
@@ -32,7 +34,7 @@ namespace LittleLooters.Gameplay.UI
         private void OnDestroy()
         {
             LevelEnemies.OnStartDetection -= HandleStartEnemiesDetection;
-            LevelEnemies.OnStopDetection -= HandleStopEnemiesDetection;
+            //LevelEnemies.OnStopDetection -= HandleStopEnemiesDetection;
         }
 
         #endregion
@@ -41,14 +43,14 @@ namespace LittleLooters.Gameplay.UI
 
         private void HideButtons()
         {
-            //_fireButton.SetActive(false);
-            //_reloadButton.SetActive(false);
+            _fireButton.SetActive(false);
+            _rollingButton.SetActive(false);
         }
 
         private void ShowButtons()
         {
-            //_fireButton.SetActive(true);
-            //_reloadButton.SetActive(true);
+            _fireButton.SetActive(true);
+            _rollingButton.SetActive(true);
         }
 
         private void HandleStopEnemiesDetection()
@@ -58,6 +60,10 @@ namespace LittleLooters.Gameplay.UI
 
         private void HandleStartEnemiesDetection()
         {
+            if (!_firstTime) return;
+
+            _firstTime = false;
+
             ShowButtons();
         }
 

@@ -43,7 +43,9 @@ namespace LittleLooters.Gameplay
 
 			if (toolIsUpgrading)
 			{
-				_uiInProgressPanel.Show();
+				//_uiInProgressPanel.Show();
+
+				UI_GameplayEvents.OnShowUpgradeToolProgress?.Invoke();
 
 				return;
 			}
@@ -53,7 +55,9 @@ namespace LittleLooters.Gameplay
 			if (isMeleeClaimExpected)
 			{
 				// Show claim panel
-				_uiClaimPanel.Show();
+				//_uiClaimPanel.Show();
+
+				UI_GameplayEvents.OnShowUpgradeToolClaim?.Invoke();
 
 				return;
 			}
@@ -61,7 +65,8 @@ namespace LittleLooters.Gameplay
 			var currentLevelData = progressDataService.Tool_GetCurrentLevelData();
 			var nextLevelData = progressDataService.Tool_GetNextLevelData();
 
-			_uiPanel.Show(progressDataService.ProgressData.resourcesData, currentLevelData, nextLevelData);
+			//_uiPanel.Show(progressDataService.ProgressData.resourcesData, currentLevelData, nextLevelData);
+			UI_GameplayEvents.OnShowUpgradeToolInformation?.Invoke();
 		}
 
 		public void HideIndicator()
@@ -69,6 +74,8 @@ namespace LittleLooters.Gameplay
 			_indicator.SetActive(false);
 
 			_uiPanel.Hide();
+
+			UI_GameplayEvents.OnHideUpgradeTool?.Invoke();
 		}
 
 		#endregion

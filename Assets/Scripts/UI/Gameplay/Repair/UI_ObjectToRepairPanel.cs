@@ -61,10 +61,18 @@ namespace LittleLooters.Gameplay.UI
 								.Append(_btnRepairAlert.DOScale(Vector2.one, _alertAnimationDuration))
 								.SetLoops(-1, LoopType.Restart);
 
+			UI_GameplayEvents.OnShowRepairPanel += HandleShowPanel;
+			UI_GameplayEvents.OnHideRepairPanel += HandleHidePanel;
+
 			PlayerProgressEvents.OnSlotFixDone += HandleSlotFixDone;
 			PlayerProgressEvents.OnStartRepairing += HandleRepairingStarted;
 			PlayerProgressEvents.OnCompleteRepairing += HandleRepairingCompleted;
 			PlayerProgressEvents.OnSpeedUpRepairing += HandleRepairingSpeedUp;
+		}
+
+		private void Start()
+		{
+			Hide();
 		}
 
 		private void OnEnable()
@@ -81,6 +89,9 @@ namespace LittleLooters.Gameplay.UI
 
 		private void OnDestroy()
 		{
+			UI_GameplayEvents.OnShowRepairPanel -= HandleShowPanel;
+			UI_GameplayEvents.OnHideRepairPanel -= HandleHidePanel;
+
 			PlayerProgressEvents.OnSlotFixDone -= HandleSlotFixDone;
 			PlayerProgressEvents.OnStartRepairing -= HandleRepairingStarted;
 			PlayerProgressEvents.OnCompleteRepairing -= HandleRepairingCompleted;
@@ -98,9 +109,20 @@ namespace LittleLooters.Gameplay.UI
 
 		#endregion
 
-		#region Public methods
+		#region Private methods
 
-		public void Setup(RepairObjectData data)
+		private void HandleShowPanel(RepairObjectData data)
+		{
+			Setup(data);
+			Show();
+		}
+
+		private void HandleHidePanel()
+		{
+			Hide();
+		}
+
+		private void Setup(RepairObjectData data)
 		{
 			_id = data.Id;
 
@@ -126,7 +148,7 @@ namespace LittleLooters.Gameplay.UI
 			}
 		}
 
-		public void Show()
+		private void Show()
 		{
 			_content.SetActive(true);
 
@@ -152,7 +174,7 @@ namespace LittleLooters.Gameplay.UI
 			HideCompleted();
 		}
 
-		public void Hide()
+		private void Hide()
 		{
 			_content.SetActive(false);
 
@@ -160,10 +182,6 @@ namespace LittleLooters.Gameplay.UI
 			HideSlotsPanel();
 			HideSlotsPanel();
 		}
-
-		#endregion
-
-		#region Private methods
 
 		private void HideSlotsPanel()
 		{
@@ -215,6 +233,7 @@ namespace LittleLooters.Gameplay.UI
 		private void RefreshSlots()
 		{
 			var progressDataService = ServiceLocator.Current.Get<PlayerProgressDataService>();
+
 
 			for (int i = 0; i < _slots.Length; i++)
 			{

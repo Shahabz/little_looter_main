@@ -53,6 +53,16 @@ namespace LittleLooters.Gameplay
 		#region Repairing events
 
 		/// <summary>
+		/// Invoked when player reaches a repairable object area
+		/// </summary>
+		public static Action<RepairObjectData> OnShowRepairPanel;
+
+		/// <summary>
+		/// Invoked when player is going out from a repairable object area
+		/// </summary>
+		public static Action OnHideRepairPanel;
+
+		/// <summary>
 		/// Invoked when player pickups a repairing part
 		/// </summary>
 		public static Action<RepairPartData> OnPickupedRepairPart;
@@ -85,6 +95,14 @@ namespace LittleLooters.Gameplay
 		#endregion
 
 		#region Tool events
+
+		public static Action OnShowUpgradeToolInformation;
+
+		public static Action OnShowUpgradeToolProgress;
+
+		public static Action OnShowUpgradeToolClaim;
+
+		public static Action OnHideUpgradeTool;
 
 		public static Action OnStartToolUpgrade;
 

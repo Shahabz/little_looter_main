@@ -78,33 +78,20 @@ namespace LittleLooters.Gameplay.UI
 
         public void Refresh(int playerResourceAmount, int currentProgress, int totalProgress)
 		{
-            if (_isCompleted) return;
-
-            if (playerResourceAmount == 0)
-			{
-                MarkAsDisable();
-                return;
-			}
-
             MarkAsEnable(currentProgress, totalProgress);
+
+            _isCompleted = currentProgress == totalProgress;
+
+            if (_isCompleted)
+            {
+                MarkAsComplete();
+                return;
+            }
+
+            if (playerResourceAmount > 0) return;
+
+			MarkAsDisable();
 		}
-
-		/*public void Refresh(PartProgress partProgress)
-		{
-            
-            var amount = partProgress.amount;
-            var total = partProgress.total;
-
-            var remaining = total - amount;
-
-            _txtAmount.text = $"x{remaining}";
-
-            var progress = (float)partProgress.amount / (float)partProgress.total;
-
-            RefreshProgressBar(progress);
-
-            RefreshCompleted(progress == 1);
-        }*/
 
 		#endregion
 

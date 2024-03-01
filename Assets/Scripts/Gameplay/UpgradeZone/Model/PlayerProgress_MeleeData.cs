@@ -15,6 +15,7 @@ namespace LittleLooters.Model
         public int damage;
         public bool isUpgrading;
         public float upgradeExpiration;
+        public float upgradeDuration;
         public bool toClaim;
         public float extraDamageExpiration;
         public bool extraDamageActive;
@@ -31,6 +32,7 @@ namespace LittleLooters.Model
 		{
             isUpgrading = true;
             upgradeExpiration = expiration;
+            upgradeDuration = duration;
 
             var args = new PlayerProgressEvents.MeleeUpgradeStartedArgs()
             {
@@ -47,6 +49,7 @@ namespace LittleLooters.Model
 		{
             isUpgrading = false;
             upgradeExpiration = 0;
+            upgradeDuration = 0;
             toClaim = true;
 
             PlayerProgressEvents.OnMeleeUpgradeCompleted?.Invoke();

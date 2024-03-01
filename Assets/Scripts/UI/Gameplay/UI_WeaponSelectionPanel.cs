@@ -17,6 +17,8 @@ namespace LittleLooters.Gameplay.UI
 		[SerializeField] private GameObject _panel = default;
 		[SerializeField] private UI_WeaponSelectionSlot[] _slots = default;
 
+		private bool _firstTime = true;
+
 		private void Start()
 		{
 			Init();
@@ -29,18 +31,18 @@ namespace LittleLooters.Gameplay.UI
 
 		private void ShowPanel()
 		{
-			//_panel.SetActive(true);
+			_panel.SetActive(true);
 		}
 
 		private void HidePanel()
 		{
-			//_panel.SetActive(false);
+			_panel.SetActive(false);
 		}
 
 		private void Init()
 		{
 			LevelEnemies.OnStartDetection += HandleStartEnemiesDetection;
-			LevelEnemies.OnStopDetection += HandleStopEnemiesDetection;
+			//LevelEnemies.OnStopDetection += HandleStopEnemiesDetection;
 
 			InitSlots();
 
@@ -50,7 +52,7 @@ namespace LittleLooters.Gameplay.UI
 		private void Teardown()
 		{
 			LevelEnemies.OnStartDetection -= HandleStartEnemiesDetection;
-			LevelEnemies.OnStopDetection -= HandleStopEnemiesDetection;
+			//LevelEnemies.OnStopDetection -= HandleStopEnemiesDetection;
 
 			TeardownSlots();
 		}
@@ -62,6 +64,10 @@ namespace LittleLooters.Gameplay.UI
 
 		private void HandleStartEnemiesDetection()
 		{
+			if (!_firstTime) return;
+
+			_firstTime = false;
+
 			ShowPanel();
 		}
 

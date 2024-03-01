@@ -37,7 +37,7 @@ namespace LittleLooters.Model
             repairProgress = progress.ToArray();
 		}
 
-        public (int, PlayerProgress_ObjectToRepairData) GetRepairObjectProgressData(int id)
+        public (int index, PlayerProgress_ObjectToRepairData data) GetRepairObjectProgressData(int id)
 		{
 			for (int i = 0; i < repairProgress.Length; i++)
 			{

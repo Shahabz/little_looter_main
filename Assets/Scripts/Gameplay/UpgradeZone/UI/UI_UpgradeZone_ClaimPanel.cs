@@ -59,7 +59,7 @@ namespace LittleLooters.Gameplay.UI
 
 		private void UpgradeCompleted()
 		{
-			Show();
+			//Show();
 		}
 
 		private void Claim()
