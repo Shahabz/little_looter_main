@@ -17,6 +17,7 @@ namespace LittleLooters.Gameplay.UI
 		[SerializeField] private GameObject _content = default;
         [SerializeField] private TextMeshProUGUI _txtTime = default;
         [SerializeField] private Slider _progressBar = default;
+        [SerializeField] private Button _btnSkip = default;
 
         #endregion
 
@@ -27,9 +28,19 @@ namespace LittleLooters.Gameplay.UI
         private float _expiration = 0;
         private float _remainingTime = 0;
 
-        #endregion
+		#endregion
 
-        #region Unity events
+		#region Unity events
+
+		private void Awake()
+		{
+            _btnSkip.onClick.AddListener(Skip);
+        }
+
+        private void OnDestroy()
+        {
+            _btnSkip.onClick.RemoveAllListeners();
+        }
 
         private void Update()
         {
@@ -93,6 +104,16 @@ namespace LittleLooters.Gameplay.UI
             _progressBar.value = progress;
         }
 
-		#endregion
-	}
+        private void Skip()
+        {
+            // TODO: play SFX
+
+            // Close
+            Hide();
+
+            UI_GameplayEvents.OnSkipToolUpgrade?.Invoke();
+        }
+
+        #endregion
+    }
 }

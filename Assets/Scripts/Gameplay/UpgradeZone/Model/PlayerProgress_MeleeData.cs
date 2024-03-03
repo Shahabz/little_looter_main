@@ -99,5 +99,29 @@ namespace LittleLooters.Model
 
             PlayerProgressEvents.OnToolDamageIncreaseCompleted?.Invoke();
 		}
+
+        public void SpeedUpUpgradeByWatchingAd()
+		{
+            var secondsToSkip = Constants.SKIP_TIME_SECS;
+            var now = UnityEngine.Time.time;
+            var newExpiration = upgradeExpiration - secondsToSkip;
+
+            // Check upgrade completion
+            if (newExpiration <= now)
+			{
+                CompleteUpgrade();
+                return;
+			}
+
+            upgradeExpiration = newExpiration;
+
+            var args = new PlayerProgressEvents.ToolUpgradeExpirationChangedArgs()
+            {
+                duration = upgradeDuration,
+                expiration = upgradeExpiration
+            };
+
+            PlayerProgressEvents.OnToolUpgradeExpirationHasChanged?.Invoke(args);
+        }
     }
 }

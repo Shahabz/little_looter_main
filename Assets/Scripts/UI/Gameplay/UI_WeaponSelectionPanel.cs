@@ -78,8 +78,9 @@ namespace LittleLooters.Gameplay.UI
 				var slot = _slots[i];
 
 				var weaponInfo = _weaponController.GetWeaponInfo(i);
+				var weaponMagazineSize = _weaponController.GetWeaponMagazineSize(weaponInfo.id);
 
-				slot.Init(weaponInfo, i == 0, SlotSelection);
+				slot.Init(weaponInfo, i == 0, SlotSelection, weaponMagazineSize);
 			}
 		}
 

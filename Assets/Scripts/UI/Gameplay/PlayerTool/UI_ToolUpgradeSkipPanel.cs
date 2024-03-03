@@ -174,7 +174,7 @@ namespace LittleLooters.Gameplay.UI
 		{
 			_remainingTime -= Time.deltaTime;
 
-			var progress = (float)_remainingTime / (float)_duration;
+			var progress = 1 - (_remainingTime / _duration);
 
 			_progressBar.value = progress;
 		}

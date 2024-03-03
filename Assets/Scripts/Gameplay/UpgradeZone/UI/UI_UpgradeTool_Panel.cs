@@ -4,6 +4,7 @@
  */
 
 using LittleLooters.Model;
+using System;
 using UnityEngine;
 
 namespace LittleLooters.Gameplay.UI
@@ -48,6 +49,7 @@ namespace LittleLooters.Gameplay.UI
 			UI_GameplayEvents.OnHideUpgradeTool += HandleHidePanel;
 			PlayerProgressEvents.OnMeleeUpgradeStarted += HandleToolUpgradeStarted;
 			PlayerProgressEvents.OnMeleeUpgradeCompleted += HandleToolUpgradeCompleted;
+			PlayerProgressEvents.OnToolUpgradeExpirationHasChanged += HandleToolUpgradeExpirationChanged;
 		}
 
 		private void UnsubscribeEvents()
@@ -58,6 +60,7 @@ namespace LittleLooters.Gameplay.UI
 			UI_GameplayEvents.OnHideUpgradeTool -= HandleHidePanel;
 			PlayerProgressEvents.OnMeleeUpgradeStarted -= HandleToolUpgradeStarted;
 			PlayerProgressEvents.OnMeleeUpgradeCompleted -= HandleToolUpgradeCompleted;
+			PlayerProgressEvents.OnToolUpgradeExpirationHasChanged -= HandleToolUpgradeExpirationChanged;
 		}
 
 		private void HandleShowInformationPanel()
@@ -115,6 +118,13 @@ namespace LittleLooters.Gameplay.UI
 			HideAllPanels();
 
 			_claimPanel.Show();
+		}
+
+		private void HandleToolUpgradeExpirationChanged(PlayerProgressEvents.ToolUpgradeExpirationChangedArgs args)
+		{
+			HideAllPanels();
+
+			_progressPanel.Show();
 		}
 
 		#endregion

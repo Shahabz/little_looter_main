@@ -18,6 +18,8 @@ namespace LittleLooters.Gameplay.UI
 		#region Inspector
 
 		[SerializeField] private TMPro.TextMeshProUGUI _txtAmmo = default;
+		[SerializeField] private GameObject _progressBarAmmo = default;
+		[SerializeField] private Image _progressBarAmmoFill = default;
 		[SerializeField] private Button _btn = default;
 		[SerializeField] private GameObject _selection = default;
 
@@ -38,6 +40,7 @@ namespace LittleLooters.Gameplay.UI
 		private bool _isSelected = false;
 		private Action<string> _callback = default;
 		private bool _isReloading = false;
+		private int _magazine = 0;
 
 		#endregion
 
@@ -60,17 +63,21 @@ namespace LittleLooters.Gameplay.UI
 
 		#region Public methods
 
-		public void Init(PlayerWeaponInfo weaponInfo, bool isSelected, Action<string> callback)
+		public void Init(PlayerWeaponInfo weaponInfo, bool isSelected, Action<string> callback, int magazine)
 		{
 			_id = weaponInfo.id;
 
 			_callback = callback;
+
+			_magazine = magazine;
 
 			_btn.onClick.AddListener(Select);
 
 			SubscribeEvents();
 
 			_txtAmmo.text = $"{weaponInfo.ammo}";
+
+			RefreshProgressBar(weaponInfo.ammo);
 
 			HideInteractionProgressBar();
 
@@ -153,6 +160,8 @@ namespace LittleLooters.Gameplay.UI
 			_reloadPanel.SetActive(false);
 
 			_isReloading = false;
+
+			ShowAmmoProgressBar();
 		}
 
 		private void HandleWeaponStartReloading(PlayerProgressEvents.WeaponStartReloadingArgs args)
@@ -162,6 +171,8 @@ namespace LittleLooters.Gameplay.UI
 			_reloadPanel.SetActive(true);
 
 			_isReloading = true;
+
+			HideAmmoProgressBar();
 
 			StartCoroutine(Reload(args.duration));
 		}
@@ -178,6 +189,8 @@ namespace LittleLooters.Gameplay.UI
 			if (!args.id.Equals(_id)) return;
 
 			_txtAmmo.text = $"{args.ammo}";
+
+			RefreshProgressBar(args.ammo);
 		}
 
 		private IEnumerator Reload(float duration)
@@ -202,6 +215,21 @@ namespace LittleLooters.Gameplay.UI
 			_reloadProgressBar.fillAmount = 1;
 
 			_txtReloadingTime.text = UI_Utils.GetFormatTime(0);
+		}
+
+		private void RefreshProgressBar(int ammo)
+		{
+			_progressBarAmmoFill.fillAmount = (float)ammo / _magazine;
+		}
+
+		private void ShowAmmoProgressBar()
+		{
+			_progressBarAmmo.SetActive(true);
+		}
+
+		private void HideAmmoProgressBar()
+		{
+			_progressBarAmmo.SetActive(false);
 		}
 
 		#endregion

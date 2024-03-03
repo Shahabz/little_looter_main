@@ -123,7 +123,7 @@ namespace LittleLooters.Model
 
         public void SpeedUp()
 		{
-            expiration = UnityEngine.Mathf.Clamp(expiration - PlayerProgressEvents.SKIP_TIME_SECS, 0, expiration);
+            expiration = UnityEngine.Mathf.Clamp(expiration - Constants.SKIP_TIME_SECS, 0, expiration);
 		}
 
         public bool ResourceWasDelivered(int resourceId)

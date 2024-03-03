@@ -134,6 +134,25 @@ namespace LittleLooters.Gameplay.Combat
 			return _weapons[index];
 		}
 
+		public int GetWeaponMagazineSize(string id)
+		{
+			var magazine = 0;
+
+			for (int i = 0; i < _allAssaultWeapons.Length; i++)
+			{
+				var weaponData = _allAssaultWeapons[i];
+
+				if (weaponData.Id.Equals(id))
+				{
+					magazine = weaponData.ClipSize;
+
+					break;
+				}
+			}
+
+			return magazine;
+		}
+
 		#endregion
 
 		#region Private methods

@@ -30279,7 +30279,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3881087803549984436, guid: ec536a7718376554185e4a856d5ae230, type: 3}
       propertyPath: m_SizeDelta.y
-      value: 650
+      value: 750
       objectReference: {fileID: 0}
     - target: {fileID: 3881087803549984436, guid: ec536a7718376554185e4a856d5ae230, type: 3}
       propertyPath: m_LocalPosition.x
@@ -43841,6 +43841,7 @@ MonoBehaviour:
   _content: {fileID: 1502187409}
   _txtTime: {fileID: 557702175}
   _progressBar: {fileID: 1476394551}
+  _btnSkip: {fileID: 1822631981}
 --- !u!1 &1251430623
 GameObject:
   m_ObjectHideFlags: 0
@@ -56031,7 +56032,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: -10.000061, y: 0}
+  m_AnchoredPosition: {x: -10.000122, y: 0}
   m_SizeDelta: {x: 100, y: 0}
   m_Pivot: {x: 1, y: 0.5}
 --- !u!1 &1513100340
@@ -78758,10 +78759,6 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 137894114123365398, guid: 620b5356fc80ae84cb539f38e73e6506, type: 3}
-      propertyPath: m_AnchoredPosition.y
-      value: -50
-      objectReference: {fileID: 0}
     - target: {fileID: 137894114123365399, guid: 620b5356fc80ae84cb539f38e73e6506, type: 3}
       propertyPath: m_IsActive
       value: 0
@@ -83066,6 +83063,10 @@ PrefabInstance:
       propertyPath: m_AnchoredPosition.y
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 3632350505349683877, guid: 028fe7c91091bcf4c9bc74b5388a8999, type: 3}
+      propertyPath: _camera
+      value: 
+      objectReference: {fileID: 1622114777}
     - target: {fileID: 3672721258178954775, guid: 028fe7c91091bcf4c9bc74b5388a8999, type: 3}
       propertyPath: m_Layer
       value: 2
@@ -84122,6 +84123,10 @@ PrefabInstance:
       propertyPath: m_Layer
       value: 2
       objectReference: {fileID: 0}
+    - target: {fileID: 9164771285722348509, guid: 028fe7c91091bcf4c9bc74b5388a8999, type: 3}
+      propertyPath: _camera
+      value: 
+      objectReference: {fileID: 1622114777}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 028fe7c91091bcf4c9bc74b5388a8999, type: 3}
 --- !u!4 &3709362088305781076

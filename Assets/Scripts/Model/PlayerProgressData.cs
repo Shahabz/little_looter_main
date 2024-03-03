@@ -138,7 +138,7 @@ namespace LittleLooters.Model
 
         public void SpeedUpToolUpgrade()
 		{
-            toolData.CompleteUpgrade();
+            toolData.SpeedUpUpgradeByWatchingAd();
         }
 
         public void IncreaseToolDamage(float now, int durationInSecs)
