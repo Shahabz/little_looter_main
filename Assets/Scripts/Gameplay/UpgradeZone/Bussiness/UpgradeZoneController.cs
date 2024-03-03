@@ -133,6 +133,7 @@ namespace LittleLooters.Gameplay
 			PlayerProgressEvents.OnMeleeUpgradeStarted += HandleToolUpgradeStarted;
 			PlayerProgressEvents.OnMeleeUpgradeCompleted += HandleToolUpgradeCompleted;
 			PlayerProgressEvents.OnToolUpgradeExpirationHasChanged += HandleToolUpgradeExpirationChanged;
+			PlayerProgressEvents.OnMeleeUpgradeClaimed += HandleToolUpgradeClaimed;
 		}
 
 		private void UnsubscribeEvents()
@@ -144,6 +145,15 @@ namespace LittleLooters.Gameplay
 			PlayerProgressEvents.OnMeleeUpgradeStarted -= HandleToolUpgradeStarted;
 			PlayerProgressEvents.OnMeleeUpgradeCompleted -= HandleToolUpgradeCompleted;
 			PlayerProgressEvents.OnToolUpgradeExpirationHasChanged -= HandleToolUpgradeExpirationChanged;
+			PlayerProgressEvents.OnMeleeUpgradeClaimed -= HandleToolUpgradeClaimed;
+		}
+
+		private void HandleToolUpgradeClaimed(PlayerProgressEvents.MeleeUpgradeClaimedArgs args)
+		{
+			_isUpgrading = false;
+			_shouldBeClaimed = false;
+
+			HideAllPanels();
 		}
 
 		private void HandleShowInformationPanel()

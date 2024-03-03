@@ -32,10 +32,13 @@ namespace StarterAssets
 
         #region Unity events
 
+        private void Awake()
+        {
+            UI_GameplayEvents.OnStartGame += HandleStartGame;
+        }
+
         private void Start()
 		{
-            UI_GameplayEvents.OnStartGame += HandleStartGame;
-
             starterAssetsInputs.OnCancelSprint += CancelSprint;
 
             if (_joystick != null)
@@ -133,6 +136,8 @@ namespace StarterAssets
 
         public void VirtualRollingInput()
         {
+            if (!_gameStarted) return;
+
             starterAssetsInputs.RollInput();
         }
 

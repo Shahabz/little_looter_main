@@ -90,9 +90,11 @@ namespace StarterAssets
         [SerializeField] private VisualCharacterController _visualController = default;
         [SerializeField] private PlayerHealth _health = default;
 
-		#endregion
+        #endregion
 
-		#region Private properties
+        #region Private properties
+
+        private bool _gameStarted = false;
 
 		// cinemachine
 		private float _cinemachineTargetYaw;
@@ -157,6 +159,8 @@ namespace StarterAssets
             {
                 _mainCamera = GameObject.FindGameObjectWithTag("MainCamera");
             }
+
+            UI_GameplayEvents.OnStartGame += HandleStartGame;
         }
 
         private void Start()
@@ -181,6 +185,8 @@ namespace StarterAssets
 
         private void Update()
         {
+            if (!_gameStarted) return;
+
             if (_health.IsDead) return;
 
             _hasAnimator = TryGetComponent(out _animator);
@@ -201,6 +207,8 @@ namespace StarterAssets
 
 		private void OnDestroy()
 		{
+            UI_GameplayEvents.OnStartGame -= HandleStartGame;
+
             _weaponController.Teardown();
             _visualController.Teardown(_weaponController);
 		}
@@ -267,6 +275,11 @@ namespace StarterAssets
         #endregion
 
         #region Private methods
+
+        private void HandleStartGame()
+		{
+            _gameStarted = true;
+		}
 
         private void AssignAnimationIDs()
         {

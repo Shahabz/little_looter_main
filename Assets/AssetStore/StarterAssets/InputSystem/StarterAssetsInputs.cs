@@ -1,3 +1,4 @@
+using LittleLooters.Gameplay;
 using UnityEngine;
 #if ENABLE_INPUT_SYSTEM && STARTER_ASSETS_PACKAGES_CHECKED
 using UnityEngine.InputSystem;
@@ -20,7 +21,7 @@ namespace StarterAssets
 		public Vector2 aim;
 		public bool attack;
 		public bool reload;
-		public bool roll;
+		public bool roll = false;
 
 		[Header("Movement Settings")]
 		public bool analogMovement;
@@ -42,6 +43,7 @@ namespace StarterAssets
 
 		#region Private properties
 
+		private bool _gameStarted = false;
 		private bool startAiming = false;
 		private bool stopAiming = false;
 		private readonly Vector2 vectorZero = Vector2.zero;
@@ -90,6 +92,8 @@ namespace StarterAssets
 
 		public void OnRoll(InputValue value)
 		{
+			if (!_gameStarted) return;
+
 			if (!value.isPressed) return;
 
 			RollInput();
@@ -163,6 +167,16 @@ namespace StarterAssets
 
 		#region Unity events
 
+		private void Awake()
+		{
+			UI_GameplayEvents.OnStartGame += HandleStartGame;
+		}
+
+		private void OnDestroy()
+		{
+			UI_GameplayEvents.OnStartGame -= HandleStartGame;
+		}
+
 		private void OnApplicationFocus(bool hasFocus)
 		{
 			SetCursorState(cursorLocked);
@@ -171,6 +185,11 @@ namespace StarterAssets
 		#endregion
 
 		#region Private methods
+
+		private void HandleStartGame()
+		{
+			_gameStarted = true;
+		}
 
 		private void SetCursorState(bool newState)
 		{
