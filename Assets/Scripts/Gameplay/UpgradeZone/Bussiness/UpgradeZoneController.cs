@@ -16,9 +16,6 @@ namespace LittleLooters.Gameplay
 		#region Inspector
 
         [SerializeField] private GameObject _indicator = default;
-		[SerializeField] private UI_UpgradeZone_Panel _uiPanel = default;
-		[SerializeField] private UI_UpgradeZone_ClaimPanel _uiClaimPanel = default;
-		[SerializeField] private UI_UpgradeZone_InProgressPanel _uiInProgressPanel = default;
 		[SerializeField] private Transform _pivotAssistance = default;
 
 		[Header("UI progress")]
@@ -60,9 +57,11 @@ namespace LittleLooters.Gameplay
 
 		private void Update()
 		{
-			if (_playerInsideArea) return;
-
 			if (!_isUpgrading) return;
+
+			_remainingTime -= Time.deltaTime;
+
+			if (_playerInsideArea) return;
 
 			RefreshUpgradeProgressBar();
 		}
@@ -75,18 +74,12 @@ namespace LittleLooters.Gameplay
 		{
 			var progressDataService = ServiceLocator.Current.Get<PlayerProgressDataService>();
 
-			_uiClaimPanel.Hide();
-			_uiPanel.Hide();
-			//_uiInProgressPanel.Hide();
-
 			_indicator.SetActive(true);
 
 			var toolIsUpgrading = progressDataService.ProgressData.toolData.isUpgrading;
 
 			if (toolIsUpgrading)
 			{
-				//_uiInProgressPanel.Show();
-
 				UI_GameplayEvents.OnShowUpgradeToolProgress?.Invoke();
 
 				return;
@@ -97,25 +90,17 @@ namespace LittleLooters.Gameplay
 			if (isMeleeClaimExpected)
 			{
 				// Show claim panel
-				//_uiClaimPanel.Show();
-
 				UI_GameplayEvents.OnShowUpgradeToolClaim?.Invoke();
 
 				return;
 			}
 
-			var currentLevelData = progressDataService.Tool_GetCurrentLevelData();
-			var nextLevelData = progressDataService.Tool_GetNextLevelData();
-
-			//_uiPanel.Show(progressDataService.ProgressData.resourcesData, currentLevelData, nextLevelData);
 			UI_GameplayEvents.OnShowUpgradeToolInformation?.Invoke();
 		}
 
 		public void HideIndicator()
 		{
 			_indicator.SetActive(false);
-
-			_uiPanel.Hide();
 
 			UI_GameplayEvents.OnHideUpgradeTool?.Invoke();
 		}
@@ -260,8 +245,6 @@ namespace LittleLooters.Gameplay
 
 		private void RefreshUpgradeProgressBar()
 		{
-			_remainingTime -= Time.deltaTime;
-
 			var progress = 1 - (_remainingTime / _duration);
 
 			_progressBarFill.value = progress;

@@ -31,6 +31,8 @@ namespace LittleLooters.Gameplay
 
 		public static Action<float> OnCameraSizeChanged;
 
+		public static Action<float> OnStartRolling;
+
 		#region Weapon events
 
 		/// <summary>

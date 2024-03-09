@@ -670,6 +670,8 @@ namespace StarterAssets
 		{
             OnStartRolling?.Invoke();
 
+            UI_GameplayEvents.OnStartRolling?.Invoke(_rollDelay);
+
             // Check if aiming is active
             if (_aimingAssistance.TargetDetected)
             {
