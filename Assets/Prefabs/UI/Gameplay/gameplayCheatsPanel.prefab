@@ -1825,6 +1825,10 @@ MonoBehaviour:
   _btnAccess: {fileID: 3042918163279552477}
   _panel: {fileID: 5629740278275755121}
   _btnClosePanel: {fileID: 8751101464610766553}
+  _slotCameraAngle: {fileID: 3568918443818236739}
+  _slotAutoaiming: {fileID: 905068009053872977}
+  _slotCameraSize: {fileID: 1191065675797012571}
+  _rotatorPanel: {fileID: 8521519511399357518}
 --- !u!1 &4018032118875722975
 GameObject:
   m_ObjectHideFlags: 0

@@ -26,6 +26,7 @@ namespace LittleLooters.Gameplay
 		[SerializeField] private RuntimeAnimatorController _meleeAnimatorController = default;
 		[SerializeField] private float _attackRate = 1.0f;
 		[SerializeField] private float _radiusDetection = default;
+		[SerializeField] private float _radiusDetectionOffset = 5;
 		[SerializeField] private LayerMask _layer = default;
 		[SerializeField] private float _angleFieldOfView = default;
 		[SerializeField] private GameObject _extraDamageVx = default;
@@ -485,7 +486,7 @@ namespace LittleLooters.Gameplay
 		{
 			var currentPosition = transform.position;
 
-			var amount = Physics.OverlapSphereNonAlloc(currentPosition, _radiusDetection + 10, _hits, _layer);
+			var amount = Physics.OverlapSphereNonAlloc(currentPosition, _radiusDetection + _radiusDetectionOffset, _hits, _layer);
 
 			var result = new List<DestructibleResourceObject>(amount);
 
@@ -621,6 +622,19 @@ namespace LittleLooters.Gameplay
 		{
 			Debug.LogError("Stop processing by <color=magenta>PLAYER's MOVEMENT</color>");
 		}
+
+		/*private void OnDrawGizmosSelected()
+		{
+#if UNITY_EDITOR
+			// detection area
+			UnityEditor.Handles.color = Color.red;
+			UnityEditor.Handles.DrawWireDisc(transform.position, new Vector3(0, 1, 0), _radiusDetection);
+
+			// detection out area
+			UnityEditor.Handles.color = Color.yellow;
+			UnityEditor.Handles.DrawWireDisc(transform.position, new Vector3(0, 1, 0), _radiusDetection + _radiusDetectionOffset);
+#endif
+		}*/
 
 		#endregion
 	}

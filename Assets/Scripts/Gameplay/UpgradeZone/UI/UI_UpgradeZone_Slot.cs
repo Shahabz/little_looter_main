@@ -13,7 +13,6 @@ namespace LittleLooters.Gameplay.UI
     {
 		#region Inspector
 
-		[SerializeField] private TextMeshProUGUI _txtCurrent = default;
 		[SerializeField] private TextMeshProUGUI _txtRequired = default;
 		[SerializeField] private Image _icon = default;
 		[SerializeField] private Color _colorCompleted = default;
@@ -28,10 +27,9 @@ namespace LittleLooters.Gameplay.UI
 		{
 			var completed = currentAmount >= requiredAmount;
 
-			//_txtCurrent.text = $"{currentAmount}/";
-			_txtRequired.text = $"{currentAmount}/{requiredAmount}";
+			_txtRequired.text = $"{requiredAmount}";//$"{currentAmount}/{requiredAmount}";
 
-			//_txtRequired.color = (completed) ? _colorCompleted : _colorNotCompleted;
+			_txtRequired.color = (completed) ? _colorCompleted : _colorNotCompleted;
 
 			_toggleCompleted.enabled = completed;
 

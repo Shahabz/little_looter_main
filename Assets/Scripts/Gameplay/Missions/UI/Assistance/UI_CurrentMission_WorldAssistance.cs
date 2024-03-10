@@ -3,6 +3,7 @@
  * Author: Peche
  */
 
+using LittleLooters.Global.ServiceLocator;
 using UnityEngine;
 
 namespace LittleLooters.Gameplay.UI
@@ -25,7 +26,13 @@ namespace LittleLooters.Gameplay.UI
 
 		#endregion
 
+		#region Private properties
+
 		private bool _isAssisting = false;
+		private bool _isToolAssisting = false;
+		private float _toolUpgradeAssistanceDuration = 5f;
+
+		#endregion
 
 		#region Unity events
 
@@ -33,12 +40,16 @@ namespace LittleLooters.Gameplay.UI
 		{
 			PlayerMissionsEvents.OnMissionAssistanceOffStarted += HandleOnTriggerAssistance;
 			PlayerMissionsEvents.OnMissionAssistanceOffStopped += HandleOnStopAssistance;
+			UI_GameplayEvents.OnTriggerToolAreaAssistance += HandleOnTriggerToolAreaAssistance;
+			UI_GameplayEvents.OnUpgradeToolAreaInteracion += HandleToolUpgradeAreaInteraction;
 		}
 
 		private void OnDestroy()
 		{
 			PlayerMissionsEvents.OnMissionAssistanceOffStarted -= HandleOnTriggerAssistance;
 			PlayerMissionsEvents.OnMissionAssistanceOffStopped -= HandleOnStopAssistance;
+			UI_GameplayEvents.OnTriggerToolAreaAssistance -= HandleOnTriggerToolAreaAssistance;
+			UI_GameplayEvents.OnUpgradeToolAreaInteracion -= HandleToolUpgradeAreaInteraction;
 		}
 
 		private void LateUpdate()
@@ -54,13 +65,45 @@ namespace LittleLooters.Gameplay.UI
 
 		private void HandleOnTriggerAssistance(Transform target)
 		{
+			CancelInvoke(nameof(StopAssistance));
+
 			_target = target;
+
+			_isToolAssisting = false;
 
 			StartAssistance();
 		}
 
 		private void HandleOnStopAssistance()
 		{
+			StopAssistance();
+		}
+
+		private void HandleOnTriggerToolAreaAssistance()
+		{
+			if (_isToolAssisting)
+			{
+				StopAssistance();
+				return;
+			}
+
+			_isToolAssisting = true;
+
+			var levelService = ServiceLocator.Current.Get<LevelService>();
+
+			var toolUpgradeArea = levelService.ToolUpgradeArea;
+
+			_target = toolUpgradeArea;
+
+			StartAssistance();
+
+			Invoke(nameof(StopAssistance), _toolUpgradeAssistanceDuration);
+		}
+
+		private void HandleToolUpgradeAreaInteraction()
+		{
+			if (!_isToolAssisting) return;
+
 			StopAssistance();
 		}
 
@@ -75,9 +118,13 @@ namespace LittleLooters.Gameplay.UI
 
 		private void StopAssistance()
 		{
+			CancelInvoke(nameof(StopAssistance));
+
 			_content.gameObject.SetActive(false);
 
 			_isAssisting = false;
+
+			_isToolAssisting = false;
 		}
 
 		private void RefreshDirection()

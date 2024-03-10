@@ -25,19 +25,11 @@ namespace LittleLooters.Gameplay.UI
 		[SerializeField] private Button _btnUpgrade = default;
 		[SerializeField] private Image _btnUpgradeBackground = default;
 		[SerializeField] private TextMeshProUGUI _txtUpgradeButton = default;
-		[SerializeField] private Sprite _colorUpgradeEnable = default;
-		[SerializeField] private Sprite _colorUpgradeDisable = default;
 		[SerializeField] private Color _colorTextUpgradeEnable = default;
 		[SerializeField] private Color _colorTextUpgradeDisable = default;
+		[SerializeField] private Color _colorBackgroundUpgradeEnable = default;
+		[SerializeField] private Color _colorBackgroundUpgradeDisable = default;
 		[SerializeField] private GameObject _btnUpgradeAlert = default;
-		[SerializeField] private float _alertAnimationScale = default;
-		[SerializeField] private float _alertAnimationDuration = default;
-
-		#endregion
-
-		#region Private properties
-
-		private Sequence _tweenSequence = default;
 
 		#endregion
 
@@ -45,11 +37,6 @@ namespace LittleLooters.Gameplay.UI
 
 		private void Awake()
 		{
-			_tweenSequence = DOTween.Sequence()
-								.Append(_btnUpgradeAlert.transform.DOScale(Vector3.one * _alertAnimationScale, _alertAnimationDuration).SetDelay(0.1f))
-								.Append(_btnUpgradeAlert.transform.DOScale(Vector2.one, _alertAnimationDuration))
-								.SetLoops(-1, LoopType.Restart);
-
 			Hide();
 
 			_btnUpgrade.onClick.AddListener(StartUpgrade);
@@ -134,29 +121,15 @@ namespace LittleLooters.Gameplay.UI
 
 		private void RefreshButtonState(bool canUpgrade)
 		{
-			StopAlertAnimation();
-
 			_btnUpgrade.enabled = canUpgrade;
 
-			_btnUpgradeBackground.sprite = (canUpgrade) ? _colorUpgradeEnable : _colorUpgradeDisable;
+			_btnUpgradeBackground.color = (canUpgrade) ? _colorBackgroundUpgradeEnable : _colorBackgroundUpgradeDisable;
 
 			_txtUpgradeButton.color = (canUpgrade) ? _colorTextUpgradeEnable : _colorTextUpgradeDisable;
 
 			_btnUpgradeAlert.SetActive(canUpgrade);
 
 			if (!canUpgrade) return;
-
-			StartAlertAnimation();
-		}
-
-		private void StopAlertAnimation()
-		{
-			_tweenSequence.Pause();
-		}
-
-		private void StartAlertAnimation()
-		{
-			_tweenSequence.Restart();
 		}
 
 		private void StartUpgrade()

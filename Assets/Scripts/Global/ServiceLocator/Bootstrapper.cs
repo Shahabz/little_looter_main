@@ -13,6 +13,7 @@ namespace LittleLooters.Global.ServiceLocator
 
         [SerializeField] private GameConfigurationService _gameConfigurationService = default;
 		[SerializeField] private PlayerProgressDataService _playerProgressService = default;
+        [SerializeField] private LevelService _levelService = default;
 
         #endregion
 
@@ -26,6 +27,7 @@ namespace LittleLooters.Global.ServiceLocator
             // Register all your services next.
             ServiceLocator.Current.Register(_gameConfigurationService);
             ServiceLocator.Current.Register(_playerProgressService);
+            ServiceLocator.Current.Register(_levelService);
         }
 
 		#endregion

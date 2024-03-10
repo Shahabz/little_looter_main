@@ -4,6 +4,8 @@
  */
 
 using LittleLooters.Global.ServiceLocator;
+using LittleLooters.Model;
+using System;
 using UnityEngine;
 
 namespace LittleLooters.Gameplay.UI
@@ -13,14 +15,19 @@ namespace LittleLooters.Gameplay.UI
 		#region Inspector
 
 		[SerializeField] private GameObject _panel = default;
+		[SerializeField] private VariableJoystick _joystick = default;
 		[SerializeField] private PlayerEntryPoint _playerEntryPoint = default;
 		[SerializeField] private UI_CurrentMissionPanel _missionPanel = default;
+		[SerializeField] private GameObject _infoPanel = default;
+		[SerializeField] private GameObject _background = default;
 
 		#endregion
 
 		#region Private properties
 
 		private Canvas _canvas = default;
+		private int _remainingTimes = 3;
+		private bool _showJoystick = true;
 
 		#endregion
 
@@ -30,40 +37,76 @@ namespace LittleLooters.Gameplay.UI
 		{
 			_canvas = GetComponent<Canvas>();
 
-			UI_GameplayEvents.OnPlayerInitialization += HandlePlayerInitialization;
+			UI_GameplayEvents.OnTriggerMissionAssistance += HandleTriggerMissionAssistance;
+			PlayerProgressEvents.OnMoveToNextMission += HandleMoveToNextMission;
+
+			_joystick.OnChange += HandleJoystickMovement;
 		}
 
 		private void OnDestroy()
 		{
-			UI_GameplayEvents.OnPlayerInitialization -= HandlePlayerInitialization;
 			UI_GameplayEvents.OnTriggerMissionAssistance -= HandleTriggerMissionAssistance;
+			PlayerProgressEvents.OnMoveToNextMission -= HandleMoveToNextMission;
+
+			_joystick.OnChange -= HandleJoystickMovement;
 		}
 
 		#endregion
 
-		private void HandlePlayerInitialization()
+		#region Private methods
+
+		private void HandleJoystickMovement(Vector2 obj)
 		{
-			var progressDataService = ServiceLocator.Current.Get<PlayerProgressDataService>();
+			_joystick.OnChange -= HandleJoystickMovement;
 
-			// Check current player's mission
-			var currentMissionId = progressDataService.ProgressData.missionsData.GetCurrentMissionId();
+			Invoke(nameof(ShowPanelWithDelay), 1);
+		}
 
-			var firstMission = _playerEntryPoint.GetFirstMissionData();
-
-			if (currentMissionId != firstMission.Id)
-			{
-				DestroyPanel();
-
-				return;
-			}
-
-			UI_GameplayEvents.OnTriggerMissionAssistance += HandleTriggerMissionAssistance;
+		private void ShowPanelWithDelay()
+		{
+			_joystick.Stop();
+			_joystick.gameObject.SetActive(false);
 
 			ShowPanel();
 		}
 
 		private void HandleTriggerMissionAssistance()
 		{
+
+			if (_showJoystick)
+			{
+				_joystick.gameObject.SetActive(true);
+				_showJoystick = false;
+			}
+
+			Hide();
+		}
+
+		private void HandleMoveToNextMission()
+		{
+			_remainingTimes--;
+
+			Invoke(nameof(ShowFtueIndicator), 2f);
+		}
+
+		private void ShowFtueIndicator()
+		{
+			_missionPanel.SetFtueCanvasOrder(_canvas.sortingOrder + 5);
+
+			_panel.SetActive(true);
+
+			_infoPanel.SetActive(false);
+			_background.SetActive(false);
+		}
+
+		private void Hide()
+		{
+			_panel.SetActive(false);
+
+			_missionPanel.SetOriginalCanvasOrder();
+
+			if (_remainingTimes > 0) return;
+
 			DestroyPanel();
 		}
 
@@ -84,5 +127,7 @@ namespace LittleLooters.Gameplay.UI
 
 			_panel.SetActive(true);
 		}
+
+		#endregion
 	}
 }

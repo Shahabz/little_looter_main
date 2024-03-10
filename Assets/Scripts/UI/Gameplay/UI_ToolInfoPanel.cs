@@ -5,9 +5,9 @@
 
 using DG.Tweening;
 using LittleLooters.Model;
-using System;
 using TMPro;
 using UnityEngine;
+using UnityEngine.UI;
 
 namespace LittleLooters.Gameplay.UI
 {
@@ -18,6 +18,7 @@ namespace LittleLooters.Gameplay.UI
 		[SerializeField] private Transform _container = default;
         [SerializeField] private TextMeshProUGUI _txtLevel = default;
         [SerializeField] private GameObject _upgradeCompletedPanel = default;
+        [SerializeField] private Button _btnAssistance = default;
 
         [Header("Animation")]
         [SerializeField] private float _animationDuration = default;
@@ -35,6 +36,8 @@ namespace LittleLooters.Gameplay.UI
             PlayerProgressEvents.OnMeleeUpgradeCompleted += UpgradeCompleted;
             PlayerProgressEvents.OnMeleeUpgradeClaimed += Claimed;
 
+            _btnAssistance.onClick.AddListener(ShowAssistance);
+
             RefreshLevel(1);    // TODO: this value should come from player's tool data
 
             HideUpgradeCompleted();
@@ -44,6 +47,8 @@ namespace LittleLooters.Gameplay.UI
         {
             PlayerProgressEvents.OnMeleeUpgradeCompleted -= UpgradeCompleted;
             PlayerProgressEvents.OnMeleeUpgradeClaimed -= Claimed;
+
+            _btnAssistance.onClick.RemoveAllListeners();
         }
 
         #endregion
@@ -83,6 +88,11 @@ namespace LittleLooters.Gameplay.UI
         {
             _upgradeCompletedPanel.SetActive(false);
         }
+
+        private void ShowAssistance()
+		{
+            UI_GameplayEvents.OnTriggerToolAreaAssistance?.Invoke();
+		}
 
         #endregion
 

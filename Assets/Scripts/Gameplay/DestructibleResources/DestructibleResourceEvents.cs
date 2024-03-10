@@ -26,9 +26,10 @@ namespace LittleLooters.Gameplay
 
     public enum DestructibleResourceType 
     {
-        NONE,
-        SMALL_BOX,
-        GRILL,
-        DOOR,
+        NONE = 0,
+        BUSH = 50,
+        SMALL_BOX = 100,
+        GRILL = 200,
+        DOOR = 300,
     }
 }

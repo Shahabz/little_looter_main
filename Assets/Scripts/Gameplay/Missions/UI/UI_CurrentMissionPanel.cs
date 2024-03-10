@@ -141,7 +141,8 @@ namespace LittleLooters.Gameplay.UI
 
 			_extraInfoPanel.Refresh(data);
 
-			Assistance();
+			// TODO: check if it needs auto assistance
+			// Assistance();
 		}
 
 		private void RefreshProgress(int current, int goal)
@@ -186,7 +187,7 @@ namespace LittleLooters.Gameplay.UI
 
 		private void HideMissionComplete()
 		{
-			_iconInfo.SetActive(true);
+			//_iconInfo.SetActive(true);
 			_fillProgress.fillAmount = 0;
 			_iconCompleted.SetActive(false);
 			_bgCompleted.SetActive(false);
@@ -229,7 +230,7 @@ namespace LittleLooters.Gameplay.UI
 
 		private void MissionAssistanceFinished()
 		{
-			_iconInfo.SetActive(true);
+			//_iconInfo.SetActive(true);
 
 			_assistanceInProgress = false;
 		}

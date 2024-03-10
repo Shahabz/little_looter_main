@@ -27,5 +27,29 @@ namespace LittleLooters.Global.ServiceLocator
         public float TimeToCheckCompletedMission => _timeToCheckCompletedMission;
         public ConfigurationMeleeLevelData[] ToolLevels => _toolLevels;
         public int ToolExtraDamageDuration => _toolExtraDamageDuration;
+
+        public (bool found, MissionConfigurationData mission) TryGetMission(int id)
+		{
+			for (int i = 0; i < _missions.Length; i++)
+			{
+                var mission = _missions[i];
+
+                if (mission.Id == id) return (true, mission);
+			}
+
+            return (false, default);
+		}
+
+        public (bool found, ResourceData resource) TryGetResource(int id)
+		{
+			for (int i = 0; i < _resources.Length; i++)
+			{
+                var resource = _resources[i];
+
+                if (resource.Id == id) return (true, resource);
+			}
+
+            return (false, default);
+		}
     }
 }

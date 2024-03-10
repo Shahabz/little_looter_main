@@ -3,6 +3,7 @@
  * Author: Peche
  */
 
+using LittleLooters.Global.ServiceLocator;
 using LittleLooters.Model;
 using TMPro;
 using UnityEngine;
@@ -30,9 +31,17 @@ namespace LittleLooters.Gameplay.UI
 		private bool _inProgress = true;
 		private float _expiration = default;
 		private float _duration = default;
+		private bool _wasShown = false;
+		private int _remainingSteps = 1;
+
+		private void Start()
+		{
+			_content.SetActive(false);
+		}
 
 		private void OnEnable()
 		{
+			PlayerProgressEvents.OnMoveToNextMission += HandleMoveToNextMission;
 			PlayerProgressEvents.OnToolDamageIncreaseStarted += HandleToolExtraDamageStarted;
 			PlayerProgressEvents.OnToolDamageIncreaseCompleted += HandleToolExtraDamageCompleted;
 
@@ -41,6 +50,7 @@ namespace LittleLooters.Gameplay.UI
 
 		private void OnDisable()
 		{
+			PlayerProgressEvents.OnMoveToNextMission -= HandleMoveToNextMission;
 			PlayerProgressEvents.OnToolDamageIncreaseStarted -= HandleToolExtraDamageStarted;
 			PlayerProgressEvents.OnToolDamageIncreaseCompleted -= HandleToolExtraDamageCompleted;
 
@@ -105,6 +115,32 @@ namespace LittleLooters.Gameplay.UI
 			var progress = (_expiration - now) / _duration;
 
 			_progressFill.fillAmount = progress;
+		}
+
+		private void HandleMoveToNextMission()
+		{
+			if (_wasShown) return;
+
+			// Check if mission is about destruction
+			var playerProgressService = ServiceLocator.Current.Get<PlayerProgressDataService>();
+
+			var currentMissionId = playerProgressService.ProgressData.missionsData.GetCurrentMissionId();
+
+			var gameConfigurationService = ServiceLocator.Current.Get<GameConfigurationService>();
+
+			var missionInfo = gameConfigurationService.TryGetMission(currentMissionId);
+
+			if (!missionInfo.found) return;
+
+			if (missionInfo.mission.Type != MissionType.DESTRUCTION) return;
+
+			_remainingSteps--;
+
+			if (_remainingSteps > 0) return;
+
+			_wasShown = true;
+
+			_content.SetActive(true);
 		}
 	}
 }

@@ -118,6 +118,10 @@ namespace LittleLooters.Gameplay
 
 		public static Action<MeleeUpgradeRequirementData[]> OnConsumeResourcesByToolUpgrade;
 
+		public static Action OnTriggerToolAreaAssistance;
+
+		public static Action OnUpgradeToolAreaInteracion;
+
 		#endregion
 
 		#region Mission events

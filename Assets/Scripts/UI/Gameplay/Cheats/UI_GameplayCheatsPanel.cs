@@ -16,6 +16,11 @@ namespace LittleLooters.Gameplay.UI
         [SerializeField] private GameObject _panel = default;
         [SerializeField] private Button _btnClosePanel = default;
 
+		[SerializeField] private UI_GameplayCheats_SlotCamera _slotCameraAngle = default;
+		[SerializeField] private UI_GameplayCheats_SlotAutoaiming _slotAutoaiming = default;
+		[SerializeField] private UI_GameplayCheats_SlotCameraSize _slotCameraSize = default;
+		[SerializeField] private UI_CameraRotatorPanel _rotatorPanel = default;
+
 		#endregion
 
 		#region Unity events
@@ -38,6 +43,8 @@ namespace LittleLooters.Gameplay.UI
 		{
 			_btnAccess.onClick.AddListener(OpenPanel);
 			_btnClosePanel.onClick.AddListener(ClosePanel);
+
+			ApplyPresets();
 		}
 
 		private void Teardown()
@@ -54,6 +61,18 @@ namespace LittleLooters.Gameplay.UI
 		private void ClosePanel()
 		{
 			_panel.SetActive(false);
+		}
+
+		private void ApplyPresets()
+		{
+			OpenPanel();
+
+			_slotCameraAngle.ApplyPreset();
+			_slotAutoaiming.ApplyPreset();
+			_slotCameraSize.ApplyPreset();
+			_rotatorPanel.ApplyPreset();
+
+			Invoke(nameof(ClosePanel), 0.25f);
 		}
 
 		#endregion

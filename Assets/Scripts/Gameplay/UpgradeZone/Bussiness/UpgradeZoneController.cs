@@ -78,6 +78,8 @@ namespace LittleLooters.Gameplay
 
 			var toolIsUpgrading = progressDataService.ProgressData.toolData.isUpgrading;
 
+			UI_GameplayEvents.OnUpgradeToolAreaInteracion?.Invoke();
+
 			if (toolIsUpgrading)
 			{
 				UI_GameplayEvents.OnShowUpgradeToolProgress?.Invoke();
