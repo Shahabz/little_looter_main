@@ -29,16 +29,28 @@ namespace LittleLooters.Gameplay.UI
 
         #endregion
 
-        #region Unity events
+        #region Private properties
 
-        private void Awake()
+        private bool _insideArea = false;
+
+		#endregion
+
+		#region Unity events
+
+		private void Awake()
         {
             PlayerProgressEvents.OnMeleeUpgradeCompleted += UpgradeCompleted;
+
+            UI_GameplayEvents.OnUpgradeToolAreaInteracion += HandleToolAreaInteractionStarted;
+            UI_GameplayEvents.OnHideUpgradeTool += HandleToolAreaInteractionStopped;
         }
 
         private void OnDestroy()
         {
             PlayerProgressEvents.OnMeleeUpgradeCompleted -= UpgradeCompleted;
+
+            UI_GameplayEvents.OnUpgradeToolAreaInteracion -= HandleToolAreaInteractionStarted;
+            UI_GameplayEvents.OnHideUpgradeTool -= HandleToolAreaInteractionStopped;
         }
 
 		#endregion
@@ -47,6 +59,8 @@ namespace LittleLooters.Gameplay.UI
 
 		private void UpgradeCompleted()
 		{
+            if (_insideArea) return;
+
             Animate();
 		}
 
@@ -62,6 +76,18 @@ namespace LittleLooters.Gameplay.UI
 		{
             _container.DOScale(0, _animationOutDuration).SetDelay(_animationOutDelay).SetEase(_animationOutEase).OnComplete( () => _container.gameObject.SetActive(false) );
 		}
+
+        private void HandleToolAreaInteractionStarted()
+		{
+            _insideArea = true;
+
+            _container.gameObject.SetActive(false);
+        }
+
+        private void HandleToolAreaInteractionStopped()
+		{
+            _insideArea = false;
+        }
 
         #endregion
 

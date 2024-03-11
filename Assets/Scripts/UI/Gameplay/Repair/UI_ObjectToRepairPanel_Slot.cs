@@ -144,7 +144,9 @@ namespace LittleLooters.Gameplay.UI
             if (!_isEnabled) return;
 
             UI_GameplayEvents.OnFixSlot?.Invoke(_objectId, _resourceId);
-		}
+
+            AnimateConsumedResources();
+        }
 
         private void HandleSlotFixDone(PlayerProgressEvents.RepairSlotArgs args)
         {
@@ -163,6 +165,25 @@ namespace LittleLooters.Gameplay.UI
 			}
 
             MarkAsDisable();
+        }
+
+        private void AnimateConsumedResources()
+		{
+            var resourceIds = new int[] { _resourceId };
+
+            var resourceAmounts = new int[] { 1 };
+
+            var position = _icon.rectTransform.position;
+            position.y += 5;
+
+            var args = new UI_ResourcesAnimation.ResourceConsumptionArgs()
+            {
+                ids = resourceIds,
+                amounts = resourceAmounts,
+                position = position
+            };
+
+            UI_ResourcesAnimation.OnAnimateResourceConsumption?.Invoke(args);
         }
 
         #endregion

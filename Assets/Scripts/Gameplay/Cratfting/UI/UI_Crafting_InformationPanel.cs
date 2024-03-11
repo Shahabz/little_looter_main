@@ -45,6 +45,7 @@ namespace LittleLooters.Gameplay.UI
 		private int _playerResourceAmount = 0;
 		private int _unitAmountRequired = 0;
 		private int _currentAmountRequired = 0;
+		private int _requiredResourceId = 0;
 
 		#endregion
 
@@ -88,6 +89,8 @@ namespace LittleLooters.Gameplay.UI
 		{
 			_areaId = data.Id;
 
+			_requiredResourceId = data.ResourceRequired.Id;
+
 			_amountSelected = 1;
 
 			_iconRequirement.sprite = data.ResourceRequired.Icon;
@@ -115,6 +118,8 @@ namespace LittleLooters.Gameplay.UI
 			if (_amountSelected < 1) return;
 
 			UI_GameplayEvents.OnCraftingStarted?.Invoke(_areaId, _amountSelected);
+
+			AnimateConsumedResources();
 		}
 
 		/*private void OnSliderValueChanged(float value)
@@ -208,6 +213,25 @@ namespace LittleLooters.Gameplay.UI
 			_txtRequirement.text = $"{_currentAmountRequired}";
 
 			_txtRequirement.color = (_amountSelected > _playerResourceAmount / _unitAmountRequired) ? _colorNotEnough : _colorEnough;
+		}
+
+		private void AnimateConsumedResources()
+		{
+			var resourceIds = new int[] { _requiredResourceId };
+
+			var resourceAmounts = new int[] { _currentAmountRequired };
+
+			var position = _btnBackground.rectTransform.position;
+			position.y += 30;
+
+			var args = new UI_ResourcesAnimation.ResourceConsumptionArgs()
+			{
+				ids = resourceIds,
+				amounts = resourceAmounts,
+				position = position
+			};
+
+			UI_ResourcesAnimation.OnAnimateResourceConsumption?.Invoke(args);
 		}
 
 		#endregion

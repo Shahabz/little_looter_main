@@ -141,6 +141,40 @@ namespace LittleLooters.Gameplay.UI
 
 			// Notify about start upgrading
 			UI_GameplayEvents.OnStartToolUpgrade?.Invoke();
+
+			AnimateConsumedResources();
+		}
+
+		private void AnimateConsumedResources()
+		{
+			var progressDataService = ServiceLocator.Current.Get<PlayerProgressDataService>();
+			var playerResourcesData = progressDataService.ProgressData.resourcesData;
+			var toolNextLevelData = progressDataService.Tool_GetNextLevelData();
+			var resourceIds = new int[toolNextLevelData.requirements.Length];
+
+			for (int i = 0; i < toolNextLevelData.requirements.Length; i++)
+			{
+				resourceIds[i] = toolNextLevelData.requirements[i].resource.Id;
+			}
+
+			var resourceAmounts = new int[toolNextLevelData.requirements.Length];
+
+			for (int i = 0; i < toolNextLevelData.requirements.Length; i++)
+			{
+				resourceAmounts[i] = toolNextLevelData.requirements[i].amount;
+			}
+
+			var position = _btnUpgradeBackground.rectTransform.position;
+			position.y += 50;
+
+			var args = new UI_ResourcesAnimation.ResourceConsumptionArgs()
+			{
+				ids = resourceIds,
+				amounts = resourceAmounts,
+				position = position
+			};
+
+			UI_ResourcesAnimation.OnAnimateResourceConsumption?.Invoke(args);
 		}
 
 		#endregion

@@ -130,7 +130,7 @@ MonoBehaviour:
   _animationVibrato: 4
   _animationElasticity: 0.493
   _animationEase: 28
-  _animationOutDelay: 3
+  _animationOutDelay: 1.5
   _animationOutDuration: 0.25
   _animationOutEase: 34
 --- !u!1 &137894114123365399

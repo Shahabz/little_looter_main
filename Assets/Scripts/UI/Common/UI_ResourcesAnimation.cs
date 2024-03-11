@@ -19,6 +19,15 @@ namespace LittleLooters.Gameplay.UI
     {
 		public static System.Action<int, int> OnAnimate;
 		public static System.Action<int> OnAnimationCompleted;
+		public static System.Action<ResourceConsumptionArgs> OnAnimateResourceConsumption;
+
+		[System.Serializable]
+		public struct ResourceConsumptionArgs
+		{
+			public int[] ids;
+			public int[] amounts;
+			public Vector2 position;
+		}
 
 		[System.Serializable]
 		public struct TargetHUD
@@ -39,6 +48,9 @@ namespace LittleLooters.Gameplay.UI
 		[SerializeField] private float _scaleAnimationToHudDelay = default;
 		[SerializeField] private float _delayBeforeAnimation = default;
 		[SerializeField] private float _initialPositionAmplitude = default;
+		[SerializeField] private float _consumptionScaleDuration = default;
+		[SerializeField] private float _consumptionMovementDuration = default;
+		[SerializeField] private float _delayBeforeConsumptionAnimation = default;
 
 		#endregion
 
@@ -57,11 +69,13 @@ namespace LittleLooters.Gameplay.UI
 			HideAllResources();
 
 			OnAnimate += SpawnResources;
+			OnAnimateResourceConsumption += HandleResourceConsumption;
 		}
 
 		private void OnDestroy()
 		{
 			OnAnimate -= SpawnResources;
+			OnAnimateResourceConsumption -= HandleResourceConsumption;
 		}
 
 		#endregion
@@ -114,21 +128,35 @@ namespace LittleLooters.Gameplay.UI
 
 				resource.gameObject.SetActive(true);
 
-				//resource.transform.DOScale(Vector3.one, _delayBeforeAnimation / 2).SetEase(Ease.InBounce);
-
-				StartCoroutine(AnimateResource(id, resource, position));
+				StartCoroutine(AnimateResource(id, resource, position, _delayBeforeAnimation));
 			}
 		}
 
-        private IEnumerator AnimateResource(int resourceId, Image resource, Vector3 position)
+        private IEnumerator AnimateResource(int resourceId, Image resource, Vector3 position, float delayBeforeAnimation)
 		{
-			yield return new WaitForSeconds(_delayBeforeAnimation);
+			yield return new WaitForSeconds(delayBeforeAnimation);
 
 			var duration = Random.Range(_animationDurationMin, _animationDurationMax);
 
 			resource.transform.DOScale(Vector3.zero, duration).SetDelay(_scaleAnimationToHudDelay);
 
 			resource.transform.DOMove(position, duration).
+				SetEase(Ease.InFlash).
+				OnComplete(
+					() => {
+						resource.gameObject.SetActive(false);
+						_readyImages.Enqueue(resource);
+						OnAnimationCompleted?.Invoke(resourceId);
+					});
+		}
+
+		private IEnumerator AnimateResourceConsumption(int resourceId, Image resource, Vector3 position, float delayBeforeAnimation)
+		{
+			yield return new WaitForSeconds(delayBeforeAnimation);
+
+			resource.transform.DOScale(Vector3.zero, _consumptionScaleDuration).SetDelay(_scaleAnimationToHudDelay);
+
+			resource.transform.DOMove(position, _consumptionMovementDuration).
 				SetEase(Ease.InFlash).
 				OnComplete(
 					() => {
@@ -165,6 +193,39 @@ namespace LittleLooters.Gameplay.UI
 			}
 
 			return Vector3.zero;
+		}
+
+		private void HandleResourceConsumption(ResourceConsumptionArgs args)
+		{
+			var resources = args.ids;
+			var amounts = args.amounts;
+			var position = args.position;
+
+			for (var i=0; i< resources.Length; i++)
+			{
+				var id = resources[i];
+
+				var icon = GetIcon(id);
+				var amount = amounts[i];
+
+				for (int j = 0; j < amount; j++)
+				{
+					if (_readyImages.Count <= 0) break;
+
+					var resource = _readyImages.Dequeue();
+
+					resource.sprite = icon;
+
+					resource.transform.localPosition = GetTargetPosition(id);
+
+					resource.transform.localScale = Vector3.one;
+
+					resource.gameObject.SetActive(true);
+
+					var delay = Random.Range(_delayBeforeConsumptionAnimation - 0.1f, _delayBeforeConsumptionAnimation + 0.1f);
+					StartCoroutine(AnimateResourceConsumption(id, resource, position, delay));
+				}
+			}
 		}
 
 		#endregion
