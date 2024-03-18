@@ -3,6 +3,7 @@
  * Author: Peche
  */
 
+using System;
 using UnityEngine;
 
 namespace LittleLooters.Gameplay.UI
@@ -17,6 +18,7 @@ namespace LittleLooters.Gameplay.UI
         #endregion
 
         private bool _firstTime = true;
+        private bool _autofire = false;
 
         #region Unity events
 
@@ -24,6 +26,7 @@ namespace LittleLooters.Gameplay.UI
         {
             LevelEnemies.OnStartDetection += HandleStartEnemiesDetection;
             //LevelEnemies.OnStopDetection += HandleStopEnemiesDetection;
+            UI_GameplayEvents.OnAutofireChangedByCheat += HandleAutofireChangedByCheats;
         }
 
         private void Start()
@@ -35,13 +38,14 @@ namespace LittleLooters.Gameplay.UI
         {
             LevelEnemies.OnStartDetection -= HandleStartEnemiesDetection;
             //LevelEnemies.OnStopDetection -= HandleStopEnemiesDetection;
+            UI_GameplayEvents.OnAutofireChangedByCheat -= HandleAutofireChangedByCheats;
         }
 
-        #endregion
+		#endregion
 
-        #region Private methods
+		#region Private methods
 
-        private void HideButtons()
+		private void HideButtons()
         {
             _fireButton.SetActive(false);
             _rollingButton.SetActive(false);
@@ -62,7 +66,22 @@ namespace LittleLooters.Gameplay.UI
         {
             if (!_firstTime) return;
 
+            if (_autofire) return;
+
             _firstTime = false;
+
+            ShowButtons();
+        }
+
+        private void HandleAutofireChangedByCheats(UI_GameplayEvents.AutofireByCheatArgs args)
+        {
+            _autofire = args.enabled;
+
+            if (args.enabled)
+			{
+                HideButtons();
+                return;
+			}
 
             ShowButtons();
         }

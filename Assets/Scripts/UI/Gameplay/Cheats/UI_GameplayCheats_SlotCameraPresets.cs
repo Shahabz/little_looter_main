@@ -17,6 +17,7 @@ namespace LittleLooters.Gameplay.UI
         [SerializeField] private UI_GameplayCheats_SlotAutoaiming _slotAutoaiming = default;
         [SerializeField] private UI_GameplayCheats_SlotCameraSize _slotCameraSize = default;
         [SerializeField] private UI_CameraRotatorPanel _rotatorPanel = default;
+        [SerializeField] private UI_GameplayCheats_SlotAutofire _slotAutofire = default;
 
         #endregion
 
@@ -42,6 +43,7 @@ namespace LittleLooters.Gameplay.UI
             _slotAutoaiming.ApplyPreset();
             _slotCameraSize.ApplyPreset();
             _rotatorPanel.ApplyPreset();
+            _slotAutofire.ApplyPreset();
         }
 
 		#endregion

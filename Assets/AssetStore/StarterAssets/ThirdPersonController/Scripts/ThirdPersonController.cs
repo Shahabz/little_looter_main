@@ -148,7 +148,10 @@ namespace StarterAssets
             }
         }
 
-		#endregion
+        private bool _autofireInitialized = false;
+        private PlayerAutofireAssistance _autofireAssistance = default;
+		
+        #endregion
 
 		#region Unity events
 
@@ -203,6 +206,8 @@ namespace StarterAssets
             _visualController.RefreshStateByInput(_input);
 
             ProcessAimingRotation();
+
+            ProcessAutofire();
         }
 
 		private void OnDestroy()
@@ -217,7 +222,7 @@ namespace StarterAssets
 
 		#region Public methods
 
-        public void TakeDamage(float damage)
+		public void TakeDamage(float damage)
 		{
             //Debug.LogError($"Player Take damage <color=yellow>{damage}</color>");
 		}
@@ -245,6 +250,12 @@ namespace StarterAssets
         public void SetAutoaiming(bool status)
 		{
             _autoaiming = status;
+		}
+
+        public void SetupAutofireAssistance(PlayerAutofireAssistance assistance)
+		{
+            _autofireAssistance = assistance;
+            _autofireInitialized = true;
 		}
 
         public void StartMeleeDestructionInteraction()
@@ -614,6 +625,13 @@ namespace StarterAssets
             // rotate to face input direction relative to camera position
             transform.rotation = Quaternion.Euler(0.0f, targetRotation, 0.0f); ; // transform.rotation = Quaternion.Euler(0.0f, rotation, 0.0f);
         }
+
+        private void ProcessAutofire()
+		{
+            if (!_autofireInitialized) return;
+
+            _autofireAssistance.Tick();
+		}
 
         #endregion
 

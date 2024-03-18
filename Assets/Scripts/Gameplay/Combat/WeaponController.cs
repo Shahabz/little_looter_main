@@ -153,6 +153,44 @@ namespace LittleLooters.Gameplay.Combat
 			return magazine;
 		}
 
+		public void ApplyAutofire()
+		{
+			var isClipEmpty = _currentWeapon.ammo == 0;
+
+			var nonFiring = _currentWeapon.isReloading || isClipEmpty;
+
+			if (nonFiring)
+			{
+				// Check if it was previously firing
+				if (_isFiring)
+				{
+					_isFiring = false;
+
+					OnStopFiring?.Invoke();
+				}
+
+				return;
+			}
+
+			// Check waiting fire rate
+			if (_weapon.WaitingFireRate) return;
+
+			// Check if it is trying to fire more than once with pressing button when weapon is not autofire
+			if (_isFiring && !_weapon.IsAutoFire) return;
+
+			ProcessFiring(true);
+		}
+
+		public void StopAutofire()
+		{
+			// Check if it was previously firing
+			if (!_isFiring) return;
+
+			_isFiring = false;
+
+			OnStopFiring?.Invoke();
+		}
+
 		#endregion
 
 		#region Private methods

@@ -3,6 +3,7 @@
  * Author: Peche
  */
 
+using System.Collections;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -20,6 +21,7 @@ namespace LittleLooters.Gameplay.UI
 		[SerializeField] private UI_GameplayCheats_SlotAutoaiming _slotAutoaiming = default;
 		[SerializeField] private UI_GameplayCheats_SlotCameraSize _slotCameraSize = default;
 		[SerializeField] private UI_CameraRotatorPanel _rotatorPanel = default;
+		[SerializeField] private UI_GameplayCheats_SlotAutofire _slotAutofire = default;
 
 		#endregion
 
@@ -44,7 +46,7 @@ namespace LittleLooters.Gameplay.UI
 			_btnAccess.onClick.AddListener(OpenPanel);
 			_btnClosePanel.onClick.AddListener(ClosePanel);
 
-			ApplyPresets();
+			StartCoroutine(ApplyPresets());
 		}
 
 		private void Teardown()
@@ -63,14 +65,19 @@ namespace LittleLooters.Gameplay.UI
 			_panel.SetActive(false);
 		}
 
-		private void ApplyPresets()
+		private IEnumerator ApplyPresets()
 		{
+			yield return new WaitForEndOfFrame();
+
+			yield return new WaitForSeconds(1);
+
 			OpenPanel();
 
 			_slotCameraAngle.ApplyPreset();
 			_slotAutoaiming.ApplyPreset();
 			_slotCameraSize.ApplyPreset();
 			_rotatorPanel.ApplyPreset();
+			_slotAutofire.ApplyPreset();
 
 			Invoke(nameof(ClosePanel), 0.25f);
 		}

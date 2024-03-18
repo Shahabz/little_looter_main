@@ -165,8 +165,15 @@ namespace LittleLooters.Gameplay
 			public int amount;
 		}
 
+		public struct AutofireByCheatArgs
+		{
+			public bool enabled;
+			public bool movementFree;
+		}
+
 		public static Action<UpdateResourceByCheatArgs> OnGrantResourceByCheat;
 		public static Action<UpdateResourceByCheatArgs> OnConsumeResourceByCheat;
+		public static Action<AutofireByCheatArgs> OnAutofireChangedByCheat;
 
 		#endregion
 	}

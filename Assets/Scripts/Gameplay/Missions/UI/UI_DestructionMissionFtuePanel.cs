@@ -43,6 +43,7 @@ namespace LittleLooters.Gameplay.UI
 
 		private void HandleEnterExplorableObject(ExplorableObjectType type, int id)
 		{
+			/*
 			if (!_firstTime) return;
 
 			if (type != ExplorableObjectType.RESOURCE) return;
@@ -62,6 +63,7 @@ namespace LittleLooters.Gameplay.UI
 			_joystick.gameObject.SetActive(false);
 
 			Invoke(nameof(ShowCloseButton), _delayShowButton);
+			*/
 		}
 
 		private void ShowCloseButton()

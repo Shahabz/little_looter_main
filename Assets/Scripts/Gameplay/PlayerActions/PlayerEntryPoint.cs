@@ -40,6 +40,7 @@ namespace LittleLooters.Gameplay
 		private ThirdPersonController _controller = default;
 		private PlayerMissionsService _missionsService = default;
 		private PlayerAimingAssistance _aimingAssistance = default;
+		private PlayerAutofireAssistance _autofireAssistance = default;
 
 		#endregion
 
@@ -78,6 +79,12 @@ namespace LittleLooters.Gameplay
 			_controller.SetAimingAssistance(_aimingAssistance);
 			_controller.SetupRepairingService(repairingService);
 
+			// Autofire assistance
+			_autofireAssistance = new PlayerAutofireAssistance();
+			_autofireAssistance.Init(_controller, _weaponController, _aimingAssistance);
+			
+			_controller.SetupAutofireAssistance(_autofireAssistance);
+
 			// Missions service
 			_missionsService = GetComponent<PlayerMissionsService>();
 		}
@@ -101,6 +108,7 @@ namespace LittleLooters.Gameplay
 		private void OnDestroy()
 		{
 			_aimingAssistance.Teardown();
+			_autofireAssistance.Teardown();
 		}
 
 		#endregion

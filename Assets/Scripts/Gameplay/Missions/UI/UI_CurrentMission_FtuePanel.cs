@@ -57,9 +57,12 @@ namespace LittleLooters.Gameplay.UI
 
 		private void HandleJoystickMovement(Vector2 obj)
 		{
+			// NOTE: this is not used anymore if we want a smoother FTUE
+			/*
 			_joystick.OnChange -= HandleJoystickMovement;
 
 			Invoke(nameof(ShowPanelWithDelay), 1);
+			*/
 		}
 
 		private void ShowPanelWithDelay()
@@ -72,7 +75,8 @@ namespace LittleLooters.Gameplay.UI
 
 		private void HandleTriggerMissionAssistance()
 		{
-
+			// NOTE: this is not used anymore if we want a smoother FTUE
+			/*
 			if (_showJoystick)
 			{
 				_joystick.gameObject.SetActive(true);
@@ -80,13 +84,17 @@ namespace LittleLooters.Gameplay.UI
 			}
 
 			Hide();
+			*/
 		}
 
 		private void HandleMoveToNextMission()
 		{
+			// NOTE: this is not used anymore if we want a smoother FTUE
+			/*
 			_remainingTimes--;
 
 			Invoke(nameof(ShowFtueIndicator), 2f);
+			*/
 		}
 
 		private void ShowFtueIndicator()
