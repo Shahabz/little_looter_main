@@ -20,6 +20,9 @@ namespace LittleLooters.Gameplay
 	/// </summary>
 	public class EnemyController : MonoBehaviour, ITakeDamage
 	{
+		public Action OnWasDetected;
+		public Action OnDetectionFinished;
+
 		#region Inspector
 
 		[SerializeField] private EnemyConfiguration _config = default;
@@ -163,11 +166,15 @@ namespace LittleLooters.Gameplay
 		public void MarkAsDetected()
 		{
 			_detection.SetActive(true);
+
+			OnWasDetected?.Invoke();
 		}
 
 		public void MarkAsNonDetected()
 		{
 			_detection.SetActive(false);
+
+			OnDetectionFinished?.Invoke();
 		}
 
 		#endregion
@@ -426,6 +433,8 @@ namespace LittleLooters.Gameplay
 			RefreshDeathState();
 
 			RefreshHudByDeath();
+
+			OnDead?.Invoke();
 		}
 
 		#endregion

@@ -29,6 +29,18 @@ namespace LittleLooters.Ftue
 		[SerializeField] private UI_Ftue_BaseTrigger _triggerDestructionDoor = default;
 		[SerializeField] private UI_Ftue_BaseTrigger _triggerDestructionDoorCompleted = default;
 		[SerializeField] private UI_Ftue_messages _floatingMessagesPanel = default;
+		[SerializeField] private EnemyController[] _enemies = default;
+		[SerializeField] private DestructibleResourceObject[] _firstBushes = default;
+		[SerializeField] private DestructibleResourceObject[] _secondBushes = default;
+
+		#endregion
+
+		#region Private properties
+
+		private int _firstRemainingBushes = 0;
+		private int _secondRemainingBushes = 0;
+		private int _remainingEnemies = 0;
+		private int _detectedEnemies = 0;
 
 		#endregion
 
@@ -44,10 +56,37 @@ namespace LittleLooters.Ftue
 			_triggerDestructionSecondTime.OnChanged += HandleTriggerDestructionSecondTimeChanged;
 			_triggerDestructionSecondTimeCompleted.OnChanged += HandleTriggerDestructionSecondTimeCompletedChanged;
 			_triggerUpgradeTool.OnChanged += HandleTriggerUpgradeToolChanged;
-			_triggerKillEnemy.OnChanged += HandleTriggerKillEnemyChanged;
-			_triggerKillEnemyCompleted.OnChanged += HandleTriggerKillEnemyCompletedChanged;
 			_triggerDestructionDoor.OnChanged += HandleTriggerDestructionDoorChanged;
 			_triggerDestructionDoorCompleted.OnChanged += HandleTriggerDestructionDoorCompletedChanged;
+
+			// First bushes
+			_firstRemainingBushes = _firstBushes.Length;
+
+			for (int i = 0; i < _firstRemainingBushes; i++)
+			{
+				var bush = _firstBushes[i];
+				bush.OnDead += HandleFirstBushesDestruction;
+			}
+
+			// Second bushes
+			_secondRemainingBushes = _secondBushes.Length;
+
+			for (int i = 0; i < _secondRemainingBushes; i++)
+			{
+				var bush = _secondBushes[i];
+				bush.OnDead += HandleSecondBushesDestruction;
+			}
+
+			// Enemies
+			_remainingEnemies = _enemies.Length;
+
+			for (int i = 0; i < _remainingEnemies; i++)
+			{
+				var enemy = _enemies[i];
+				enemy.OnDead += HandleEnemyDeath;
+				enemy.OnWasDetected += HandleEnemyStartDetection;
+				enemy.OnDetectionFinished += HandleEnemyStopDetection;
+			}
 		}
 
 		private void OnDestroy()
@@ -60,10 +99,31 @@ namespace LittleLooters.Ftue
 			_triggerDestructionSecondTime.OnChanged -= HandleTriggerDestructionSecondTimeChanged;
 			_triggerDestructionSecondTimeCompleted.OnChanged -= HandleTriggerDestructionSecondTimeCompletedChanged;
 			_triggerUpgradeTool.OnChanged -= HandleTriggerUpgradeToolChanged;
-			_triggerKillEnemy.OnChanged -= HandleTriggerKillEnemyChanged;
-			_triggerKillEnemyCompleted.OnChanged -= HandleTriggerKillEnemyCompletedChanged;
 			_triggerDestructionDoor.OnChanged -= HandleTriggerDestructionDoorChanged;
 			_triggerDestructionDoorCompleted.OnChanged -= HandleTriggerDestructionDoorCompletedChanged;
+
+			// First bushes
+			for (int i = 0; i < _firstBushes.Length; i++)
+			{
+				var bush = _firstBushes[i];
+				bush.OnDead += HandleFirstBushesDestruction;
+			}
+
+			// Second bushes
+			for (int i = 0; i < _secondBushes.Length; i++)
+			{
+				var bush = _secondBushes[i];
+				bush.OnDead += HandleSecondBushesDestruction;
+			}
+
+			// Enemies
+			for (int i = 0; i < _enemies.Length; i++)
+			{
+				var enemy = _enemies[i];
+				enemy.OnDead -= HandleEnemyDeath;
+				enemy.OnWasDetected -= HandleEnemyStartDetection;
+				enemy.OnDetectionFinished -= HandleEnemyStopDetection;
+			}
 		}
 
 		#endregion
@@ -78,6 +138,8 @@ namespace LittleLooters.Ftue
 			_movementPanel.Show();
 			_resourcesPanel.Hide();
 			_toolInfoPanel.Hide();
+
+			_floatingMessagesPanel.ShowMovementMessage();
 
 			DebugStepChanged();
 		}
@@ -156,32 +218,6 @@ namespace LittleLooters.Ftue
 			DebugStepChanged();
 		}
 
-		private void HandleTriggerKillEnemyChanged(bool status)
-		{
-			if (!status) return;
-
-			if (_step != FtueSteps.SECOND_DESTRUCTIBLE) return;
-
-			_step = FtueSteps.FIRST_ENEMY;
-
-			_floatingMessagesPanel.ShowKillEnemyMessage();
-
-			DebugStepChanged();
-		}
-
-		private void HandleTriggerKillEnemyCompletedChanged(bool status)
-		{
-			if (!status) return;
-
-			if (_step != FtueSteps.FIRST_ENEMY) return;
-
-			_step = FtueSteps.DOOR_DESTRUCTIBLE;
-
-			_floatingMessagesPanel.HideAll();
-
-			DebugStepChanged();
-		}
-
 		private void HandleTriggerDestructionDoorChanged(bool status)
 		{
 			if (_step != FtueSteps.DOOR_DESTRUCTIBLE) return;
@@ -203,9 +239,88 @@ namespace LittleLooters.Ftue
 
 			_step = FtueSteps.FIRST_TOOL_UPGRADE;
 
+			_missionsPanel.Show();
+
+			_toolInfoPanel.Show();
+
 			_floatingMessagesPanel.HideAll();
 
 			DebugStepChanged();
+		}
+
+		private void HandleEnemyStartDetection()
+		{
+			if ((int)_step < (int)FtueSteps.SECOND_DESTRUCTIBLE) return;
+
+			if (_step == FtueSteps.SECOND_DESTRUCTIBLE)
+			{
+				_step = FtueSteps.FIRST_ENEMY;
+				DebugStepChanged();
+			}
+
+			_detectedEnemies++;
+
+			_floatingMessagesPanel.ShowKillEnemyMessage();
+		}
+
+		private void HandleEnemyStopDetection()
+		{
+			if (_remainingEnemies <= 0) return;
+
+			if ((int)_step <= (int)FtueSteps.SECOND_DESTRUCTIBLE) return;
+
+			_detectedEnemies--;
+
+			if (_detectedEnemies > 0) return;
+
+			_floatingMessagesPanel.HideAll();
+		}
+
+		private void HandleEnemyDeath()
+		{
+			_remainingEnemies--;
+
+			if (_remainingEnemies == 2)
+			{
+				_step = FtueSteps.SECOND_ENEMY;
+				DebugStepChanged();
+			}
+			else if (_remainingEnemies == 1)
+			{
+				_step = FtueSteps.THIRD_ENEMY;
+				DebugStepChanged();
+			}
+
+			if (_remainingEnemies > 0) return;
+
+			_step = FtueSteps.DOOR_DESTRUCTIBLE;
+
+			_floatingMessagesPanel.ShowDoorMessage();
+
+			DebugStepChanged();
+		}
+
+		private void HandleFirstBushesDestruction()
+		{
+			_firstRemainingBushes--;
+
+			if (_firstRemainingBushes == 1)
+			{
+				_resourcesPanel.Show();
+			}
+
+			if (_firstRemainingBushes > 0) return;
+
+			_floatingMessagesPanel.HideAll();
+		}
+
+		private void HandleSecondBushesDestruction()
+		{
+			_secondRemainingBushes--;
+
+			if (_secondRemainingBushes > 0) return;
+
+			_floatingMessagesPanel.HideAll();
 		}
 
 		#endregion
