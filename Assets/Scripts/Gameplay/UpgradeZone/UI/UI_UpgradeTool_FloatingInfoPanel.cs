@@ -1,35 +1,36 @@
 /*
- * Date: February 29th, 2024
+ * Date: March 23th, 2024
  * Author: Peche
  */
 
-using DG.Tweening;
 using LittleLooters.Global.ServiceLocator;
+using LittleLooters.Model;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
 namespace LittleLooters.Gameplay.UI
 {
-    public class UI_UpgradeTool_InfoPanel : MonoBehaviour
+    /// <summary>
+    /// Class in charge of floating panel that shows the current tool upgrade requirements
+    /// </summary>
+    public class UI_UpgradeTool_FloatingInfoPanel : MonoBehaviour
     {
 		#region Inspector
 
 		[SerializeField] private GameObject _content = default;
 		[SerializeField] private TextMeshProUGUI _txtTitle = default;
 		[SerializeField] private UI_UpgradeZone_Slot[] _slots = default;
-		[SerializeField] private TextMeshProUGUI _txtCurrentDamage = default;
-		[SerializeField] private TextMeshProUGUI _txtNextDamage = default;
 
 		[Header("Upgrade button")]
 		[SerializeField] private Button _btnUpgrade = default;
 		[SerializeField] private Image _btnUpgradeBackground = default;
-		[SerializeField] private TextMeshProUGUI _txtUpgradeButton = default;
-		[SerializeField] private Color _colorTextUpgradeEnable = default;
-		[SerializeField] private Color _colorTextUpgradeDisable = default;
-		[SerializeField] private Color _colorBackgroundUpgradeEnable = default;
-		[SerializeField] private Color _colorBackgroundUpgradeDisable = default;
-		[SerializeField] private GameObject _btnUpgradeAlert = default;
+
+		#endregion
+
+		#region Private properties
+
+		private bool _isVisible = true;
 
 		#endregion
 
@@ -37,39 +38,44 @@ namespace LittleLooters.Gameplay.UI
 
 		private void Awake()
 		{
-			Hide();
+			UI_GameplayEvents.OnStartGame += HandleGameStarted;
 
-			_btnUpgrade.onClick.AddListener(StartUpgrade);
+			PlayerProgressEvents.OnResourceHasChanged += HandlePlayerResourcesHasChanged;
+			PlayerProgressEvents.OnMeleeUpgradeClaimed += HandleToolLevelUpClaimed;
+
+			_btnUpgrade.onClick.AddListener(ButtonAction_StartUpgrade);
 		}
 
 		private void OnDestroy()
 		{
+			UI_GameplayEvents.OnStartGame -= HandleGameStarted;
+
+			PlayerProgressEvents.OnResourceHasChanged -= HandlePlayerResourcesHasChanged;
+			PlayerProgressEvents.OnMeleeUpgradeClaimed -= HandleToolLevelUpClaimed;
+
 			_btnUpgrade.onClick.RemoveAllListeners();
 		}
 
 		#endregion
 
-		#region Public methods
+		#region Private methods
 
-		public void Show()
+		private void HandleGameStarted()
 		{
-			/*
-			HideSlots();
-
-			LoadInformation();
-
-            _content.SetActive(true);
-			*/
+			Show();
 		}
 
-        public void Hide()
+		private void HandlePlayerResourcesHasChanged(int resourceId, int amount)
 		{
-            _content.SetActive(false);
-        }
+			if (!_isVisible) return;
 
-		#endregion
+			Show();
+		}
 
-		#region Private methods
+		private void HandleToolLevelUpClaimed(PlayerProgressEvents.MeleeUpgradeClaimedArgs args)
+		{
+			Show();
+		}
 
 		private void HideSlots()
 		{
@@ -81,10 +87,9 @@ namespace LittleLooters.Gameplay.UI
 
 		private void LoadInformation()
 		{
-            var progressDataService = ServiceLocator.Current.Get<PlayerProgressDataService>();
-            var playerResourcesData = progressDataService.ProgressData.resourcesData;
-            var toolCurrentLevelData = progressDataService.Tool_GetCurrentLevelData();
-            var toolNextLevelData = progressDataService.Tool_GetNextLevelData();
+			var progressDataService = ServiceLocator.Current.Get<PlayerProgressDataService>();
+			var playerResourcesData = progressDataService.ProgressData.resourcesData;
+			var toolNextLevelData = progressDataService.Tool_GetNextLevelData();
 
 			_txtTitle.text = $"UPGRADE TO <color=#50FC8A>LEVEL {toolNextLevelData.level}</color>";
 
@@ -110,31 +115,10 @@ namespace LittleLooters.Gameplay.UI
 				slot.gameObject.SetActive(true);
 			}
 
-			RefreshDamage(toolCurrentLevelData.damage, toolNextLevelData.damage);
-
-			RefreshButtonState(canUpgrade);
+			_btnUpgrade.gameObject.SetActive(canUpgrade);
 		}
 
-		private void RefreshDamage(int current, int next)
-		{
-			_txtCurrentDamage.text = $"{current}";
-			_txtNextDamage.text = $"{next}";
-		}
-
-		private void RefreshButtonState(bool canUpgrade)
-		{
-			_btnUpgrade.enabled = canUpgrade;
-
-			_btnUpgradeBackground.color = (canUpgrade) ? _colorBackgroundUpgradeEnable : _colorBackgroundUpgradeDisable;
-
-			_txtUpgradeButton.color = (canUpgrade) ? _colorTextUpgradeEnable : _colorTextUpgradeDisable;
-
-			_btnUpgradeAlert.SetActive(canUpgrade);
-
-			if (!canUpgrade) return;
-		}
-
-		private void StartUpgrade()
+		private void ButtonAction_StartUpgrade()
 		{
 			// TODO: play SFX
 
@@ -145,6 +129,24 @@ namespace LittleLooters.Gameplay.UI
 			UI_GameplayEvents.OnStartToolUpgrade?.Invoke();
 
 			AnimateConsumedResources();
+		}
+
+		private void Show()
+		{
+			_isVisible = true;
+
+			HideSlots();
+
+			LoadInformation();
+
+			_content.SetActive(true);
+		}
+
+		private void Hide()
+		{
+			_content.SetActive(false);
+
+			_isVisible = false;
 		}
 
 		private void AnimateConsumedResources()

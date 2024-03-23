@@ -35,7 +35,7 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: -50, y: -50}
+  m_SizeDelta: {x: -56, y: -56}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &4854294217766703452
 CanvasRenderer:
@@ -260,5 +260,5 @@ MonoBehaviour:
   _animDuration: 0.25
   _delay: 0.1
   _animationOffsetHorizontal: 0
-  _animationOffsetVertical: 1
+  _animationOffsetVertical: 2
   _autoInit: 1

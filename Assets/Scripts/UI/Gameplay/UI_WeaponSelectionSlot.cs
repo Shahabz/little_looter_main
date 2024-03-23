@@ -52,6 +52,16 @@ namespace LittleLooters.Gameplay.UI
 
 		#region Unity events
 
+		private void OnEnable()
+		{
+			SubscribeEvents();
+		}
+
+		private void OnDisable()
+		{
+			UnsubscribeEvents();
+		}
+
 		private void Update()
 		{
 			if (!_isRefreshingInteractionProgress && !_isRefreshingInteractionDelay) return;
@@ -73,7 +83,7 @@ namespace LittleLooters.Gameplay.UI
 
 			_btn.onClick.AddListener(Select);
 
-			SubscribeEvents();
+			//SubscribeEvents();
 
 			_txtAmmo.text = $"{weaponInfo.ammo}";
 
@@ -94,7 +104,7 @@ namespace LittleLooters.Gameplay.UI
 		{
 			_callback = null;
 
-			UnsubscribeEvents();
+			//UnsubscribeEvents();
 
 			_btn.onClick.RemoveAllListeners();
 		}

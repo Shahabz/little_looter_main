@@ -43,6 +43,7 @@ namespace StarterAssets
         [Space(10)]
         [Tooltip("The height the player can jump")]
         public float JumpHeight = 1.2f;
+        [SerializeField] private bool _canJump = false;
 
         [Tooltip("The character uses its own gravity value. The engine default is -9.81f")]
         public float Gravity = -15.0f;
@@ -194,7 +195,8 @@ namespace StarterAssets
 
             _hasAnimator = TryGetComponent(out _animator);
 
-            JumpAndGravity();
+            if (_canJump) JumpAndGravity();
+
             GroundedCheck();
             RollingCheck();
             Move();

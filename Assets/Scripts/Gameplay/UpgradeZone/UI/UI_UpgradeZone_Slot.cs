@@ -18,22 +18,54 @@ namespace LittleLooters.Gameplay.UI
 		[SerializeField] private Color _colorCompleted = default;
 		[SerializeField] private Color _colorNotCompleted = default;
 		[SerializeField] private Image _toggleCompleted = default;
+		[SerializeField] private Button _btnInfo = default;
+
+		#endregion
+
+		#region Private properties
+
+		private int _resourceId = -1;
+
+		#endregion
+
+		#region Unity events
+
+		private void OnEnable()
+		{
+			_btnInfo.onClick.AddListener(ShowInfo);
+		}
+
+		private void OnDisable()
+		{
+			_btnInfo.onClick.RemoveAllListeners();
+		}
 
 		#endregion
 
 		#region Public methods
 
-		public void Setup(int currentAmount, int requiredAmount, Sprite icon)
+		public void Setup(int resourceId, int currentAmount, int requiredAmount, Sprite icon)
 		{
+			_resourceId = resourceId;
+
 			var completed = currentAmount >= requiredAmount;
 
-			_txtRequired.text = $"{requiredAmount}";//$"{currentAmount}/{requiredAmount}";
+			_txtRequired.text = $"x{requiredAmount}";
 
 			_txtRequired.color = (completed) ? _colorCompleted : _colorNotCompleted;
 
 			_toggleCompleted.enabled = completed;
 
 			_icon.sprite = icon;
+		}
+
+		#endregion
+
+		#region Private methods
+
+		private void ShowInfo()
+		{
+			Debug.LogError($"Show info about where to find resource '<color=yellow>{_resourceId}</color>'");
 		}
 
 		#endregion

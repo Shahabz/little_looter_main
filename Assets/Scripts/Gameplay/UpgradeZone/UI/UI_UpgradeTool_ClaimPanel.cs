@@ -16,16 +16,18 @@ namespace LittleLooters.Gameplay.UI
         private void Awake()
 		{
             _btnClaim.onClick.AddListener(Claim);
+
+            _content.SetActive(false);
         }
 
 		public void Show()
         {
-            _content.SetActive(true);
+            //_content.SetActive(true);
         }
 
         public void Hide()
         {
-            _content.SetActive(false);
+            //_content.SetActive(false);
         }
 
         private void Claim()

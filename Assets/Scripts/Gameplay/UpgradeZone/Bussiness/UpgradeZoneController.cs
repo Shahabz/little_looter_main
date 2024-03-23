@@ -226,21 +226,22 @@ namespace LittleLooters.Gameplay
 
 		private void HideAllPanels()
 		{
-			_uiCompleted.SetActive(false);
-			_uiInProgress.SetActive(false);
+			//_uiCompleted.SetActive(false);
+			
+			//_uiInProgress.SetActive(false);
 		}
 
 		private void RefreshUIPanels()
 		{
 			if (_isUpgrading)
 			{
-				_uiInProgress.SetActive(true);
+				//_uiInProgress.SetActive(true);
 				return;
 			}
 
 			if (_shouldBeClaimed)
 			{
-				_uiCompleted.SetActive(true);
+				//_uiCompleted.SetActive(true);
 				return;
 			}
 		}

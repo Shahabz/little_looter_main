@@ -35,6 +35,7 @@ namespace LittleLooters.Gameplay
 
 		#region Private properties
 
+		private bool _isEnabled = true;
 		private bool _isPlayerAiming = false;
 		private bool _isPlayerRolling = false;
 		private int _damage = -1;   // This value comes from player's melee weapon data
@@ -53,6 +54,12 @@ namespace LittleLooters.Gameplay
 		private int _lastNotEnabledObject = -1;
 		private float _lastNotEnabledDelay = 10;
 		private float _remainingLastNotEnabledDelay = 0;
+		private Transform _transform = default;
+		private float _timeSinceLastDetection = 0;
+		private float _timeBetweenDetections = 0.5f;
+		private List<DestructibleResourceObject> _targetsInsideFoV = default;
+		private List<DestructibleResourceObject> _targetsAround = default;
+		private List<DestructibleResourceObject> _targetsOut = default;
 
 		#endregion
 
@@ -66,9 +73,19 @@ namespace LittleLooters.Gameplay
 			PlayerProgressEvents.OnToolDamageIncreaseStarted += HandleStartToolDamageIncrease;
 			PlayerProgressEvents.OnToolDamageIncreaseCompleted += HandleStopToolDamageIncrease;
 
+			UI_GameplayEvents.OnDestructionDetectionChangedByCheat += HandleDestructionStatusChangedByCheat;
+
+			_transform = transform;
+
 			_hits = new Collider[100];
 
 			_targets = new List<DestructibleResourceObject>();
+
+			_targetsInsideFoV = new List<DestructibleResourceObject>();
+
+			_targetsAround = new List<DestructibleResourceObject>();
+
+			_targetsOut = new List<DestructibleResourceObject>();
 
 			_controller = GetComponent<ThirdPersonController>();
 
@@ -96,6 +113,8 @@ namespace LittleLooters.Gameplay
 
 			DestructibleResourceEvents.OnGrantRewardsByDamage -= GrantRewardsByDamage;
 
+			UI_GameplayEvents.OnDestructionDetectionChangedByCheat -= HandleDestructionStatusChangedByCheat;
+
 			if (_controller != null)
 			{
 				_controller.OnStartRolling -= HandleOnStartRolling;
@@ -109,6 +128,10 @@ namespace LittleLooters.Gameplay
 
 		private void Update()
 		{
+			// TODO: add delay between executions
+
+			if (!_isEnabled) return;
+
 			if (_playerIsDead) return;
 
 			CheckToolExtraDamageProgress();
@@ -310,6 +333,15 @@ namespace LittleLooters.Gameplay
 			_isPlayerRolling = false;
 		}
 
+		private void HandleDestructionStatusChangedByCheat(bool status)
+		{
+			_isEnabled = status;
+
+			if (_isEnabled) return;
+
+			StopProcessing();
+		}
+
 		#endregion
 
 		#region Tool extra damage
@@ -371,18 +403,19 @@ namespace LittleLooters.Gameplay
 			_targets.Clear();
 
 			// Calculate possible targets inside a circle
-			var targetsAround = GetTargetsAround();
+			GetTargetsAround();
 
-			if (targetsAround.Count == 0) return;
+			if (_targetsAround.Count == 0) return;
 
-			var playerPosition = transform.position;
-			var playerForward = transform.forward;
-			var targetsInsideFoV = new List<DestructibleResourceObject>();
+			var playerPosition = _transform.position;
+			var playerForward = _transform.forward;
+
+			_targetsInsideFoV.Clear();
 
 			// For each possible target check if there is at least one in the cone vision
-			for (int i = 0; i < targetsAround.Count; i++)
+			for (int i = 0; i < _targetsAround.Count; i++)
 			{
-				var possibleTarget = targetsAround[i];
+				var possibleTarget = _targetsAround[i];
 
 				var directionToTarget = possibleTarget.transform.position - playerPosition;
 
@@ -390,18 +423,18 @@ namespace LittleLooters.Gameplay
 
 				if (angle > _angleFieldOfView) continue;
 
-				if (targetsInsideFoV.Contains(possibleTarget)) continue;
+				if (_targetsInsideFoV.Contains(possibleTarget)) continue;
 
-				targetsInsideFoV.Add(possibleTarget);
+				_targetsInsideFoV.Add(possibleTarget);
 			}
 
-			if (targetsInsideFoV.Count > 0)
+			if (_targetsInsideFoV.Count > 0)
 			{
-				_targets = targetsInsideFoV;
+				_targets = _targetsInsideFoV;
 			}
-			else if (targetsAround.Count > 0)
+			else if (_targetsAround.Count > 0)
 			{
-				_targets = targetsAround;
+				_targets = _targetsAround;
 			}
 			else
 			{
@@ -451,13 +484,13 @@ namespace LittleLooters.Gameplay
 			}
 		}
 
-		private List<DestructibleResourceObject> GetTargetsAround()
+		private void GetTargetsAround()
 		{
-			var currentPosition = transform.position;
+			var currentPosition = _transform.position;
 
 			var amount = Physics.OverlapSphereNonAlloc(currentPosition, _radiusDetection, _hits, _layer);
 
-			var result = new List<DestructibleResourceObject>(amount);
+			_targetsAround.Clear();
 
 			for (int i = 0; i < amount; i++)
 			{
@@ -467,12 +500,10 @@ namespace LittleLooters.Gameplay
 
 				if (target.IsDead) continue;
 
-				if (result.Contains(target)) continue;
+				if (_targetsAround.Contains(target)) continue;
 
-				result.Add(target);
+				_targetsAround.Add(target);
 			}
-
-			return result;
 		}
 
 		private float GetAngle(Vector3 direction, Vector3 forward)
@@ -484,11 +515,11 @@ namespace LittleLooters.Gameplay
 
 		private void GetTargetsOut()
 		{
-			var currentPosition = transform.position;
+			var currentPosition = _transform.position;
 
 			var amount = Physics.OverlapSphereNonAlloc(currentPosition, _radiusDetection + _radiusDetectionOffset, _hits, _layer);
 
-			var result = new List<DestructibleResourceObject>(amount);
+			_targetsOut.Clear();
 
 			for (int i = 0; i < amount; i++)
 			{
@@ -496,10 +527,10 @@ namespace LittleLooters.Gameplay
 
 				var target = hit.gameObject.GetComponent<DestructibleResourceObject>();
 
-				result.Add(target);
+				_targetsOut.Add(target);
 			}
 
-			MarkAsNoDetected(result.ToArray());
+			MarkAsNoDetected(_targetsOut.ToArray());
 		}
 
 		#endregion

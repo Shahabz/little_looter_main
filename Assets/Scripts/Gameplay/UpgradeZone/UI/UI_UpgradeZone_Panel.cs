@@ -114,7 +114,7 @@ namespace LittleLooters.Gameplay.UI
 					canUpgrade = false;
 				}
 
-				slot.Setup(playerResource.amount, requirement.amount, requirement.resource.Icon);
+				slot.Setup(playerResource.info.Id, playerResource.amount, requirement.amount, requirement.resource.Icon);
 
 				slot.gameObject.SetActive(true);
 			}

@@ -86,7 +86,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _id: 0
-  _data: {fileID: 0}
+  _data: {fileID: 11400000, guid: 36aa1a99a3c476d45b898a9b4b182d71, type: 2}
   _art: {fileID: 2944100026483685079}
   _hp: 20
   _maxHp: 20

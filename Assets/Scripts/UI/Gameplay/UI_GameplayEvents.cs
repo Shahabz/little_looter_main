@@ -174,6 +174,7 @@ namespace LittleLooters.Gameplay
 		public static Action<UpdateResourceByCheatArgs> OnGrantResourceByCheat;
 		public static Action<UpdateResourceByCheatArgs> OnConsumeResourceByCheat;
 		public static Action<AutofireByCheatArgs> OnAutofireChangedByCheat;
+		public static Action<bool> OnDestructionDetectionChangedByCheat;
 
 		#endregion
 	}

@@ -160,7 +160,7 @@ namespace LittleLooters.Gameplay
 
 		public void Undetected()
 		{
-			HideIndicator();
+			//HideIndicator();
 
 			HideProgressBar();
 		}
