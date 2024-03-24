@@ -19,6 +19,8 @@ namespace LittleLooters.Gameplay.UI
 		[SerializeField] private Color _colorNotCompleted = default;
 		[SerializeField] private Image _toggleCompleted = default;
 		[SerializeField] private Button _btnInfo = default;
+		[SerializeField] private GameObject _progressBar = default;
+		[SerializeField] private Image _progressBarFill = default;
 
 		#endregion
 
@@ -51,8 +53,10 @@ namespace LittleLooters.Gameplay.UI
 			var completed = currentAmount >= requiredAmount;
 
 			_txtRequired.text = $"x{requiredAmount}";
-
 			_txtRequired.color = (completed) ? _colorCompleted : _colorNotCompleted;
+
+			_progressBar.SetActive(!completed);
+			_progressBarFill.fillAmount = (float)currentAmount / (float)requiredAmount;
 
 			_toggleCompleted.enabled = completed;
 

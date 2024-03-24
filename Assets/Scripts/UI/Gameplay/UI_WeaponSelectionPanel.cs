@@ -64,13 +64,11 @@ namespace LittleLooters.Gameplay.UI
 
 		private void HandleStartEnemiesDetection()
 		{
-			/*
 			if (!_firstTime) return;
 
 			_firstTime = false;
 
 			ShowPanel();
-			*/
 		}
 
 		private void InitSlots()

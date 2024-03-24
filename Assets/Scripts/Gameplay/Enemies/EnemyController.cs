@@ -300,6 +300,8 @@ namespace LittleLooters.Gameplay
 
 		private void StopMovement()
 		{
+			if (!_agent.enabled) return;
+
 			_agent.isStopped = true;
 			_agent.velocity = Vector3.zero;
 		}
@@ -429,6 +431,8 @@ namespace LittleLooters.Gameplay
 			_enabled = false;
 
 			StopMovement();
+
+			_agent.enabled = false;
 
 			RefreshDeathState();
 

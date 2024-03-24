@@ -47,7 +47,7 @@ namespace LittleLooters.Gameplay.UI
 
         public void ApplyPreset()
 		{
-            _currentOption = 6;
+            _currentOption = 5;
 
             Apply();
 		}
