@@ -16,11 +16,13 @@ namespace LittleLooters.Gameplay.Combat
 		public static System.Action OnStartAiming;
         public static System.Action OnStopAiming;
 
-		#endregion
+        #endregion
 
-		#region Private properties
+        #region Private properties
 
-		private Transform localTransform = default;
+        private LayerMask obstaclesLayerMask = default;
+        private RaycastHit[] obstacleHits = default;
+        private Transform localTransform = default;
         private float angleThreshold = default;
         private const float radiusDetection = 15f;
         private float weaponRadiusDetection = default;
@@ -45,14 +47,17 @@ namespace LittleLooters.Gameplay.Combat
 
 		#region Public methods
 
-		public void Init(Transform transform, float angle, float radius, LevelEnemies levelEnemies)
+		public void Init(Transform transform, float angle, float radius, LevelEnemies levelEnemies, LayerMask obstaclesMask)
 		{
             this.localTransform = transform;
             this.angleThreshold = angle;
             this.weaponRadiusDetection = radius;
             this.levelEnemies = levelEnemies;
+            this.obstaclesLayerMask = obstaclesMask;
 
             this.results = new EnemyController[0];
+
+            this.obstacleHits = new RaycastHit[4];
 
             PlayerProgressEvents.OnWeaponChanged += HandlePlayerWeaponChanged;
 
@@ -227,6 +232,7 @@ namespace LittleLooters.Gameplay.Combat
 
                 if (enemy.IsDead) continue;
 
+                // Check if target is inside the detection area
                 var directionToTarget = enemy.transform.position - currentPosition;
 
                 float dSqrToTarget = directionToTarget.magnitude;
@@ -235,6 +241,11 @@ namespace LittleLooters.Gameplay.Combat
 
                 if (!insideRange) continue;
 
+                // Check if there is an obstacle between player and target
+                var obstacleExist = CheckObstacleInBetween(currentPosition, directionToTarget);
+
+                if (obstacleExist) continue;
+
                 entities.Add(enemy);
                 found = true;
             }
@@ -242,6 +253,18 @@ namespace LittleLooters.Gameplay.Combat
             results = entities.ToArray();
 
             return found;
+		}
+
+        /// <summary>
+        /// Checks if there is an obstacle between target and player
+        /// </summary>
+        private bool CheckObstacleInBetween(Vector3 playerPosition, Vector3 targetDirection)
+		{
+            var result = Physics.RaycastNonAlloc(playerPosition, targetDirection, obstacleHits, targetDirection.magnitude, obstaclesLayerMask);
+
+            //Debug.DrawRay(playerPosition, targetDirection, (result > 0) ? Color.red : Color.green);
+
+            return result > 0;
 		}
 
         #endregion

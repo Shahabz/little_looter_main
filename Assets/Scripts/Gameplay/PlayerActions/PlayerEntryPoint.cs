@@ -17,6 +17,7 @@ namespace LittleLooters.Gameplay
 
 		[Header("Level")]
 		[SerializeField] private LevelEnemies _levelEnemies = default;
+		[SerializeField] private LayerMask _obstaclesLayer = default;
 
 		[Header("Config")]
 		[SerializeField] private int _initialHp = default;
@@ -62,7 +63,7 @@ namespace LittleLooters.Gameplay
 
 			// Aiming assistance
 			_aimingAssistance = new PlayerAimingAssistance();
-			_aimingAssistance.Init(transform, _aimingAssistanceAngle, _weaponController.WeaponRadiusDetection, _levelEnemies);
+			_aimingAssistance.Init(transform, _aimingAssistanceAngle, _weaponController.WeaponRadiusDetection, _levelEnemies, _obstaclesLayer);
 
 			_weaponController.Init(_aimingAssistance);
 

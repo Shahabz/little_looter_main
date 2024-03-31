@@ -248,13 +248,15 @@ namespace LittleLooters.Gameplay.UI
 
 		private float _interactionProgressTime = 0;
 		private float _interactionProgressRemainingTime = 0;
-		private float _interactionProgressTotalTime = 1.5f;	// Interaction progress bar time duration
+		private float _interactionProgressTotalTime = 0.75f;	// Interaction progress bar time duration
 		private float _interactionProgressDelay = 0.5f;		// Time before showing interaction progress bar
 		private bool _isRefreshingInteractionProgress = false;
 		private bool _isRefreshingInteractionDelay = false;
 
 		public void OnPointerDown(PointerEventData eventData)
 		{
+			if (string.IsNullOrEmpty(_id)) return;
+
 			if (_isReloading) return;
 
 			_isRefreshingInteractionDelay = true;
@@ -269,6 +271,8 @@ namespace LittleLooters.Gameplay.UI
 			_interactionProgressRemainingTime = 0;
 			_isRefreshingInteractionProgress = false;
 			_interactionProgressTime = 0;
+
+			if (string.IsNullOrEmpty(_id)) return;
 
 			if (_isReloading) return;
 

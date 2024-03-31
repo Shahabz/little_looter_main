@@ -66,6 +66,8 @@ namespace LittleLooters.Gameplay.Combat
 			if (!_gameHasStarted) return;
 
 			ProcessWeaponsReloading(Time.time);
+
+			ProcessSwapWeaponProgress(Time.deltaTime);
 		}
 
 		#endregion
@@ -155,6 +157,8 @@ namespace LittleLooters.Gameplay.Combat
 
 		public void ApplyAutofire()
 		{
+			if (_waitingSwapWeapon) return;
+
 			var isClipEmpty = _currentWeapon.ammo == 0;
 
 			var nonFiring = _currentWeapon.isReloading || isClipEmpty;
@@ -303,6 +307,8 @@ namespace LittleLooters.Gameplay.Combat
 
 			_weapon.RefreshData(weaponData);
 
+			StartSwapWeaponDelay();
+
 			PlayerProgressEvents.OnWeaponChanged?.Invoke(weaponData);
 		}
 
@@ -449,6 +455,37 @@ namespace LittleLooters.Gameplay.Combat
 
 				break;
 			}
+		}
+
+		#endregion
+
+		#region Swap weapon delay
+
+		private float _swapWeaponDelay = 0.5f;
+		private float _swapWeaponDelayTime = 0;
+		private bool _waitingSwapWeapon = false;
+
+		private void StartSwapWeaponDelay()
+		{
+			_swapWeaponDelayTime = _swapWeaponDelay;
+			_waitingSwapWeapon = true;
+		}
+
+		private void StopSwapWeaponDelay()
+		{
+			_waitingSwapWeapon = false;
+			_swapWeaponDelayTime = 0;
+		}
+
+		private void ProcessSwapWeaponProgress(float deltaTime)
+		{
+			if (!_waitingSwapWeapon) return;
+
+			_swapWeaponDelayTime -= deltaTime;
+
+			if (_swapWeaponDelayTime > 0) return;
+
+			StopSwapWeaponDelay();
 		}
 
 		#endregion

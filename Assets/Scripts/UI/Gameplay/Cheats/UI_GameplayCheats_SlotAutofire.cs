@@ -34,7 +34,7 @@ namespace LittleLooters.Gameplay.UI
 
         public void ApplyPreset()
         {
-            _status = 1;
+            _status = 0;
 
             Apply();
         }
@@ -75,7 +75,7 @@ namespace LittleLooters.Gameplay.UI
 
         private void RefreshStatus()
         {
-            _txtStatus.text = (_status == 0) ? "[OFF]" :  (_status == 1) ? "[FREE MOVEMENT]" : "[NO MOVEMENT]";
+            _txtStatus.text = (_status == 0) ? "[OFF]" :  (_status == 1) ? "[MOVING]" : "[PAUSE]";
             _txtStatus.color = (_status > 0) ? _colorOn : _colorOff;
         }
 
