@@ -15,7 +15,9 @@ namespace LittleLooters.Gameplay.UI
     {
         #region Inspector properties
 
+        [SerializeField] private Camera _cam = default;
         [SerializeField] private Transform _camera = default;
+        [SerializeField] private Transform _targetPosition = default;
         [SerializeField] private bool _followRotation = true;
         [SerializeField] private bool _followPosition = false;
         [SerializeField] private bool _autoInitialization = false;
@@ -95,7 +97,7 @@ namespace LittleLooters.Gameplay.UI
             }
 
             // Follow position
-            if (_followPosition && !_followRotation)
+            if (_followPosition) // && !_followRotation)
             {
                 FollowPosition();
 
@@ -110,7 +112,9 @@ namespace LittleLooters.Gameplay.UI
 
         private void FollowPosition()
         {
-            // TODO
+            var position = _cam.WorldToScreenPoint(_targetPosition.position);
+
+            transform.position = position;
         }
 
         #endregion

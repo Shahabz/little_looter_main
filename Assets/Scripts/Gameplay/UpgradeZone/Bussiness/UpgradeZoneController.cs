@@ -74,7 +74,7 @@ namespace LittleLooters.Gameplay
 		{
 			var progressDataService = ServiceLocator.Current.Get<PlayerProgressDataService>();
 
-			_indicator.SetActive(true);
+			//_indicator.SetActive(true);
 
 			var toolIsUpgrading = progressDataService.ProgressData.toolData.isUpgrading;
 
@@ -102,7 +102,7 @@ namespace LittleLooters.Gameplay
 
 		public void HideIndicator()
 		{
-			_indicator.SetActive(false);
+			//_indicator.SetActive(false);
 
 			UI_GameplayEvents.OnHideUpgradeTool?.Invoke();
 		}

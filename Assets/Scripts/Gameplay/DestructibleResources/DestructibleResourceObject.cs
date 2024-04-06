@@ -46,6 +46,9 @@ namespace LittleLooters.Gameplay
 		[SerializeField] private ParticleSystem _vfxHit = default;
 		[SerializeField] private ParticleSystem _vfxDestruction = default;
 
+		[Header("Hide on death")]
+		[SerializeField] private GameObject[] _hideOnDeath = default;
+
 		#endregion
 
 		#region Private properties
@@ -121,6 +124,11 @@ namespace LittleLooters.Gameplay
 			ShowVfxDestruction();
 
 			_art.SetActive(false);
+
+			for (int i = 0; i < _hideOnDeath.Length; i++)
+			{
+				_hideOnDeath[i].SetActive(false);
+			}
 
 			_collider.enabled = false;
 

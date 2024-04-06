@@ -13,8 +13,9 @@ namespace LittleLooters.Gameplay.UI
     /// </summary>
     public class UI_TargetIndicator : MonoBehaviour
     {
-		#region Inspector
+        #region Inspector
 
+        [SerializeField] private GameObject _content = default;
 		public RectTransform _indicator = default;
         public RectTransform _indicatorRotator = default;
         public Transform _player = default;
@@ -41,14 +42,42 @@ namespace LittleLooters.Gameplay.UI
 
 		#region Unity events
 
-        /// <summary>
-        /// CAN BE REPLACED FOR INVOKE REPEAT METHOD!
-        /// </summary>
+		private void Start()
+		{
+            Init();
+		}
+
+		/// <summary>
+		/// CAN BE REPLACED FOR INVOKE REPEAT METHOD!
+		/// </summary>
 		private void Update()
 		{
             RefreshIndicatorAngle();
             RefreshIndicatorPosition();
         }
+
+		private void OnDestroy()
+		{
+            Teardown();
+		}
+
+		#endregion
+
+		#region Public methods
+
+		protected virtual void Init() { }
+
+        protected virtual void Teardown() { }
+
+        public void Show()
+		{
+            _content.SetActive(true);
+		}
+
+        public void Hide()
+		{
+            _content.SetActive(false);
+		}
 
 		#endregion
 

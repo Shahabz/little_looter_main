@@ -123,5 +123,31 @@ namespace LittleLooters.Model
 
             PlayerProgressEvents.OnToolUpgradeExpirationHasChanged?.Invoke(args);
         }
+
+        /// <summary>
+        /// Checks if player's resources are enough to upgrade the player's tool to the next level
+        /// </summary>
+        /// <param name="playerResources"></param>
+        /// <param name="toolNextLevelData"></param>
+        /// <returns></returns>
+        public bool CheckUpgradeRequirementsReady(PlayerProgress_ResourcesData playerResources, ConfigurationMeleeLevelData toolNextLevelData)
+		{
+            var canUpgrade = true;
+
+            for (int i = 0; i < toolNextLevelData.requirements.Length; i++)
+            {
+                var requirement = toolNextLevelData.requirements[i];
+
+                var playerResource = playerResources.GetResourceAmount(requirement.resource.Id);
+
+                if (playerResource.amount < requirement.amount)
+                {
+                    canUpgrade = false;
+                    break;
+                }
+            }
+
+            return canUpgrade;
+		}
     }
 }

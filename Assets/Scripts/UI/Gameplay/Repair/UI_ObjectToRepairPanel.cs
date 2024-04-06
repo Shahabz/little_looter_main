@@ -15,7 +15,9 @@ namespace LittleLooters.Gameplay.UI
     {
 		#region Inspector
 
-		[SerializeField] private GameObject _content = default;
+		//[SerializeField] private GameObject _content = default;
+		[SerializeField] private VisibleObject _visibleTarget = default;
+		[SerializeField] private GameObject _ui = default;
 
 		[Header("Slots panel")]
 		[SerializeField] private GameObject _slotsPanel = default;
@@ -72,7 +74,9 @@ namespace LittleLooters.Gameplay.UI
 
 		private void Start()
 		{
-			Hide();
+			_visibleTarget.OnStatusChanged += HandleVisibleObjectStatusChanged;
+
+			//Hide();
 		}
 
 		private void OnEnable()
@@ -89,6 +93,8 @@ namespace LittleLooters.Gameplay.UI
 
 		private void OnDestroy()
 		{
+			_visibleTarget.OnStatusChanged -= HandleVisibleObjectStatusChanged;
+
 			UI_GameplayEvents.OnShowRepairPanel -= HandleShowPanel;
 			UI_GameplayEvents.OnHideRepairPanel -= HandleHidePanel;
 
@@ -119,7 +125,7 @@ namespace LittleLooters.Gameplay.UI
 
 		private void HandleHidePanel()
 		{
-			Hide();
+			//Hide();
 		}
 
 		private void Setup(RepairObjectData data)
@@ -150,7 +156,7 @@ namespace LittleLooters.Gameplay.UI
 
 		private void Show()
 		{
-			_content.SetActive(true);
+			//_content.SetActive(true);
 
 			if (_wasCompleted)
 			{
@@ -176,7 +182,7 @@ namespace LittleLooters.Gameplay.UI
 
 		private void Hide()
 		{
-			_content.SetActive(false);
+			//_content.SetActive(false);
 
 			HideCompleted();
 			HideSlotsPanel();
@@ -190,7 +196,8 @@ namespace LittleLooters.Gameplay.UI
 
 		private void ShowSlotsPanel()
 		{
-			_slotsPanel.SetActive(true);
+			// NOTE: uncomment this line
+			//_slotsPanel.SetActive(true);
 		}
 
 		private void HideSlots()
@@ -323,6 +330,11 @@ namespace LittleLooters.Gameplay.UI
 			// TODO: SFX
 
 			UI_GameplayEvents.OnSkipRepairing?.Invoke(_id, _expiration, _duration);
+		}
+
+		private void HandleVisibleObjectStatusChanged(bool isVisible)
+		{
+			_ui.SetActive(isVisible);
 		}
 
 		#endregion
