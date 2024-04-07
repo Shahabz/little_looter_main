@@ -133,6 +133,14 @@ namespace LittleLooters.Gameplay
 
 		#endregion
 
+		#region Camera assistance events
+		
+		public static Action<UnityEngine.GameObject> OnMissionCameraAssistance;
+		public static Action OnStartCameraAssistance;
+		public static Action OnStopCameraAssistance;
+
+		#endregion
+
 		#region Crafting events
 
 		/// <summary>

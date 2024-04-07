@@ -130,6 +130,8 @@ namespace LittleLooters.Gameplay.UI
 
 			StartIndicatorOffScreen();
 
+			UI_GameplayEvents.OnMissionCameraAssistance.Invoke(target.gameObject);
+
 			Invoke(nameof(StopAssistance), _assistanceDuration);
 		}
 
