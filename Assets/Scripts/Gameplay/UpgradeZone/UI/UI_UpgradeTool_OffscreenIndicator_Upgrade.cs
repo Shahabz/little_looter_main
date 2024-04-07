@@ -20,7 +20,7 @@ namespace LittleLooters.Gameplay.UI
 			PlayerProgressEvents.OnResourceHasChanged += HandlePlayerResourcesChanged;
 			PlayerProgressEvents.OnMeleeUpgradeStarted += HandlePlayerToolUpgradeStarted;
 
-			Hide();
+			Deactivate();
 		}
 
 		protected override void Teardown()
@@ -54,16 +54,16 @@ namespace LittleLooters.Gameplay.UI
 
 			if (!requirementsAchieved)
 			{
-				Hide();
+				Deactivate();
 				return;
 			}
 
-			Show();
+			Activate();
 		}
 
 		private void HandlePlayerToolUpgradeStarted(PlayerProgressEvents.MeleeUpgradeStartedArgs args)
 		{
-			Hide();
+			Deactivate();
 		}
 
 		#endregion

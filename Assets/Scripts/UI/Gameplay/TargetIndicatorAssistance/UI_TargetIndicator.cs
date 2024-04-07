@@ -4,7 +4,6 @@
  */
 
 using UnityEngine;
-using UnityEngine.UI;
 
 namespace LittleLooters.Gameplay.UI
 {
@@ -32,11 +31,17 @@ namespace LittleLooters.Gameplay.UI
         [SerializeField] private float offsetXLeft = 100f;
         [SerializeField] private float offsetYBottom = 100f;
 
+        [Header("Hiden distance properties")]
+        [SerializeField] private bool _checkHidenDistance = true;
+        [SerializeField] private float _distanceToHide = 3f;
+
 		#endregion
 
 		#region Private properties
 
 		private Vector3 _eulerAngles = Vector3.zero;
+        private bool _isHiden = false;
+        private bool _isActive = false;
 
 		#endregion
 
@@ -52,6 +57,12 @@ namespace LittleLooters.Gameplay.UI
 		/// </summary>
 		private void Update()
 		{
+            if (!_isActive) return;
+
+            CheckVisibleStatus();
+
+            if (_isHiden) return;
+
             RefreshIndicatorAngle();
             RefreshIndicatorPosition();
         }
@@ -69,13 +80,21 @@ namespace LittleLooters.Gameplay.UI
 
         protected virtual void Teardown() { }
 
-        public void Show()
+        public void Activate()
 		{
+            _isActive = true;
+
+            if (_content.activeSelf) return;
+
             _content.SetActive(true);
 		}
 
-        public void Hide()
+        public void Deactivate()
 		{
+            _isActive = false;
+
+            if (!_content.activeSelf) return;
+
             _content.SetActive(false);
 		}
 
@@ -143,6 +162,59 @@ namespace LittleLooters.Gameplay.UI
 
             return pos;
 		}
+
+        private void ShowContent()
+        {
+            if (_content.activeSelf) return;
+
+            _content.SetActive(true);
+        }
+
+        private void HideContent()
+        {
+            if (!_content.activeSelf) return;
+
+            _content.SetActive(false);
+        }
+
+        private void CheckVisibleStatus()
+		{
+            if (!_checkHidenDistance)
+			{
+                _isHiden = false;
+                return;
+			}
+
+            Vector3 playerPoint = _camera.WorldToScreenPoint(_player.position);
+            Vector3 targetPoint = _camera.WorldToScreenPoint(_target.position);
+
+            var dir = targetPoint - playerPoint;
+
+            var distance = dir.magnitude;
+
+            _isHiden = distance <= _distanceToHide;
+
+            if (_canDebug) DebugDistanceToHide(dir);
+
+            if (_isHiden)
+			{
+                HideContent();
+                return;
+			}
+
+            ShowContent();
+        }
+
+        #endregion
+
+        #region Debug
+
+        private bool _canDebug = false;
+
+        private void DebugDistanceToHide(Vector3 dir)
+		{
+            Debug.LogError($"distance magnitude: <color=yellow>{dir.magnitude}</color>, distance magnitude sqr: <color=yellow>{dir.sqrMagnitude}</color>");
+        }
 
 		#endregion
 	}

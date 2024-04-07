@@ -62,6 +62,11 @@ namespace LittleLooters.Gameplay.UI
             _transform = target;
 		}
 
+        public void SetTarget(Transform target)
+		{
+            _targetPosition = target;
+		}
+
         #endregion
 
         #region Unity events

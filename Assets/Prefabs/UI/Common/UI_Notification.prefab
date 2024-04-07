@@ -260,5 +260,5 @@ MonoBehaviour:
   _animDuration: 0.25
   _delay: 0.1
   _animationOffsetHorizontal: 0
-  _animationOffsetVertical: 4
+  _animationOffsetVertical: 8
   _autoInit: 1

@@ -15,7 +15,6 @@ namespace LittleLooters.Gameplay.UI
     {
 		#region Inspector
 
-		//[SerializeField] private GameObject _content = default;
 		[SerializeField] private VisibleObject _visibleTarget = default;
 		[SerializeField] private GameObject _ui = default;
 
@@ -23,14 +22,14 @@ namespace LittleLooters.Gameplay.UI
 		[SerializeField] private GameObject _slotsPanel = default;
 		[SerializeField] private TMPro.TextMeshProUGUI _txtDisplayName = default;
 		[SerializeField] private UI_ObjectToRepairPanel_Slot[] _slots = default;
+		[SerializeField] private bool _canResizePanel = true;
+		[SerializeField] private float _slotSize = 150;
 		
 		[Header("Repair button")]
 		[SerializeField] private Button _btnRepair = default;
 		[SerializeField] private Image _btnRepairBackground = default;
 		[SerializeField] private Color _btnRepairColorEnabled = default;
 		[SerializeField] private Transform _btnRepairAlert = default;
-		[SerializeField] private float _alertAnimationScale = default;
-		[SerializeField] private float _alertAnimationDuration = default;
 
 		[Header("Progress panel")]
 		[SerializeField] private GameObject _progressPanel = default;
@@ -50,7 +49,9 @@ namespace LittleLooters.Gameplay.UI
 		private bool _isReparing = false;
 		private int _duration = 0;
 		private float _expiration = 0;
-		private Sequence _tweenSequence = default;
+		private int _slotsAmount = 0;
+		private RectTransform _slotsPanelRectTransform = default;
+		private bool _slotsPanelVisible = false;
 
 		#endregion
 
@@ -58,11 +59,6 @@ namespace LittleLooters.Gameplay.UI
 
 		private void Awake()
 		{
-			_tweenSequence = DOTween.Sequence()
-								.Append(_btnRepairAlert.DOScale(Vector3.one * _alertAnimationScale, _alertAnimationDuration).SetDelay(0.1f))
-								.Append(_btnRepairAlert.DOScale(Vector2.one, _alertAnimationDuration))
-								.SetLoops(-1, LoopType.Restart);
-
 			UI_GameplayEvents.OnShowRepairPanel += HandleShowPanel;
 			UI_GameplayEvents.OnHideRepairPanel += HandleHidePanel;
 
@@ -70,31 +66,29 @@ namespace LittleLooters.Gameplay.UI
 			PlayerProgressEvents.OnStartRepairing += HandleRepairingStarted;
 			PlayerProgressEvents.OnCompleteRepairing += HandleRepairingCompleted;
 			PlayerProgressEvents.OnSpeedUpRepairing += HandleRepairingSpeedUp;
-		}
+			PlayerProgressEvents.OnResourceHasChanged += HandlePlayerResourceHasChanged;
 
-		private void Start()
-		{
-			_visibleTarget.OnStatusChanged += HandleVisibleObjectStatusChanged;
-
-			//Hide();
+			_slotsPanelRectTransform = _slotsPanel.GetComponent<RectTransform>();
 		}
 
 		private void OnEnable()
 		{
 			_btnRepair.onClick.AddListener(StartRepairingInput);
 			_btnSkip.onClick.AddListener(Skip);
+
+			_visibleTarget.OnStatusChanged += HandleVisibleObjectStatusChanged;
 		}
 
 		private void OnDisable()
 		{
 			_btnRepair.onClick.RemoveAllListeners();
 			_btnSkip.onClick.RemoveAllListeners();
+
+			_visibleTarget.OnStatusChanged -= HandleVisibleObjectStatusChanged;
 		}
 
 		private void OnDestroy()
 		{
-			_visibleTarget.OnStatusChanged -= HandleVisibleObjectStatusChanged;
-
 			UI_GameplayEvents.OnShowRepairPanel -= HandleShowPanel;
 			UI_GameplayEvents.OnHideRepairPanel -= HandleHidePanel;
 
@@ -102,6 +96,7 @@ namespace LittleLooters.Gameplay.UI
 			PlayerProgressEvents.OnStartRepairing -= HandleRepairingStarted;
 			PlayerProgressEvents.OnCompleteRepairing -= HandleRepairingCompleted;
 			PlayerProgressEvents.OnSpeedUpRepairing -= HandleRepairingSpeedUp;
+			PlayerProgressEvents.OnResourceHasChanged -= HandlePlayerResourceHasChanged;
 		}
 
 		private void Update()
@@ -131,6 +126,8 @@ namespace LittleLooters.Gameplay.UI
 		private void Setup(RepairObjectData data)
 		{
 			_id = data.Id;
+
+			_slotsAmount = data.Parts.Length;
 
 			_txtDisplayName.text = data.DisplayName.ToUpperInvariant();
 
@@ -191,13 +188,28 @@ namespace LittleLooters.Gameplay.UI
 
 		private void HideSlotsPanel()
 		{
+			_slotsPanelVisible = false;
+
 			_slotsPanel.SetActive(false);
 		}
 
 		private void ShowSlotsPanel()
 		{
-			// NOTE: uncomment this line
-			//_slotsPanel.SetActive(true);
+			_slotsPanelVisible = true;
+
+			_slotsPanel.SetActive(true);
+
+			ResizeSlotsPanel();
+		}
+
+		private void ResizeSlotsPanel()
+		{
+			if (!_canResizePanel) return;
+
+			var size = _slotsPanelRectTransform.sizeDelta;
+			size.x = _slotsAmount * _slotSize;
+
+			_slotsPanelRectTransform.sizeDelta = size;
 		}
 
 		private void HideSlots()
@@ -241,7 +253,8 @@ namespace LittleLooters.Gameplay.UI
 		{
 			var progressDataService = ServiceLocator.Current.Get<PlayerProgressDataService>();
 
-
+			var readyToRepair = true;
+			
 			for (int i = 0; i < _slots.Length; i++)
 			{
 				var slot = _slots[i];
@@ -253,7 +266,14 @@ namespace LittleLooters.Gameplay.UI
 				var objectPartProgressData = objectData.GetPartProgress(slot.ResourceId);
 
 				slot.Refresh(playerResourceAmount, objectPartProgressData.amount, objectPartProgressData.total);
+
+				if (objectPartProgressData.amount < objectPartProgressData.total)
+				{
+					readyToRepair = false;
+				}
 			}
+
+			_btnRepair.gameObject.SetActive(readyToRepair);
 		}
 
 		private void HandleSlotFixDone(PlayerProgressEvents.RepairSlotArgs args)
@@ -265,8 +285,6 @@ namespace LittleLooters.Gameplay.UI
 			_btnRepairBackground.color = _btnRepairColorEnabled;
 
 			_btnRepairAlert.gameObject.SetActive(true);
-
-			_tweenSequence.Restart();
 		}
 
 		private void StartRepairingInput()
@@ -315,6 +333,13 @@ namespace LittleLooters.Gameplay.UI
 			_duration = args.duration;
 		}
 
+		private void HandlePlayerResourceHasChanged(int resourceId, int amount)
+		{
+			if (!_slotsPanelVisible) return;
+
+			RefreshSlots();
+		}
+
 		private void ShowCompleted()
 		{
 			_completedPanel.SetActive(true);
@@ -332,9 +357,19 @@ namespace LittleLooters.Gameplay.UI
 			UI_GameplayEvents.OnSkipRepairing?.Invoke(_id, _expiration, _duration);
 		}
 
-		private void HandleVisibleObjectStatusChanged(bool isVisible)
+		private void HandleVisibleObjectStatusChanged(GameObject target, bool isVisible)
 		{
+			if (target == null || target.transform.parent == null) return;
+
 			_ui.SetActive(isVisible);
+
+			var repairableTarget = _visibleTarget.transform.parent.GetComponentInParent<RepairObject>();
+
+			var data = repairableTarget.Data;
+
+			Setup(data);
+
+			Show();
 		}
 
 		#endregion

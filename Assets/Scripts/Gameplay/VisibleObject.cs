@@ -14,16 +14,32 @@ namespace LittleLooters.Gameplay
 	[RequireComponent(typeof(MeshRenderer))]
     public class VisibleObject : MonoBehaviour
     {
-		public System.Action<bool> OnStatusChanged;
+		public System.Action<GameObject, bool> OnStatusChanged;
+
+		private bool _isEnabled = false;
+
+		private void OnEnable()
+		{
+			_isEnabled = true;
+		}
+
+		private void OnDisable()
+		{
+			_isEnabled = false;
+		}
 
 		private void OnBecameVisible()
 		{
-			OnStatusChanged?.Invoke(true);
+			if (!_isEnabled) return;
+
+			OnStatusChanged?.Invoke(gameObject, true);
 		}
 
 		private void OnBecameInvisible()
 		{
-			OnStatusChanged?.Invoke(false);
+			if (!_isEnabled) return;
+
+			OnStatusChanged?.Invoke(gameObject, false);
 		}
 	}
 }

@@ -17,7 +17,7 @@ namespace LittleLooters.Gameplay.UI
         [SerializeField] private TMPro.TextMeshProUGUI _txtAmount = default;
         [SerializeField] private Image _icon = default;
         [SerializeField] private Image _progressBar = default;
-        [SerializeField] private Image _completed = default;
+        [SerializeField] private GameObject _completed = default;
         [SerializeField] private Button _btnFix = default;
         [SerializeField] private Image _btnFixBackground = default;
         [SerializeField] private Color _colorFixEnabled = default;
@@ -104,7 +104,7 @@ namespace LittleLooters.Gameplay.UI
 
         private void RefreshCompleted(bool isCompleted)
 		{
-            _completed.enabled = isCompleted;
+            _completed.SetActive(isCompleted);
 
             _txtAmount.enabled = !isCompleted;
 
@@ -116,7 +116,7 @@ namespace LittleLooters.Gameplay.UI
 
             _btnFix.gameObject.SetActive(false);
 
-            _completed.enabled = true;
+            _completed.SetActive(true);
 		}
 
         private void MarkAsDisable()

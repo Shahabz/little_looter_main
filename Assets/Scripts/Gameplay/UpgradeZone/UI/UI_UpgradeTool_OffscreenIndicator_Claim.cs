@@ -21,7 +21,7 @@ namespace LittleLooters.Gameplay.UI
 			PlayerProgressEvents.OnMeleeUpgradeCompleted += HandlePlayerToolUpgradeCompleted;
 			PlayerProgressEvents.OnMeleeUpgradeClaimed += HandlePlayerToolUpgradeClaimed;
 
-			Hide();
+			Deactivate();
 		}
 
 		protected override void Teardown()
@@ -36,12 +36,12 @@ namespace LittleLooters.Gameplay.UI
 
 		private void HandlePlayerToolUpgradeCompleted()
 		{
-			Show();
+			Activate();
 		}
 
 		private void HandlePlayerToolUpgradeClaimed(PlayerProgressEvents.MeleeUpgradeClaimedArgs args)
 		{
-			Hide();
+			Deactivate();
 		}
 
 		#endregion
