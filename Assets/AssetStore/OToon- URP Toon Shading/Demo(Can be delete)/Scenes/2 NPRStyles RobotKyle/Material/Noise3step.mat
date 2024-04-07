@@ -142,6 +142,7 @@ Material:
     - _FaceShadowMapEnabled: 0
     - _FaceShadowMapPow: 0.2
     - _FaceShadowSmoothness: 0
+    - _FlattenGI: 0
     - _GlossMapScale: 0
     - _Glossiness: 0
     - _GlossinessSource: 0
@@ -155,7 +156,10 @@ Material:
     - _HalfToneIncludeReceivedShadow: 0
     - _HalfToneShape: 0
     - _HalfToneUvMode: 0
+    - _HalftoneFadeDistance: 10
+    - _HalftoneFadeToColor: 0
     - _HalftoneNoiseClip: 0.8
+    - _HalftoneTilling: 8
     - _HatchingDensity: 1
     - _HatchingDiffuseOffset: 0
     - _HatchingDrawStrength: 1

@@ -22,12 +22,13 @@ namespace LittleLooters.Gameplay.UI
         [SerializeField] private Image _btnFixBackground = default;
         [SerializeField] private Color _colorFixEnabled = default;
         [SerializeField] private Color _colorFixDisabled = default;
+        [SerializeField] private Button _btnInfo = default;
 
-		#endregion
+        #endregion
 
-		#region Private properties
+        #region Private properties
 
-		private int _objectId = default;
+        private int _objectId = default;
         private int _resourceId = default;
         private bool _isEnabled = false;
         private bool _isCompleted = false;
@@ -46,6 +47,7 @@ namespace LittleLooters.Gameplay.UI
 		private void OnEnable()
 		{
             _btnFix.onClick.AddListener(Fix);
+            _btnInfo.onClick.AddListener(ShowInfo);
 
             PlayerProgressEvents.OnSlotFixDone += HandleSlotFixDone;
         }
@@ -53,6 +55,7 @@ namespace LittleLooters.Gameplay.UI
         private void OnDisable()
         {
             _btnFix.onClick.RemoveAllListeners();
+            _btnInfo.onClick.RemoveAllListeners();
 
             PlayerProgressEvents.OnSlotFixDone -= HandleSlotFixDone;
         }
@@ -184,6 +187,11 @@ namespace LittleLooters.Gameplay.UI
             };
 
             UI_ResourcesAnimation.OnAnimateResourceConsumption?.Invoke(args);
+        }
+
+        private void ShowInfo()
+        {
+            Debug.LogError($"RepairSlot -> Show info about where to find resource '<color=yellow>{_resourceId}</color>'");
         }
 
         #endregion

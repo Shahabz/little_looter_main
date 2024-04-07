@@ -69,7 +69,7 @@ namespace LittleLooters.Gameplay.UI
 
 		private void ShowInfo()
 		{
-			Debug.LogError($"Show info about where to find resource '<color=yellow>{_resourceId}</color>'");
+			Debug.LogError($"Upgrade Tool slot -> Show info about where to find resource '<color=yellow>{_resourceId}</color>'");
 		}
 
 		#endregion

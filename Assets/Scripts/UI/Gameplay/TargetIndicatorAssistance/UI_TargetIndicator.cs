@@ -21,15 +21,14 @@ namespace LittleLooters.Gameplay.UI
         public Transform _target = default;
         [SerializeField] private Camera _camera = default;
         [SerializeField] private RectTransform _canvasRect = default;
-        [SerializeField] private bool _useAngle = default;
-        [SerializeField] private bool _useSigned = default;
-        [SerializeField] private float outOfSightOffest = 5;
-        [SerializeField] private float borderSize = 100f;
-        [SerializeField] private float borderSizeVertical = 100f;
-        [SerializeField] private float offsetX = 100f;
-        [SerializeField] private float offsetY = 100f;
-        [SerializeField] private float offsetXLeft = 100f;
-        [SerializeField] private float offsetYBottom = 100f;
+
+        [Header("Horizontal offsets")]
+        [SerializeField] private float _offsetL = 100f;
+        [SerializeField] private float _offsetR = 100f;
+
+        [Header("Vertical offsets")]
+        [SerializeField] private float _offsetTop = 50f;
+        [SerializeField] private float _offsetBottom = 50f;
 
         [Header("Hiden distance properties")]
         [SerializeField] private bool _checkHidenDistance = true;
@@ -122,28 +121,10 @@ namespace LittleLooters.Gameplay.UI
 
             Vector3 targetPositionScreenPoint = _camera.WorldToScreenPoint(targetPosition);
 
-            var screenWidth = _canvasRect.rect.width;
-            var screenHeight = _canvasRect.rect.height;
+            var screenWidth = Screen.width; //_canvasRect.rect.width;
+            var screenHeight = Screen.height;   //_canvasRect.rect.height;
 
-            bool isOffScreen = targetPositionScreenPoint.x <= borderSize || targetPositionScreenPoint.x >= Screen.width - borderSize || targetPositionScreenPoint.y <= borderSize || targetPositionScreenPoint.y >= Screen.height - borderSize;
-
-            //if (!isOffScreen)
-			//{
-            //    Hide();
-            //    return;
-			//}
-
-
-            Vector3 cappedTargetScreenPosition = targetPositionScreenPoint;
-            if (cappedTargetScreenPosition.x <= borderSize) cappedTargetScreenPosition.x = borderSize;
-            if (cappedTargetScreenPosition.x >= screenWidth - borderSize) cappedTargetScreenPosition.x = screenWidth - borderSize;
-            if (cappedTargetScreenPosition.y <= borderSizeVertical) cappedTargetScreenPosition.y = borderSizeVertical;
-            if (cappedTargetScreenPosition.y >= screenHeight - borderSizeVertical) cappedTargetScreenPosition.y = screenHeight - borderSizeVertical;
-
-            var clampedPos = ClampPosition(cappedTargetScreenPosition, screenWidth, screenHeight);
-            _indicator.position = clampedPos;
-
-            //Show();
+            _indicator.position = ClampMarkerIndicator(targetPositionScreenPoint, screenWidth, screenHeight);
         }
 
         private float GetAngleFromVectorFloat(Vector3 dir)
@@ -154,14 +135,6 @@ namespace LittleLooters.Gameplay.UI
 
             return n;
         }
-
-        private Vector3 ClampPosition(Vector3 pos, float screenWidth, float screenHeight)
-		{
-            pos.x = Mathf.Clamp(pos.x, -screenWidth/2 - offsetXLeft, screenWidth/2 - offsetX);
-            pos.y = Mathf.Clamp(pos.y, -screenHeight/2 - offsetYBottom, screenHeight/2 - offsetY);
-
-            return pos;
-		}
 
         private void ShowContent()
         {
@@ -205,9 +178,88 @@ namespace LittleLooters.Gameplay.UI
             ShowContent();
         }
 
-        #endregion
+        private Vector3 ClampMarkerIndicator(Vector3 pos, float screenWidth, float screenHeight)
+		{
+#if UNITY_EDITOR
+            return ClampMarkerIndicator_Editor(pos, screenWidth, screenHeight);
+#else
+            return ClampMarkerIndicator_Mobile(pos, screenWidth, screenHeight);
+#endif
+		}
 
-        #region Debug
+        private Vector3 ClampMarkerIndicator_Editor(Vector3 pos, float screenWidth, float screenHeight)
+		{
+            // Check horizontal
+            var limitL = 0 + _offsetL;
+            var limitR = screenWidth - _offsetR;
+
+            if (pos.x < limitL)
+            {
+                pos.x = limitL;
+            }
+            else if (pos.x > limitR)
+            {
+                pos.x = limitR;
+            }
+
+            // Check vertical
+            var limitTop = screenHeight - _offsetTop;
+            var limitBottom = 0 + _offsetBottom;
+
+            if (pos.y > limitTop)
+            {
+                pos.y = limitTop;
+            }
+            else if (pos.y < limitBottom)
+            {
+                pos.y = limitBottom;
+            }
+
+            //Debug.LogError($"pos [{pos.x}, {pos.y}], screen [{screenWidth}, {screenHeight}], limit Horizontal: [{limitL}, {limitR}], limit vertical: [{limitTop}, {limitBottom}]");
+
+            pos.z = 0;
+
+            return pos;
+        }
+
+        private Vector3 ClampMarkerIndicator_Mobile(Vector3 pos, float screenWidth, float screenHeight)
+        {
+            // Check horizontal
+            var limitL = 0 + _offsetL + 50;
+            var limitR = (screenWidth) - (_offsetR + 50);
+
+            if (pos.x < limitL)
+            {
+                pos.x = limitL;
+            }
+            else if (pos.x > limitR)
+            {
+                pos.x = limitR;
+            }
+
+            // Check vertical
+            var limitTop = screenHeight - (_offsetTop + 50);
+            var limitBottom = 0 + _offsetBottom + 50;
+
+            if (pos.y > limitTop)
+            {
+                pos.y = limitTop;
+            }
+            else if (pos.y < limitBottom)
+            {
+                pos.y = limitBottom;
+            }
+
+            //Debug.LogError($"pos [{pos.x}, {pos.y}], screen [{screenWidth}, {screenHeight}], limit Horizontal: [{limitL}, {limitR}], limit vertical: [{limitTop}, {limitBottom}]");
+
+            pos.z = 0;
+
+            return pos;
+        }
+
+#endregion
+
+#region Debug
 
         private bool _canDebug = false;
 
@@ -216,6 +268,6 @@ namespace LittleLooters.Gameplay.UI
             Debug.LogError($"distance magnitude: <color=yellow>{dir.magnitude}</color>, distance magnitude sqr: <color=yellow>{dir.sqrMagnitude}</color>");
         }
 
-		#endregion
+#endregion
 	}
 }

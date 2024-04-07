@@ -5,6 +5,7 @@
 
 using LittleLooters.Model;
 using UnityEngine;
+using UnityEngine.UI;
 
 namespace LittleLooters.Gameplay.UI
 {
@@ -21,6 +22,8 @@ namespace LittleLooters.Gameplay.UI
 		[SerializeField] private TMPro.TextMeshProUGUI _txtLevel = default;
         [SerializeField] private TriggerPlayerProximityObject[] _targets = default;
 		[SerializeField] private UI_FollowCamera _followCamera = default;
+		[SerializeField] private GameObject _infoTarget = default;
+		[SerializeField] private Button _btnInfo = default;
 
 		#endregion
 
@@ -38,6 +41,8 @@ namespace LittleLooters.Gameplay.UI
 			SubscribeTargets();
 
 			PlayerProgressEvents.OnMeleeUpgradeClaimed += HandleToolUpgradeClaimed;
+
+			_btnInfo.onClick.AddListener(ShowInfo);
 		}
 
 		private void OnDisable()
@@ -45,6 +50,8 @@ namespace LittleLooters.Gameplay.UI
 			UnsubscribeTargets();
 
 			PlayerProgressEvents.OnMeleeUpgradeClaimed -= HandleToolUpgradeClaimed;
+
+			_btnInfo.onClick.RemoveAllListeners();
 		}
 
 		#endregion
@@ -120,6 +127,11 @@ namespace LittleLooters.Gameplay.UI
 			if (!_content.activeSelf) return;
 
 			_content.SetActive(false);
+		}
+
+		private void ShowInfo()
+		{
+			UI_GameplayEvents.OnMissionCameraAssistance?.Invoke(_infoTarget);
 		}
 
 		#endregion
