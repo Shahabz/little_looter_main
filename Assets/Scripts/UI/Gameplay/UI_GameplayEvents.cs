@@ -33,6 +33,8 @@ namespace LittleLooters.Gameplay
 
 		public static Action<float> OnStartRolling;
 
+		public static Action<UnityEngine.Vector2> OnProcessSwipe;
+
 		#region Weapon events
 
 		/// <summary>
@@ -183,6 +185,21 @@ namespace LittleLooters.Gameplay
 		public static Action<UpdateResourceByCheatArgs> OnConsumeResourceByCheat;
 		public static Action<AutofireByCheatArgs> OnAutofireChangedByCheat;
 		public static Action<bool> OnDestructionDetectionChangedByCheat;
+
+		/// <summary>
+		/// Invoked by cheats to activate/deactivate the destruction while player is moving
+		/// </summary>
+		public static Action<bool> OnDestructionMovingChangedByCheat;
+
+		/// <summary>
+		/// Invoked by cheats to upgrade the player's tool to the next level
+		/// </summary>
+		public static Action OnToolUpgradeByCheat;
+
+		/// <summary>
+		/// Invoked from cheat to try to spawn a bunch of enemies
+		/// </summary>
+		public static Action<int> OnSpawnEnemiesByCheat;
 
 		#endregion
 	}

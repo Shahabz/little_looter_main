@@ -4,6 +4,7 @@
  */
 
 using LittleLooters.Gameplay.Combat;
+using LittleLooters.Gameplay.UI;
 using System;
 using UnityEngine;
 using UnityEngine.AI;
@@ -39,6 +40,12 @@ namespace LittleLooters.Gameplay
 		[SerializeField] private float _rotationSmoothTime = 0.12f;
 		[SerializeField] private UI_EnemyHud _hud = default;
 		[SerializeField] private bool _canShowTextDamage = false;
+		[SerializeField] private UI_FollowCamera _followCamera = default;
+
+		[Header("Destroy on dead")]
+		[SerializeField] private GameObject _uiDetection = default;
+		[SerializeField] private GameObject _uiHealth = default;
+		[SerializeField] private GameObject _visualWeapon = default;
 
 		#endregion
 
@@ -81,6 +88,16 @@ namespace LittleLooters.Gameplay
 		#endregion
 
 		#region Public methods
+
+		public void SetTarget(Transform target)
+		{
+			_target = target;
+		}
+
+		public void SetCamera(Camera camera)
+		{
+			_followCamera.SetCamera(camera);
+		}
 
 		public void Initialization(int id)
 		{
@@ -165,6 +182,8 @@ namespace LittleLooters.Gameplay
 
 		public void MarkAsDetected()
 		{
+			if (IsDead) return;
+
 			_detection.SetActive(true);
 
 			OnWasDetected?.Invoke();
@@ -172,6 +191,8 @@ namespace LittleLooters.Gameplay
 
 		public void MarkAsNonDetected()
 		{
+			if (IsDead) return;
+
 			_detection.SetActive(false);
 
 			OnDetectionFinished?.Invoke();
@@ -428,6 +449,8 @@ namespace LittleLooters.Gameplay
 		{
 			_collider.enabled = false;
 
+			_weaponController.enabled = false;
+
 			_enabled = false;
 
 			StopMovement();
@@ -438,7 +461,20 @@ namespace LittleLooters.Gameplay
 
 			RefreshHudByDeath();
 
+			DestroyNotNeeded();
+
 			OnDead?.Invoke();
+		}
+
+		private void DestroyNotNeeded()
+		{
+			Destroy(_agent);
+			Destroy(_uiDetection);
+			Destroy(_uiHealth);
+			Destroy(_visualWeapon);
+			Destroy(_visualController);
+			Destroy(_fovHelper);
+			Destroy(_weaponController);
 		}
 
 		#endregion

@@ -38,6 +38,7 @@ namespace StarterAssets
 		public bool IsMoving => move != vectorZero;
 		public bool StartAiming => startAiming;
 		public bool StopAiming => stopAiming;
+		public Vector2 SwipeDirection => _swipeDirection;
 
 		#endregion
 
@@ -47,6 +48,7 @@ namespace StarterAssets
 		private bool startAiming = false;
 		private bool stopAiming = false;
 		private readonly Vector2 vectorZero = Vector2.zero;
+		private Vector2 _swipeDirection = default;
 
 		#endregion
 
@@ -170,11 +172,13 @@ namespace StarterAssets
 		private void Awake()
 		{
 			UI_GameplayEvents.OnStartGame += HandleStartGame;
+			UI_GameplayEvents.OnProcessSwipe += HandleSwipe;
 		}
 
 		private void OnDestroy()
 		{
 			UI_GameplayEvents.OnStartGame -= HandleStartGame;
+			UI_GameplayEvents.OnProcessSwipe -= HandleSwipe;
 		}
 
 		private void OnApplicationFocus(bool hasFocus)
@@ -189,6 +193,13 @@ namespace StarterAssets
 		private void HandleStartGame()
 		{
 			_gameStarted = true;
+		}
+
+		private void HandleSwipe(Vector2 dir)
+		{
+			Debug.LogError("StarterAssetsInputs::HandleSwipe");
+			_swipeDirection = dir;
+			RollInput();
 		}
 
 		private void SetCursorState(bool newState)

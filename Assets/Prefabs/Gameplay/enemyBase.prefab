@@ -1367,19 +1367,20 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5ad361009a4702442887a7cc181fedd8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _data: {fileID: 0}
+  _config: {fileID: 11400000, guid: 11a8be259e4cf4f478449be720467100, type: 2}
+  _data: {fileID: 11400000, guid: c988bb0177e97504b8d5d885a46e705a, type: 2}
+  _level: 1
   _state: 0
   _visualController: {fileID: 4405331416515651087}
   _weaponController: {fileID: 1262842954251124798}
   _target: {fileID: 0}
   _fovHelper: {fileID: 6694687262555749580}
-  _hp: 50
-  _maxHp: 0
   _collider: {fileID: 4405331416515651085}
   _mainCamera: {fileID: 0}
   _detection: {fileID: 4264530015595266925}
   _rotationSmoothTime: 0.06
-  _canDebug: 1
+  _hud: {fileID: 0}
+  _canShowTextDamage: 0
 --- !u!114 &4405331416515651087
 MonoBehaviour:
   m_ObjectHideFlags: 0

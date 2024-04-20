@@ -25,6 +25,9 @@ namespace StarterAssets
         [Tooltip("Sprint speed of the character in m/s")]
         public float SprintSpeed = 5.335f;
 
+        [Tooltip("Move speed of the character while using tool")]
+        public float UsingToolSpeed = 1.0f;
+
         [Tooltip("How fast the character turns to face movement direction")]
         [Range(0.0f, 0.3f)]
         public float RotationSmoothTime = 0.12f;
@@ -151,12 +154,13 @@ namespace StarterAssets
 
         private bool _autofireInitialized = false;
         private PlayerAutofireAssistance _autofireAssistance = default;
-		
+        private bool _cameraAssistanceInProgress = false;
+
         #endregion
 
-		#region Unity events
+        #region Unity events
 
-		private void Awake()
+        private void Awake()
         {
             // get a reference to our main camera
             if (_mainCamera == null)
@@ -165,6 +169,8 @@ namespace StarterAssets
             }
 
             UI_GameplayEvents.OnStartGame += HandleStartGame;
+            UI_GameplayEvents.OnStartCameraAssistance += HandleCameraAssistanceStarted;
+            UI_GameplayEvents.OnStopCameraAssistance += HandleCameraAssistanceFinished;
         }
 
         private void Start()
@@ -195,15 +201,18 @@ namespace StarterAssets
 
             _hasAnimator = TryGetComponent(out _animator);
 
-            if (_canJump) JumpAndGravity();
+            //if (_canJump) JumpAndGravity();
+            JumpAndGravity();
 
             GroundedCheck();
-            RollingCheck();
-            Move();
 
-            //if (_isMeleeDestructionInProgress) return;
-
-            FireCheck();
+            // If camera assistance is in progress, then controls are canceled
+            if (!_cameraAssistanceInProgress)
+            {
+                RollingCheck();
+                Move();
+                FireCheck();
+            }
 
             _visualController.RefreshStateByInput(_input);
 
@@ -215,6 +224,8 @@ namespace StarterAssets
 		private void OnDestroy()
 		{
             UI_GameplayEvents.OnStartGame -= HandleStartGame;
+            UI_GameplayEvents.OnStartCameraAssistance -= HandleCameraAssistanceStarted;
+            UI_GameplayEvents.OnStopCameraAssistance -= HandleCameraAssistanceFinished;
 
             _weaponController.Teardown();
             _visualController.Teardown(_weaponController);
@@ -294,6 +305,16 @@ namespace StarterAssets
             _gameStarted = true;
 		}
 
+        private void HandleCameraAssistanceStarted()
+		{
+            _cameraAssistanceInProgress = true;
+		}
+
+        private void HandleCameraAssistanceFinished()
+		{
+            _cameraAssistanceInProgress = false;
+        }
+
         private void AssignAnimationIDs()
         {
             _animIDSpeed = Animator.StringToHash("Speed");
@@ -359,7 +380,7 @@ namespace StarterAssets
 			}
 
             // set target speed based on move speed, sprint speed and if sprint is pressed
-            float targetSpeed = _input.sprint ? SprintSpeed : MoveSpeed;
+            float targetSpeed = (_input.sprint) ? SprintSpeed : MoveSpeed;
 
             // a simplistic acceleration and deceleration designed to be easy to remove, replace, or iterate upon
 
@@ -628,6 +649,19 @@ namespace StarterAssets
             transform.rotation = Quaternion.Euler(0.0f, targetRotation, 0.0f); ; // transform.rotation = Quaternion.Euler(0.0f, rotation, 0.0f);
         }
 
+        private void InstantRotationToSwipeDirection()
+        {
+            // normalise input direction
+            var dir = _input.SwipeDirection.normalized;
+
+            Vector3 inputDirection = new Vector3(dir.x, 0.0f, dir.y).normalized;
+
+            var targetRotation = Mathf.Atan2(inputDirection.x, inputDirection.z) * Mathf.Rad2Deg + _mainCamera.transform.eulerAngles.y;
+
+            // rotate to face input direction relative to camera position
+            transform.rotation = Quaternion.Euler(0.0f, targetRotation, 0.0f);
+        }
+
         private void ProcessAutofire()
 		{
             if (!_autofireInitialized) return;
@@ -711,6 +745,13 @@ namespace StarterAssets
             // normalise input direction
             Vector3 inputDirection = new Vector3(_input.move.x, 0.0f, _input.move.y).normalized;
 
+            // Perform rolling based on swipe direction
+#if !UNITY_EDITOR
+            InstantRotationToSwipeDirection();
+            inputDirection.x = _input.SwipeDirection.x;
+            inputDirection.z = _input.SwipeDirection.y;
+#endif
+
             _rollingDirection = (Quaternion.Euler(0.0f, _targetRotation, 0.0f) * Vector3.forward).normalized;
 
             _visualController.SetRolling();
@@ -730,9 +771,9 @@ namespace StarterAssets
             OnStopRolling?.Invoke();
 		}
 
-		#endregion
+#endregion
 
-		#region Repairing methods
+#region Repairing methods
 
         private void OnStartRepairing()
 		{
@@ -749,6 +790,6 @@ namespace StarterAssets
             // TODO
 		}
 
-        #endregion
+#endregion
     }
 }

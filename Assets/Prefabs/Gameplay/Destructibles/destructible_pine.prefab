@@ -53485,7 +53485,7 @@ RectTransform:
   m_GameObject: {fileID: 7827637256021273897}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalScale: {x: 1.1, y: 1.1, z: 1.1}
   m_Children: []
   m_Father: {fileID: 7827637256562402385}
   m_RootOrder: 0
@@ -53516,14 +53516,14 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 0.41051993, g: 0.98039216, b: 0.031372555, a: 1}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_RaycastTarget: 0
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: c866526ed45a6404bb2a4cdcdb3c576e, type: 3}
+  m_Sprite: {fileID: 21300000, guid: c4bc2cb784675495aa5aa8fdc62414cc, type: 3}
   m_Type: 0
   m_PreserveAspect: 1
   m_FillCenter: 1
@@ -53774,6 +53774,7 @@ MonoBehaviour:
   _animDamageElasticity: 0.5
   _vfxHit: {fileID: 6740614153221857466}
   _vfxDestruction: {fileID: 1992120464685801540}
+  _hideOnDeath: []
 --- !u!65 &7407935852393898649
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -54005,7 +54006,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cf5379ac970f94c499628d855e59fa23, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _cam: {fileID: 0}
   _camera: {fileID: 0}
+  _targetPosition: {fileID: 0}
   _followRotation: 1
   _followPosition: 0
   _autoInitialization: 1

@@ -55,6 +55,7 @@ namespace LittleLooters.Gameplay
 
 		private System.Collections.Generic.List<DestructibleRewardData> _rewards = default;
 		private bool _isAnimating = false;
+		private const string _playerTag = "Player";
 
 		#endregion
 
@@ -125,6 +126,8 @@ namespace LittleLooters.Gameplay
 
 			_art.SetActive(false);
 
+			_uiIndicator.SetActive(false);
+
 			for (int i = 0; i < _hideOnDeath.Length; i++)
 			{
 				_hideOnDeath[i].SetActive(false);
@@ -153,6 +156,20 @@ namespace LittleLooters.Gameplay
 
 			// Hide progress bar
 			HideProgressBar();
+		}
+
+		private void OnTriggerEnter(Collider other)
+		{
+			if (!other.CompareTag(_playerTag)) return;
+
+			ShowProximityIndicator();
+		}
+
+		private void OnTriggerExit(Collider other)
+		{
+			if (!other.CompareTag(_playerTag)) return;
+
+			HideProximityIndicator();
 		}
 
 		#endregion
@@ -262,6 +279,18 @@ namespace LittleLooters.Gameplay
 		private void ShowVfxDestruction()
 		{
 			_vfxDestruction.Play();
+		}
+
+		private void ShowProximityIndicator()
+		{
+			if (IsDead) return;
+
+			_uiIndicator.SetActive(true);
+		}
+
+		private void HideProximityIndicator()
+		{
+			_uiIndicator.SetActive(false);
 		}
 
 		#endregion

@@ -60,6 +60,7 @@ namespace LittleLooters.Gameplay
 		private List<DestructibleResourceObject> _targetsInsideFoV = default;
 		private List<DestructibleResourceObject> _targetsAround = default;
 		private List<DestructibleResourceObject> _targetsOut = default;
+		private bool _canDestroyWhileMoving = false;
 
 		#endregion
 
@@ -74,6 +75,7 @@ namespace LittleLooters.Gameplay
 			PlayerProgressEvents.OnToolDamageIncreaseCompleted += HandleStopToolDamageIncrease;
 
 			UI_GameplayEvents.OnDestructionDetectionChangedByCheat += HandleDestructionStatusChangedByCheat;
+			UI_GameplayEvents.OnDestructionMovingChangedByCheat += HandleDestructionMovingStatusChangedByCheat;
 
 			_transform = transform;
 
@@ -114,6 +116,7 @@ namespace LittleLooters.Gameplay
 			DestructibleResourceEvents.OnGrantRewardsByDamage -= GrantRewardsByDamage;
 
 			UI_GameplayEvents.OnDestructionDetectionChangedByCheat -= HandleDestructionStatusChangedByCheat;
+			UI_GameplayEvents.OnDestructionMovingChangedByCheat -= HandleDestructionMovingStatusChangedByCheat;
 
 			if (_controller != null)
 			{
@@ -128,7 +131,7 @@ namespace LittleLooters.Gameplay
 
 		private void Update()
 		{
-			// TODO: add delay between executions
+			// TODO: add delay between executions.
 
 			if (!_isEnabled) return;
 
@@ -140,7 +143,7 @@ namespace LittleLooters.Gameplay
 
 			if (!CanProcess()) return;
 
-			if (_controller.IsMoving())
+			if (IsPlayerMoving())	//if (_controller.IsMoving())
 			{
 				if (_isInProgress)
 				{
@@ -165,6 +168,17 @@ namespace LittleLooters.Gameplay
 				CheckTargetsAround();
 
 				return;
+			}
+
+			if (_canDestroyWhileMoving)
+			{
+				CheckTargetsAround();
+
+				if (_targets.Count == 0)
+				{
+					StopByPlayerMovement();
+					return;
+				}
 			}
 
 			ProcessCheck(Time.deltaTime);
@@ -342,6 +356,11 @@ namespace LittleLooters.Gameplay
 			StopProcessing();
 		}
 
+		private void HandleDestructionMovingStatusChangedByCheat(bool status)
+		{
+			_canDestroyWhileMoving = status;
+		}
+
 		#endregion
 
 		#region Tool extra damage
@@ -444,7 +463,7 @@ namespace LittleLooters.Gameplay
 			MarkAsDetected();
 
 			// If player is moving, skip process
-			if (_controller.IsMoving()) return;
+			if (IsPlayerMoving()) return;	//if (_controller.IsMoving()) return;
 
 			var nearest = GetNearestTarget();
 
@@ -531,6 +550,13 @@ namespace LittleLooters.Gameplay
 			}
 
 			MarkAsNoDetected(_targetsOut.ToArray());
+		}
+
+		private bool IsPlayerMoving()
+		{
+			if (_canDestroyWhileMoving) return false;
+
+			return _controller.IsMoving();
 		}
 
 		#endregion

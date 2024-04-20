@@ -28,6 +28,7 @@ namespace LittleLooters.Gameplay
     {
         NONE = 0,
         BUSH = 50,
+        PINE = 55,
         SMALL_BOX = 100,
         GRILL = 200,
         DOOR = 300,

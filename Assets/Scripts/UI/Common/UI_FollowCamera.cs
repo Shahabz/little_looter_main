@@ -67,6 +67,12 @@ namespace LittleLooters.Gameplay.UI
             _targetPosition = target;
 		}
 
+        public void SetCamera(Camera camera)
+		{
+            _cam = camera;
+            _camera = camera.transform;
+		}
+
         #endregion
 
         #region Unity events

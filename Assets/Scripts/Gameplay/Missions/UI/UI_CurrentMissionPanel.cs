@@ -195,7 +195,15 @@ namespace LittleLooters.Gameplay.UI
 
 		private void AnimateCompletionOut()
 		{
-			_animatedPanel.DOLocalMoveY(_animationOutGoal, _animationOutDuration).SetDelay(_animationOutDelay).SetEase(_animationOutEase);
+			_animatedPanel.DOLocalMoveY(_animationOutGoal, _animationOutDuration)
+					.SetDelay(_animationOutDelay)
+					.SetEase(_animationOutEase)
+					.OnComplete( 
+						() =>
+							{
+								Assistance();
+							}
+						);
 		}
 
 		private void Assistance()

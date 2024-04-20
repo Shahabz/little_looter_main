@@ -3,6 +3,8 @@
  * Author: Peche
  */
 
+using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 namespace LittleLooters.Gameplay
@@ -17,6 +19,8 @@ namespace LittleLooters.Gameplay
 		#endregion
 
 		[SerializeField] private EnemyController[] _entities = default;
+		[SerializeField] private Transform _player = default;
+		[SerializeField] private Camera _camera = default;
 
 		public EnemyController[] Entities => _entities;
 
@@ -24,10 +28,14 @@ namespace LittleLooters.Gameplay
 		private int _detectedId = -1;
 		private EnemyController _detected = default;
 		private bool _detectionStarted = false;
+		private int _enemyId = 0;
+		private List<EnemyController> _enemiesAlive = default;
 
 		private void Start()
 		{
 			UI_GameplayEvents.OnStartGame += HandleStartGame;
+
+			_enemiesAlive = new List<EnemyController>(50);
 		}
 
 		private void OnDestroy()
@@ -102,18 +110,41 @@ namespace LittleLooters.Gameplay
 
 			ClearTargetDetection();
 
+			RemoveDeadEntities();
+
 			_detectionStarted = false;
 
 			OnStopDetection?.Invoke();
 		}
 
+		public void AddNewEnemy(EnemyController enemy)
+		{
+			var enemies = _entities.ToList();
+
+			enemies.Add(enemy);
+
+			enemy.name += $"_{_enemyId}";
+
+			enemy.SetTarget(_player);
+			enemy.SetCamera(_camera);
+			enemy.Initialization(_enemyId);
+
+			_entities = enemies.ToArray();
+
+			_enemyId++;
+		}
+
 		private void InitEntities()
 		{
+			_enemyId = 0;
+
 			for (int i = 0; i < _entities.Length; i++)
 			{
 				var entity = _entities[i];
 
-				entity.Initialization(i);
+				entity.Initialization(_enemyId);
+
+				_enemyId++;
 			}
 		}
 
@@ -135,6 +166,22 @@ namespace LittleLooters.Gameplay
 
 			_detected = null;
 			_detectedId = -1;
+		}
+
+		private void RemoveDeadEntities()
+		{
+			_enemiesAlive.Clear();
+
+			for (int i = 0; i < _entities.Length; i++)
+			{
+				var entity = _entities[i];
+
+				if (entity.IsDead) continue;
+
+				_enemiesAlive.Add(entity);
+			}
+
+			_entities = _enemiesAlive.ToArray();
 		}
 
 		#region Debug

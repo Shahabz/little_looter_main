@@ -163,6 +163,7 @@ namespace LittleLooters.Global.ServiceLocator
 			UI_GameplayEvents.OnClaimToolUpgrade += HandleToolUpgradeClaim;
 			UI_GameplayEvents.OnSpeedUpToolUpgrade += HandleToolSpeedUpUpgrade;
 			UI_GameplayEvents.OnIncreaseToolDamage += HandleToolIncreaseDamage;
+			UI_GameplayEvents.OnToolUpgradeByCheat += HandleToolUpgradeByCheat;
 		}
 
 		private void Tool_UnsubscribeEvents()
@@ -171,6 +172,7 @@ namespace LittleLooters.Global.ServiceLocator
 			UI_GameplayEvents.OnClaimToolUpgrade -= HandleToolUpgradeClaim;
 			UI_GameplayEvents.OnSpeedUpToolUpgrade -= HandleToolSpeedUpUpgrade;
 			UI_GameplayEvents.OnIncreaseToolDamage -= HandleToolIncreaseDamage;
+			UI_GameplayEvents.OnToolUpgradeByCheat -= HandleToolUpgradeByCheat;
 		}
 
 		private void HandleToolStartUpgrade()
@@ -191,6 +193,11 @@ namespace LittleLooters.Global.ServiceLocator
 		private void HandleToolIncreaseDamage()
 		{
 			Tool_IncreaseDamage();
+		}
+
+		private void HandleToolUpgradeByCheat()
+		{
+			Tool_ClaimUpgrade();
 		}
 
 		public void Tool_CompleteExtraDamage()
