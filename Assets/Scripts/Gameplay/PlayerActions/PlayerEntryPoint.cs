@@ -71,6 +71,9 @@ namespace LittleLooters.Gameplay
 			var repairingService = GetComponent<PlayerRepairService>();
 			repairingService.SetupSpeed(_repairingSpeed);
 
+			// Stamina service
+			var staminaService = GetComponent<PlayerStaminaService>();
+
 			// Visual controller
 			_visualController = GetComponent<VisualCharacterController>();
 			_visualController.Init(_weaponController);
@@ -79,6 +82,7 @@ namespace LittleLooters.Gameplay
 			_controller = GetComponent<ThirdPersonController>();
 			_controller.SetAimingAssistance(_aimingAssistance);
 			_controller.SetupRepairingService(repairingService);
+			_controller.SetupStaminaService(staminaService);
 
 			// Autofire assistance
 			_autofireAssistance = new PlayerAutofireAssistance();

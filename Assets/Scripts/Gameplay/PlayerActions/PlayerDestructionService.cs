@@ -61,6 +61,7 @@ namespace LittleLooters.Gameplay
 		private List<DestructibleResourceObject> _targetsAround = default;
 		private List<DestructibleResourceObject> _targetsOut = default;
 		private bool _canDestroyWhileMoving = false;
+		private bool _enemyDetected = false;
 
 		#endregion
 
@@ -70,6 +71,9 @@ namespace LittleLooters.Gameplay
 		{
 			PlayerAimingAssistance.OnStartAiming += StartAiming;
 			PlayerAimingAssistance.OnStopAiming += StopAiming;
+
+			LevelEnemies.OnTargetInsideRange += HandleEnemyInsideRadiusDetection;
+			LevelEnemies.OnTargetOutsideRange += HandleEnemyOutsideRadiusDetection;
 
 			PlayerProgressEvents.OnToolDamageIncreaseStarted += HandleStartToolDamageIncrease;
 			PlayerProgressEvents.OnToolDamageIncreaseCompleted += HandleStopToolDamageIncrease;
@@ -109,6 +113,9 @@ namespace LittleLooters.Gameplay
 		{
 			PlayerAimingAssistance.OnStartAiming -= StartAiming;
 			PlayerAimingAssistance.OnStopAiming -= StopAiming;
+
+			LevelEnemies.OnStartDetection -= HandleEnemyInsideRadiusDetection;
+			LevelEnemies.OnStopDetection -= HandleEnemyOutsideRadiusDetection;
 
 			PlayerProgressEvents.OnToolDamageIncreaseStarted -= HandleStartToolDamageIncrease;
 			PlayerProgressEvents.OnToolDamageIncreaseCompleted -= HandleStopToolDamageIncrease;
@@ -190,7 +197,11 @@ namespace LittleLooters.Gameplay
 
 		private bool CanProcess()
 		{
-			if (_isPlayerAiming) return false;
+			if (_isPlayerAiming)
+			{
+				// Check if there is an enemy detected
+				if (_enemyDetected) return false;
+			}
 
 			if (_isPlayerRolling) return false;
 
@@ -304,14 +315,24 @@ namespace LittleLooters.Gameplay
 		{
 			_isPlayerAiming = true;
 
-			//if (!_isInProgress && !_animationStarted) return;
-
-			CancelProcessing();
+			//CancelProcessing();
 		}
 
 		private void StopAiming()
 		{
 			_isPlayerAiming = false;
+		}
+
+		private void HandleEnemyInsideRadiusDetection()
+		{
+			_enemyDetected = true;
+
+			CancelProcessing();
+		}
+
+		private void HandleEnemyOutsideRadiusDetection()
+		{
+			_enemyDetected = false;
 		}
 
 		private void StopAllTargets()

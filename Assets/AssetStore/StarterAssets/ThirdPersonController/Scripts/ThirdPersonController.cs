@@ -155,6 +155,7 @@ namespace StarterAssets
         private bool _autofireInitialized = false;
         private PlayerAutofireAssistance _autofireAssistance = default;
         private bool _cameraAssistanceInProgress = false;
+        private PlayerStaminaService _staminaService = default;
 
         #endregion
 
@@ -258,6 +259,11 @@ namespace StarterAssets
             _repairService = service;
 
             _repairService.Init(OnStartRepairing, OnStopRepairing, OnCompleteRepairing);
+        }
+
+        public void SetupStaminaService(PlayerStaminaService service)
+		{
+            _staminaService = service;
         }
 
         public void SetAutoaiming(bool status)
@@ -693,7 +699,7 @@ namespace StarterAssets
                 ProcessRolling();
             }
 
-            // jump timeout
+            /*// jump timeout
             if (_rollTimeoutDelta > 0.0f)
             {
                 _rollTimeoutDelta -= Time.deltaTime;
@@ -701,7 +707,7 @@ namespace StarterAssets
                 _input.roll = false;
 
                 return;
-            }
+            }*/
 
             if (_isRolling)
             {
@@ -716,6 +722,15 @@ namespace StarterAssets
             }
 
             if (!_input.roll) return;
+
+            // Check stamina
+            var staminaIsEnough = _staminaService.TryConsumePoints(1);
+
+            if (!staminaIsEnough)
+            {
+                _input.roll = false;
+                return;
+            }
 
             StartRolling();
         }

@@ -15,6 +15,8 @@ namespace LittleLooters.Gameplay
 
 		public static System.Action OnStartDetection;
 		public static System.Action OnStopDetection;
+		public static System.Action OnTargetInsideRange;
+		public static System.Action OnTargetOutsideRange;
 
 		#endregion
 
@@ -75,6 +77,8 @@ namespace LittleLooters.Gameplay
 
 			if (!isTargetInsideRadius)
 			{
+				if (_detectedId != -1) OnTargetOutsideRange?.Invoke();
+
 				ClearTargetDetection();
 			}
 
@@ -95,6 +99,8 @@ namespace LittleLooters.Gameplay
 				_detected = target;
 				_detectedId = target.Id;
 				_detected.MarkAsDetected();
+
+				OnTargetInsideRange?.Invoke();
 			}
 
 			if (!previousDetection) return;
