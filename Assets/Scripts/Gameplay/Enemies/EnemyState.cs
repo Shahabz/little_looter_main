@@ -6,10 +6,12 @@
 namespace LittleLooters.Gameplay
 {
 	public enum EnemyState { 
-		NONE, 
-		IDLE, 
-		CHASE, 
-		ATTACK, 
-		DIE 
+		NONE = 0, 
+		IDLE = 100, 
+		CHASE = 200, 
+		ATTACK = 300, 
+		DIE = 400, 
+		AIM = 500, 
+		RELOAD = 600,
 	}
 }

@@ -28,5 +28,10 @@ namespace LittleLooters.Gameplay
 		{
 			_weaponController.MeleeAttackCompleted();
 		}
+
+		public void FireWeapon()
+		{
+			_weaponController.Process();
+		}
 	}
 }

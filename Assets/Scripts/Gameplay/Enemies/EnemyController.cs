@@ -27,11 +27,11 @@ namespace LittleLooters.Gameplay
 		#region Inspector
 
 		[SerializeField] private EnemyConfiguration _config = default;
-		[SerializeField] private EnemyBehaviorData _data = default;
+		[SerializeField] protected EnemyBehaviorData _data = default;
 		[SerializeField] private int _level = 1;
-		[SerializeField] private EnemyState _state = EnemyState.NONE;
-		[SerializeField] private VisualEnemyController _visualController = default;
-		[SerializeField] private WeaponEnemyController _weaponController = default;
+		[SerializeField] protected EnemyState _state = EnemyState.NONE;
+		[SerializeField] protected VisualEnemyController _visualController = default;
+		[SerializeField] protected WeaponEnemyController _weaponController = default;
 		[SerializeField] private Transform _target = default;
 		[SerializeField] private FieldOfViewHelper _fovHelper = default;
 		[SerializeField] private Collider _collider = default;
@@ -52,12 +52,12 @@ namespace LittleLooters.Gameplay
 		#region Private properties
 
 		private int _id = -1;
-		private bool _enabled = false;
+		protected bool _enabled = false;
 		private int _hp = default;
 		private int _maxHp = default;
 		private EnemyFieldOfViewService _fovService = default;
-		private NavMeshAgent _agent = default;
-		private float _nextAttackTime = 0;
+		protected NavMeshAgent _agent = default;
+		protected float _nextAttackTime = 0;
 		private EnemyState _previousState = EnemyState.NONE;
 		private float _refreshTime = 0;
 		private const float DELAY_CALCULATION = 0.12f;
@@ -99,7 +99,7 @@ namespace LittleLooters.Gameplay
 			_followCamera.SetCamera(camera);
 		}
 
-		public void Initialization(int id)
+		public virtual void Initialization(int id)
 		{
 			_id = id;
 
@@ -141,7 +141,7 @@ namespace LittleLooters.Gameplay
 			_enabled = true;
 		}
 
-		public void Teardown()
+		public virtual void Teardown()
 		{
 			if (_fovService != null)
 			{
@@ -202,7 +202,7 @@ namespace LittleLooters.Gameplay
 
 		#region Private methods
 
-		private void OnStartDetection()
+		protected virtual void OnStartDetection()
 		{
 			if (!_enabled) return;
 
@@ -214,7 +214,7 @@ namespace LittleLooters.Gameplay
 			_state = EnemyState.CHASE;
 		}
 
-		private void RefreshDetection()
+		protected virtual void RefreshDetection()
 		{
 			if (!_enabled) return;
 
@@ -224,7 +224,7 @@ namespace LittleLooters.Gameplay
 			_agent.isStopped = false;
 		}
 
-		private void OnStopDetection()
+		protected virtual void OnStopDetection()
 		{
 			if (!_enabled) return;
 
@@ -252,6 +252,8 @@ namespace LittleLooters.Gameplay
 
 		private void RefreshAttackState()
 		{
+			if (_state == EnemyState.RELOAD) return;
+
 			var inAttackRange = CheckInAttackRange();
 
 			// It was attacking but is not in attack range area
@@ -278,7 +280,7 @@ namespace LittleLooters.Gameplay
 			Attack();
 		}
 
-		private bool CheckInAttackRange()
+		protected virtual bool CheckInAttackRange()
 		{
 			var currentPosition = transform.position;
 
@@ -308,7 +310,7 @@ namespace LittleLooters.Gameplay
 			Attack();
 		}
 
-		private void Attack()
+		protected virtual void Attack()
 		{
 			if (Time.time < _nextAttackTime) return;
 
@@ -319,7 +321,7 @@ namespace LittleLooters.Gameplay
 			_visualController.Attack();
 		}
 
-		private void StopMovement()
+		protected void StopMovement()
 		{
 			if (!_agent.enabled) return;
 
@@ -356,6 +358,8 @@ namespace LittleLooters.Gameplay
 			_state = EnemyState.IDLE;
 
 			_visualController.Refresh(_state, false);
+
+			_weaponController.Disable();
 		}
 
 		private void MeleeAttackStarted()

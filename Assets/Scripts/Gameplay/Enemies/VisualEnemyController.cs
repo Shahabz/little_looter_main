@@ -27,7 +27,12 @@ namespace LittleLooters.Gameplay
 		private int _animIsAttackingId = default;
 		private int _animTakeDamageId = default;
 		private int _animDeathId = default;
+		private int _animIsAimingId = default;
+		private int _animIsReloadingId = default;
+		private int _animReloadId = default;
 		private bool _isEnabled = false;
+		private bool _isReloading = false;
+		private bool _isAttacking = false;
 
 		#endregion
 
@@ -44,12 +49,17 @@ namespace LittleLooters.Gameplay
 			// Attack ids
 			_animAttackId = Animator.StringToHash("attack");
 			_animIsAttackingId = Animator.StringToHash("isAttacking");
+			_animIsAimingId = Animator.StringToHash("isAiming");
 
 			// Take damage id
 			_animTakeDamageId = Animator.StringToHash("takeDamage");
 
 			// Death id
 			_animDeathId = Animator.StringToHash("dead");
+
+			// Reload ids
+			_animIsReloadingId = Animator.StringToHash("isReloading");
+			_animReloadId = Animator.StringToHash("reload");
 
 			_isEnabled = true;
 
@@ -69,6 +79,18 @@ namespace LittleLooters.Gameplay
 			if (state == EnemyState.CHASE)
 			{
 				SetChase();
+				return;
+			}
+
+			if (state == EnemyState.RELOAD)
+			{
+				SetReload();
+				return;
+			}
+
+			if (state == EnemyState.AIM)
+			{
+				SetAiming();
 				return;
 			}
 
@@ -122,7 +144,12 @@ namespace LittleLooters.Gameplay
 			_animator.SetFloat(_animSpeedId, 0);
 			_animator.SetFloat(_animMotionSpeedId, 0);
 
-			_animator.SetBool(_animIsAttackingId, false);
+			CancelAttacking();
+
+			// Cancel aiming
+			_animator.SetBool(_animIsAimingId, false);
+
+			CancelReloading();
 		}
 
 		private void SetChase()
@@ -130,7 +157,28 @@ namespace LittleLooters.Gameplay
 			_animator.SetFloat(_animSpeedId, _data.WalkingSpeed);
 			_animator.SetFloat(_animMotionSpeedId, 1);
 
-			_animator.SetBool(_animIsAttackingId, false);
+			CancelAttacking();
+		}
+
+		private void SetAiming()
+		{
+			_animator.SetBool(_animIsAimingId, true);
+		}
+
+		private void SetReload()
+		{
+			if (!_isReloading)
+			{
+				_animator.SetTrigger(_animReloadId);
+			}
+
+			_isReloading = true;
+
+			_animator.SetBool(_animIsReloadingId, true);
+
+			_animator.SetBool(_animIsAimingId, false);
+
+			CancelAttacking();
 		}
 
 		private void SetAttack(bool isPerformingAttack)
@@ -139,13 +187,15 @@ namespace LittleLooters.Gameplay
 			_animator.SetFloat(_animSpeedId, 0);
 			_animator.SetFloat(_animMotionSpeedId, 0);
 
-			// Set attack trigger
-			/*if (!isPerformingAttack)
-			{
-				_animator.SetTrigger(_animAttackId);
-			}*/
+			// Cancel aiming
+			_animator.SetBool(_animIsAimingId, false);
 
+			CancelReloading();
+
+			// Start Attacking
 			_animator.SetBool(_animIsAttackingId, true);
+
+			_isAttacking = true;
 		}
 
 		private void SetDeath()
@@ -154,7 +204,9 @@ namespace LittleLooters.Gameplay
 			_animator.SetFloat(_animSpeedId, 0);
 			_animator.SetFloat(_animMotionSpeedId, 0);
 
-			_animator.SetBool(_animIsAttackingId, false);
+			CancelAttacking();
+
+			CancelReloading();
 
 			// Set dead trigger
 			_animator.SetTrigger(_animDeathId);
@@ -162,8 +214,28 @@ namespace LittleLooters.Gameplay
 
 		private void SetTakeDamage()
 		{
+			if (_isReloading) return;
+
+			if (_isAttacking) return;
+
 			// Set take damage trigger
 			_animator.SetTrigger(_animTakeDamageId);
+		}
+
+		private void CancelReloading()
+		{
+			if (!_isReloading) return;
+
+			_animator.SetBool(_animIsReloadingId, false);
+
+			_isReloading = false;
+		}
+
+		private void CancelAttacking()
+		{
+			_isAttacking = false;
+
+			_animator.SetBool(_animIsAttackingId, false);
 		}
 
 		#endregion

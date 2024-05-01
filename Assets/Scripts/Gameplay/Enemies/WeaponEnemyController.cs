@@ -15,17 +15,18 @@ namespace LittleLooters.Gameplay
 
 		private EnemyBehaviorData _data = default;
 		private EnemyLevelConfiguration _levelConfiguration = default;
-		private bool _initialized = false;
+		protected bool _initialized = false;
 		private Action _meleeAttackCompleted = default;
 		private Action _meleeAttackStarted = default;
 		private Transform _target = default;
 		private PlayerHealth _targetHealth = default;
+		protected bool _enabled = false;
 
 		#endregion
 
 		#region Public methods
 
-		public void Init(EnemyBehaviorData data, EnemyLevelConfiguration levelConfig, Transform target, Action callbackCompleted, Action callbackStarted)
+		public virtual void Init(EnemyBehaviorData data, EnemyLevelConfiguration levelConfig, Transform target, Action callbackCompleted, Action callbackStarted)
 		{
 			_data = data;
 
@@ -38,6 +39,18 @@ namespace LittleLooters.Gameplay
 			_meleeAttackCompleted = callbackCompleted;
 
 			_initialized = true;
+
+			_enabled = true;
+		}
+
+		public virtual void Process()
+		{
+
+		}
+
+		public void Disable()
+		{
+			_enabled = false;
 		}
 
 		#endregion
