@@ -88,6 +88,8 @@ namespace LittleLooters.Gameplay
 
 		private bool CheckInsideAttackArea()
 		{
+			if (!_enabled) return false;
+
 			Vector3 currentPosition = transform.position;
 
 			Vector3 directionToTarget = _target.position - currentPosition;

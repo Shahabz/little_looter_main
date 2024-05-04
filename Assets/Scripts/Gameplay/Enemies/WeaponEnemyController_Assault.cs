@@ -67,7 +67,7 @@ namespace LittleLooters.Gameplay
 
 		private void ShowMuzzleVfx()
 		{
-			_muzzle.Play();
+			_muzzle?.Play();
 		}
 
 		private void ShowProjectile()

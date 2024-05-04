@@ -24,6 +24,7 @@ namespace LittleLooters.Gameplay
 
 		[SerializeField] private RuntimeAnimatorController _assaultAnimatorController = default;
 		[SerializeField] private RuntimeAnimatorController _meleeAnimatorController = default;
+		[SerializeField] private RuntimeAnimatorController _toolAnimatorController = default;
 		[SerializeField] private float _attackRate = 1.0f;
 		[SerializeField] private float _radiusDetection = default;
 		[SerializeField] private float _radiusDetectionOffset = 5;
@@ -262,7 +263,7 @@ namespace LittleLooters.Gameplay
 
 			_controller.LookAtMeleeTarget(_lookingTarget.transform);
 
-			_visualController.OverrideAnimatorController(_meleeAnimatorController);
+			_visualController.OverrideAnimatorController(_toolAnimatorController);
 			_visualController.SetMeleeWeapon();
 			_visualController.DisableRig();
 		}

@@ -19,6 +19,12 @@ namespace LittleLooters.Gameplay.Combat
 
 		#endregion
 
+		#region Public properties
+
+		public bool CanFireOnPause => _enabled && !_movementFree;
+
+		#endregion
+
 		#region Public methods
 
 		public void Init(ThirdPersonController movementController, WeaponController weaponController, PlayerAimingAssistance aimingAssistance)

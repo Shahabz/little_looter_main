@@ -353,13 +353,13 @@ namespace LittleLooters.Gameplay
 
 			_enabled = false;
 
-			StopMovement();
+			_weaponController.Disable();
 
+			StopMovement();
+			
 			_state = EnemyState.IDLE;
 
 			_visualController.Refresh(_state, false);
-
-			_weaponController.Disable();
 		}
 
 		private void MeleeAttackStarted()

@@ -586,11 +586,15 @@ namespace StarterAssets
 
                 return;
             }
+
             if (!_weaponController.IsReloading && _autoaiming && _aimingAssistance.TargetDetected && _aimingAssistance.TargetInsideRadius)
 			{
                 //_aimingAssistance.RotateToTarget();
 
-                return;
+                // If player is moving and autofire is only when not moving, skip rotation towards target
+                if (!IsMoving() && !_autofireAssistance.CanFireOnPause) return;
+                
+                //return;
             }
             else
 			{
@@ -624,10 +628,14 @@ namespace StarterAssets
             if (_isRolling) return;
 
             if (_weaponController.IsReloading) return;
-            
+
             if (_autoaiming && !_input.IsAiming)
             {
+
                 _aimingAssistance?.Process(transform.forward);
+
+                // If player is moving and autofire is only when not moving, skip rotation towards target
+                if (IsMoving() && _autofireAssistance.CanFireOnPause) return;
 
                 _visualController.SetAutoAiming(_aimingAssistance.TargetDetected);
 
